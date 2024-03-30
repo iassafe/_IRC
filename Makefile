@@ -1,6 +1,6 @@
-NAME	= IR
+NAME	= ircserv
 
-SRCS	= main.cpp Server.cpp Client.cpp
+SRCS	= main.cpp Server.cpp Client.cpp Channel.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
 
@@ -8,7 +8,7 @@ CXX	 = c++
 
 CXXFLAGS = -Wall -Werror -Wextra  -std=c++98
 
-%.o: %.cpp Server.hpp Client.hpp
+%.o: %.cpp Server.hpp Client.hpp Channel.hpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 	
 all: $(NAME)

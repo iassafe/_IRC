@@ -1,5 +1,7 @@
 #include "Server.hpp"
 
+
+
 bool	Server::signal = false;
 
 void	Server::sigHandler(int signum){
@@ -39,8 +41,6 @@ void	Server::clearClient(int fd){
 	for (size_t i = 0; i < Clients.size(); ++i){//close clients fd
 		std::cout << "client disconnected" << std::endl;
 		close(Clients[i].getClientID());}
-
-		
 	if (serverID == -1){//close server socket
 		std::cout << "server disconnected" << std::endl;
 		close(serverID);}
@@ -114,7 +114,14 @@ void	to_lower(std::string &command){
 		command[i] = std::tolower(command[i]);
 	}
 }
-
+std::string	skip_spaces(std::string str){
+	for (size_t i = 0; i < str.size(); ++i){
+		if (str[i] != ' ')
+			return (&str[i]);
+	}
+	std::cout << "lets see" << str << std::endl;
+	return (str);
+}
 void	Server::recieve_data(int fd){
 	char	buffer[1024];
 	Client	c;
@@ -126,31 +133,59 @@ void	Server::recieve_data(int fd){
 		clearClient(fd);
 		close(fd);
 	}
-	else
-		this->Clients[fd].setBuffer(buffer);
-	password += "\n";
-	// if (strcmp(buffer, this->password.c_str())){
-	// 	if (send(connectionID, "password :", 10, 0) == -1)
-	// 		throw (std::runtime_error("failed to send to client"));
-	// 	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0);
-	// 	if (total <= 0){
-	// 		std::cout << "client gone" << std::endl;
-	// 	clearClient(fd);
-	// 	close(fd);
-	// }
-	// }
-	std::string	buf = buffer;
-	size_t found = buf.find(' ');
-	this->command = buf.substr(0, found);
-	this->args = buf.substr(found + 1, buf.length());
-	to_lower(this->command);
-	if (this->command == "join\n")
-		std::cout <<"join channel" << std::endl;
-	else if (this->command == "invite\n")
-		std::cout <<"invite user" << std::endl;
-	else if (this->command == "kick\n")
-		std::cout <<"kick user" << std::endl;
-	std::cout << "command : " << this->command << " args :" << this->args << std::endl;
+	else{
+		std::string	buf = buffer;size_t fond;
+		std::string	new_buf = skip_spaces(buf);
+			fond = new_buf.find_first_of(" ");
+			if (fond != std::string::npos){
+				std::cout << "found space in here : " << fond << std::endl;
+				this->command = new_buf.substr(0, fond);
+				this->args = new_buf.substr(fond + 1, new_buf.length());
+				std::cout << "command: " << this->command << std::endl;
+				std::cout << "argu: " << this->args << std::endl;
+			}
+			else
+			{
+				this->command = new_buf;
+				this->args = "\0";
+				std::cout << "command: " << this->command << std::endl;
+				std::cout << "argu: " << this->args << std::endl;
+			}
+			
+		// this->password += "\n";
+		// if (strcmp(buffer, this->password.c_str())){
+		// 	if (send(this->connectionID, "password :", 10, 0) == -1)
+		// 		throw (std::runtime_error("failed to send to client"));
+		// 	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0);
+		// 	if (total <= 0){
+		// 		std::cout << "client gone" << std::endl;
+		// 		clearClient(fd);
+		// 		close(fd);
+		// 	}
+		// }
+		// if (send(this->connectionID, "nickname :", 10, 0) == -1)
+		// 		throw (std::runtime_error("failed to send to client"));
+		// this->nick = buffer;
+		// if (send(this->connectionID, "username :", 10, 0) == -1)
+		// 		throw (std::runtime_error("failed to send to client"));
+		// this->user = buffer;
+		// std::cout << "user = " << this->nick << std::endl;
+		// std::string	buf = buffer;
+		// size_t found = buf.find(' ');
+		// this->command = buf.substr(0, found);
+		// this->args = buf.substr(found + 1, buf.length());
+		// to_lower(this->command);
+		// if (this->command == "join\n")
+		// 	std::cout <<"join channel" << std::endl;
+		// else if (this->command == "invite\n")
+		// 	std::cout <<"invite user" << std::endl;
+		// else if (this->command == "kick\n")
+		// 	std::cout <<"kick user" << std::endl;
+		// std::cout << "command : " << this->command << " args :" << this->args << std::endl;
+
+	}
+		// this->Clients[fd].setBuffer(buffer);
+
 
 }
 
