@@ -122,6 +122,15 @@ std::string	skip_spaces(std::string str){
 	std::cout << "lets see" << str << std::endl;
 	return (str);
 }
+
+static int validCommand(std::string &cmd){
+    if (cmd == "join" || cmd == "privmsg" || cmd == "topic" \
+        || cmd == "kick" || cmd == "mode" || cmd == "pass" || \
+        cmd == "user" || cmd == "invite")
+        return(1);
+    return(0);
+}
+
 void	Server::recieve_data(int fd){
 	char	buffer[1024];
 	Client	c;
@@ -151,6 +160,16 @@ void	Server::recieve_data(int fd){
 				std::cout << "command: " << this->command << std::endl;
 				std::cout << "argu: " << this->args << std::endl;
 			}
+			to_lower(this->command);
+			if (validCommand(this->command)){
+				// if (this->command == "join")
+				// 	executeJoin()
+        	}
+			else if(send(this->connectionID, "Invalid command\n", 16, 0) == -1)
+				throw (std::runtime_error("failed to send to client"));
+
+			
+
 			
 		// this->password += "\n";
 		// if (strcmp(buffer, this->password.c_str())){
