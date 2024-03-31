@@ -185,6 +185,11 @@ void	Server::recieve_data(int fd){
 						if (send(this->connectionID, "Invalid args\n", 13, 0) == -1)
 							throw (std::runtime_error("failed to send to client"));
 					}
+					else
+					{
+						// joinCommand();
+					}
+					
 				}
         	}
 			else if(send(this->connectionID, "Invalid command\n", 16, 0) == -1)
