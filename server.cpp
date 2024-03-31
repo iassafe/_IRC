@@ -160,29 +160,36 @@ void	Server::recieve_data(int fd){
 		close(fd);
 	}
 	else{
-		std::string	buf = buffer;size_t fond;
+		std::string	buf = buffer;
+		 size_t fond;
 		std::string	new_buf = skip_spaces(buf);
-			fond = new_buf.find_first_of(" ");
-			if (fond != std::string::npos){
-				std::cout << "found space in here : " << fond << std::endl;
-				this->command = new_buf.substr(0, fond);
-				this->args = new_buf.substr(fond + 1, new_buf.length());
-				std::cout << "command: " << this->command << std::endl;
-				std::cout << "argu: " << this->args << std::endl;
-			}
+		for(size_t i = 0; i <= new_buf.size(); i++){
+			fond = new_buf.find_first_of("\t\r\n");
+			if (fond == std::string::npos)
+				return;
+			std::cout << "content of fond++" << new_buf[fond] << "++" << std::endl;	
+			std::string	commond = new_buf.substr(0, fond);
+			std::cout << "command:" << commond << "--" << std::endl;
+			size_t	sp = commond.find_first_of(" ");
+			this->command = commond.substr(0, sp);
+			std::cout << "com:[" << this->command << "]--" << std::endl;
+			new_buf = new_buf.substr(fond+1, new_buf.size());
+			this->args = skip_spaces(commond.substr(sp + 1, commond.length()));
+			std::cout << "argu:[" << this->args << "]--" << std::endl;
+			std::cout << "new_buff :" << &new_buf[i] << std::endl;
 			to_lower(this->command);
 			if (validCommand(this->command)){
 				if (this->command == "join"){
-					if (!this->args[0] || this->args[0]== ' ')
+					if (!this->args[0] || this->args[0]== '\n')
 					{
 						if (send(this->connectionID, "Invalid args\n", 13, 0) == -1)
 							throw (std::runtime_error("failed to send to client"));
 					}
-					// executeJoin();
 				}
         	}
 			else if(send(this->connectionID, "Invalid command\n", 16, 0) == -1)
 				throw (std::runtime_error("failed to send to client"));
+		}
 		// this->password += "\n";
 		// if (strcmp(buffer, this->password.c_str())){
 		// 	if (send(this->connectionID, "password :", 10, 0) == -1)
