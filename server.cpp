@@ -1,20 +1,21 @@
+
 #include "Server.hpp"
-
-
 
 bool	Server::signal = false;
 
-void	Server::sigHandler(int signum){
-	(void)signum;
-	std::cout << "signal found!" << std::endl;
-	signal = true;//to stop the server
-}
 Server::Server(){
 	serverID = -1; 
 	password = "\0";
 	nick = "tikchbila";
 	user = "tiwliwla";
-	}
+}
+
+Server::~Server(){
+    for (unsigned int i = 0; i < clients.size(); i++)
+        close(clients[i].getSocketDescriptor());//close users fd before quitting 
+}
+
+//setters
 
 void	Server::setPort(int n){
 	port = n;
@@ -24,6 +25,20 @@ void	Server::setPassword(char *str){
 	password = str;
 }
 
+//getters
+
+std::string    Server::getPassword(){
+    return password;
+}
+
+
+//building the server
+void	Server::sigHandler(int signum){
+	(void)signum;
+	std::cout << "signal found!" << std::endl;
+	signal = true;//to stop the server
+}
+
 void	Server::clearClient(int fd){
 	for (size_t i = 0; i < fds.size(); ++i){//remove client from fds vector
 		if(fds[i].fd == fd){
@@ -31,16 +46,18 @@ void	Server::clearClient(int fd){
 			break ;
 		}
 	}
-	for (size_t i = 0; i < Clients.size(); ++i){//remove client from Clients vector
-		if(Clients[i].getClientID() == fd){
-			Clients.erase(Clients.begin() + i);
+	for (size_t i = 0; i < clients.size(); ++i){//remove client from Clients vector
+		if(clients[i].getClientID() == fd){
+			clients.erase(clients.begin() + i);
 			break ;
 		}
 	}
-}void	Server::closeFD(){
-	for (size_t i = 0; i < Clients.size(); ++i){//close clients fd
+}
+
+void	Server::closeFD(){
+	for (size_t i = 0; i < clients.size(); ++i){//close clients fd
 		std::cout << "client disconnected" << std::endl;
-		close(Clients[i].getClientID());}
+		close(clients[i].getClientID());}
 	if (serverID == -1){//close server socket
 		std::cout << "server disconnected" << std::endl;
 		close(serverID);}
@@ -76,6 +93,7 @@ void		Server::create_socket(){
 	fds.push_back(pollf);//initialize fds vector
 	std::cout << "server is listening from port : " << this->port << std::endl;
 }
+
 void	Server::launch_server(){
 	create_socket();
 	multi_clients();
@@ -104,7 +122,7 @@ void	Server::acceptClient(){
 
 	client.setClientID(connectionID);
 	client.setIP(inet_ntoa(clientaddress.sin_addr));
-	Clients.push_back(client);
+	clients.push_back(client);
 	fds.push_back(newpool);
 	std::cout << "accepted!" << std::endl;
 }
@@ -114,6 +132,7 @@ void	to_lower(std::string &command){
 		command[i] = std::tolower(command[i]);
 	}
 }
+
 std::string	skip_spaces(std::string str){
 	for (size_t i = 0; i < str.size(); ++i){
 		if (str[i] != ' ')
@@ -122,7 +141,6 @@ std::string	skip_spaces(std::string str){
 	std::cout << "lets see" << str << std::endl;
 	return (str);
 }
-
 static int validCommand(std::string &cmd){
     if (cmd == "join" || cmd == "privmsg" || cmd == "topic" \
         || cmd == "kick" || cmd == "mode" || cmd == "pass" || \
@@ -130,7 +148,6 @@ static int validCommand(std::string &cmd){
         return(1);
     return(0);
 }
-
 void	Server::recieve_data(int fd){
 	char	buffer[1024];
 	Client	c;
@@ -153,24 +170,19 @@ void	Server::recieve_data(int fd){
 				std::cout << "command: " << this->command << std::endl;
 				std::cout << "argu: " << this->args << std::endl;
 			}
-			else
-			{
-				this->command = new_buf;
-				this->args = "\0";
-				std::cout << "command: " << this->command << std::endl;
-				std::cout << "argu: " << this->args << std::endl;
-			}
 			to_lower(this->command);
 			if (validCommand(this->command)){
-				// if (this->command == "join")
-				// 	executeJoin()
+				if (this->command == "join"){
+					if (!this->args[0] || this->args[0]== ' ')
+					{
+						if (send(this->connectionID, "Invalid args\n", 13, 0) == -1)
+							throw (std::runtime_error("failed to send to client"));
+					}
+					// executeJoin();
+				}
         	}
 			else if(send(this->connectionID, "Invalid command\n", 16, 0) == -1)
 				throw (std::runtime_error("failed to send to client"));
-
-			
-
-			
 		// this->password += "\n";
 		// if (strcmp(buffer, this->password.c_str())){
 		// 	if (send(this->connectionID, "password :", 10, 0) == -1)
@@ -204,8 +216,6 @@ void	Server::recieve_data(int fd){
 
 	}
 		// this->Clients[fd].setBuffer(buffer);
-
-
 }
 
 void	Server::multi_clients(){
@@ -224,3 +234,64 @@ void	Server::multi_clients(){
 	}
 	closeFD();
 }
+
+//managing users
+bool    Server::isInUseNickname(std::string nickname){
+    for (unsigned int i = 0; i < clients.size(); i++){
+        if (clients[i].getNickname() == nickname)
+            return true;
+    }
+    return false;
+}
+
+void    Server::addUser(Client const& client){
+    clients.push_back(client);
+}
+
+void    Server::removeUser(Client const& client){
+    for (std::vector<Client>::iterator it = clients.begin(); it != clients.end(); it++){
+        if (it->getNickname() == client.getNickname()){
+			close(client.getSocketDescriptor()); //close client fd
+            clients.erase(it);
+            return ;
+        }
+    }
+}
+
+bool    Server::isInUseChName(std::string chName){
+    for (unsigned int i = 0; i < channels.size(); i++){
+        if (channels[i].getName() == chName)
+            return true;
+    }
+    return false;
+}
+
+void    Server::addChannel(Channel const& channel){
+    channels.push_back(channel);
+}
+
+void    Server::removeChannel(Channel const& channel){
+    for (std::vector<Channel>::iterator it = channels.begin(); it != channels.end(); it++){
+        if (it->getName() == channel.getName()){
+            channels.erase(it);
+            return ;
+        }
+    }
+}
+
+//other
+
+void	Server::sendMsg(int clientFd, std::string msg){
+	std::cerr << clientFd << ">> Error: " << msg <<"\n";
+}
+
+void	Server::handleCommands(std::string &cmd, std::string &args, Client &client){
+	tolowercase(cmd);
+	if (cmd == "user")
+		userCommand(args, client);
+	else if (cmd == "nick")
+		nickCommand(args, client);
+	else if (cmd == "pass")
+		passCommand(args, client);
+}
+

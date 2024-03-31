@@ -1,6 +1,8 @@
+
+
 NAME	= ircserv
 
-SRCS	= main.cpp Server.cpp Client.cpp Channel.cpp
+SRCS	= main.cpp Server.cpp Client.cpp Channel.cpp authentication.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
 

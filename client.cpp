@@ -1,23 +1,92 @@
+
 #include "Client.hpp"
 
-
-Client::Client(){}
-
-int Client::getClientID(){
-	return (clientID);
+Client::Client(){
+    nickname = username = hostname = servername = realname = "\0";
+    registered = PasswordSended = false;
+    socket = -1;
 }
-void	Client::setClientID(int fd){
-	this->clientID = fd;
+Client::~Client(){
+    server.removeUser(*this);//client's fd is closed in removeuser
+    PasswordSended = false; //to reautenticate the next time he connect to the server
 }
+
+//setters
 void	Client::setIP(std::string IPaddr){
 	this->clientIP = IPaddr;
 }
 void	Client::setBuffer(std::string rec){
 	this->buffer = rec;
 }
-Client::~Client(){}
+void	Client::setClientID(int fd){
+	this->clientID = fd;
+}
 
+void Client::setNickname(std::string nn){
+    nickname = nn;
+}
+void Client::setUsername(std::string un){
+    username = un;
+}
+void Client::setHostname(std::string hn){
+    hostname = hn;
+}
+void Client::setServername(std::string sn){
+    servername = sn;
+}
+void Client::setRealname(std::string rn){
+    realname = rn;
+}
+void Client::setSocketDescriptor(int sd){
+    socket = sd;
+}
+void Client::setRegistered(bool b){
+    registered = b;
+}
 
+void Client::setPasswordSended(bool b){
+    PasswordSended = b;
+}
+
+//getters
+int Client::getClientID(){
+	return (clientID);
+}
+
+std::string Client::getNickname() const{
+    return (nickname);
+}
+std::string Client::getUsername() const{
+    return (username);
+}
+std::string Client::getHostname() const{
+    return (hostname);
+}
+std::string Client::getRealname() const{
+    return (realname);
+}
+std::string Client::getServername() const{
+    return (servername);
+}
+int Client::getSocketDescriptor() const{
+    return (socket);
+}
+bool Client::isRegistered() const{
+    return (registered);
+} 
+bool    Client::isPasswordSended(){
+    return true;
+}
+
+//others
+
+void Client::registerClient(){
+    if (PasswordSended && !nickname.empty() && !username.empty()
+    && !hostname.empty() && !servername.empty() && !realname.empty()){
+        registered = true;
+        server.addUser(*this);
+    }
+}
 
 
 //     return 0;
