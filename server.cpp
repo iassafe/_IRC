@@ -141,6 +141,7 @@ std::string	skip_spaces(std::string str){
 	std::cout << "lets see" << str << std::endl;
 	return (str);
 }
+
 static int validCommand(std::string &cmd){
     if (cmd == "join" || cmd == "privmsg" || cmd == "topic" \
         || cmd == "kick" || cmd == "mode" || cmd == "pass" || \
@@ -149,14 +150,23 @@ static int validCommand(std::string &cmd){
     return(0);
 }
 
+int countComma(std::string str){
+	int count = 0;
+	for(size_t i=0; i < str.length(); i++){
+		if(str[i] == ',')
+			count++;
+	}
+	return (count);
+}
+
 void Server::joinCommand(void){
-	std::cout << "valid command\n";
+	if (send(this->connectionID, "Valid Command\n", 14, 0) == -1)
+		throw (std::runtime_error("failed to send to client"));
 }
 
 int Server::validArgsJoin(void){
 	if (!this->args[0] || this->args[0]== '\n' || this->args[0] != '#'
-		|| (this->args[0] == '#' && !isalpha(this->args[1])))
-	{
+		|| (this->args[0] == '#' && !isalpha(this->args[1]))){
 		if (send(this->connectionID, "Invalid args\n", 13, 0) == -1)
 			throw (std::runtime_error("failed to send to client"));
 		return (0);
@@ -165,19 +175,45 @@ int Server::validArgsJoin(void){
 	if (fond == std::string::npos || this->args[fond] == '\n')
 		return (0);
 	size_t fondComma = this->args.find_first_of(",");
-	if (fondComma == std::string::npos)
-	{
+	if (fondComma == std::string::npos){
 		std::string temp_args = this->args;
 		this->joinChannel[temp_args.substr(0, fond)] = temp_args.substr(fond + 1, temp_args.length());
-		temp_args = temp_args.substr(fond + 1, temp_args.length());
+		while(fond < temp_args.length() && temp_args[fond] == ' '){
+			fond++;
+		};
+		temp_args = temp_args.substr(fond, temp_args.length());
 		size_t fond_sp = temp_args.find_first_of(" ");
 		if (fond_sp != std::string::npos){
 			temp_args = temp_args.substr(fond_sp + 1, temp_args.length());
 			size_t i;
 			for(i=0; i < temp_args.length() && temp_args[i] == ' '; ++i){
 			};
-			if (temp_args[i] && temp_args[i] != '\n')
+			if (temp_args[i] != '\n')
 				return (0);
+		}
+	}
+	else{
+		std::string temp_args = this->args;
+		std::string channels = temp_args.substr(0, fond);
+		std::string password = temp_args.substr(fond + 1, temp_args.length());
+		int count_ch = countComma(channels);
+		int count_ps = countComma(password);
+		if (count_ch != count_ps)
+			return (0);
+		password = skip_spaces(password);
+		size_t fond_commach = channels.find_first_of(",");
+		size_t fond_commaps = password.find_first_of(",");
+		this->joinChannel[channels.substr(0, fond_commach)] = password.substr(0, fond_commaps);
+		std::cout << "[" << channels.substr(0, fond_commach) <<"]["<< password.substr(0, fond_commaps) <<"]\n";
+		channels = channels.substr(fond_commach + 1, channels.length());
+		password = password.substr(fond_commaps + 1, password.length());
+		for(int i = 0; i < count_ch; ++i){
+			fond_commach = channels.find_first_of(",");
+			fond_commaps = password.find_first_of(",");
+			this->joinChannel[channels.substr(0, fond_commach)] = password.substr(0, fond_commaps);
+			std::cout << "[" << channels.substr(0, fond_commach) <<"]["<< password.substr(0, fond_commaps) <<"]\n";
+			channels = channels.substr(fond_commach + 1, channels.length());
+			password = password.substr(fond_commaps + 1, password.length());
 		}
 	}
 	return (1);
@@ -187,6 +223,10 @@ void Server::handleCommands1(void){
 	if (this->command == "join"){
 			if(validArgsJoin())
 				joinCommand();
+			else{
+				if (send(this->connectionID, "Invalid args\n", 13, 0) == -1)
+					throw (std::runtime_error("failed to send to client"));
+			}
 	}
 }
 
@@ -206,13 +246,13 @@ void	Server::recieve_data(int fd){
 		 size_t fond;
 		std::string	new_buf = skip_spaces(buf);
 		for(size_t i = 0; i <= new_buf.size(); i++){
-			fond = new_buf.find_first_of("\t\r\n");
+			fond = new_buf.find_first_of("\n");
 			if (fond == std::string::npos)
 				return;
 			std::cout << "content of fond++" << new_buf[fond] << "++" << std::endl;	
 			std::string	commond = new_buf.substr(0, fond);
 			std::cout << "command:" << commond << "--" << std::endl;
-			size_t	sp = commond.find_first_of(" ");
+			size_t	sp = commond.find_first_of(" \t\r");
 			this->command = commond.substr(0, sp);
 			std::cout << "com:[" << this->command << "]--" << std::endl;
 			new_buf = new_buf.substr(fond+1, new_buf.size());
