@@ -14,6 +14,7 @@
 #include <csignal>
 #include <cstring>
 #include <string>
+#include <map>
 
 #include "Client.hpp"
 #include "Channel.hpp"

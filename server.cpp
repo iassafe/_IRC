@@ -154,7 +154,8 @@ void Server::joinCommand(void){
 }
 
 int Server::validArgsJoin(void){
-	if (!this->args[0] || this->args[0]== '\n' || this->args[0] != '#')
+	if (!this->args[0] || this->args[0]== '\n' || this->args[0] != '#'
+		|| (this->args[0] == '#' && !isalpha(this->args[1])))
 	{
 		if (send(this->connectionID, "Invalid args\n", 13, 0) == -1)
 			throw (std::runtime_error("failed to send to client"));
@@ -163,11 +164,22 @@ int Server::validArgsJoin(void){
 	size_t fond = this->args.find_first_of(" \t\r\n");
 	if (fond == std::string::npos || this->args[fond] == '\n')
 		return (0);
-	// size_t fondComma = this->args.find_first_of(",");
-	// if (fondComma == std::string::npos)
-	// {
-
-	// }
+	size_t fondComma = this->args.find_first_of(",");
+	if (fondComma == std::string::npos)
+	{
+		std::string temp_args = this->args;
+		this->joinChannel[temp_args.substr(0, fond)] = temp_args.substr(fond + 1, temp_args.length());
+		temp_args = temp_args.substr(fond + 1, temp_args.length());
+		size_t fond_sp = temp_args.find_first_of(" ");
+		if (fond_sp != std::string::npos){
+			temp_args = temp_args.substr(fond_sp + 1, temp_args.length());
+			size_t i;
+			for(i=0; i < temp_args.length() && temp_args[i] == ' '; ++i){
+			};
+			if (temp_args[i] && temp_args[i] != '\n')
+				return (0);
+		}
+	}
 	return (1);
 }
 
