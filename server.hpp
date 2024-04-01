@@ -36,6 +36,9 @@ class Server{
 
         std::vector<Client> clients; //the currently connected clients in the server (the key in map is the client's nickname)
         std::vector<Channel> channels; //Available channels in the server
+
+		// join
+		std::map<std::string, std::string> joinChannel;
     public:
         Server();
         ~Server();//close users fds before quitting
@@ -71,6 +74,12 @@ class Server{
 
 		// other
 		void	handleCommands(std::string &cmd, std::string &args, Client &client);
+
+
+		//
+		void	handleCommands1(void);
+		int		validArgsJoin(void);
+		void	joinCommand(void);
 
 };
 

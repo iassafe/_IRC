@@ -26,7 +26,7 @@ int	main(int ac, char **av){
 		// if (!isprint(strtol(av[2], NULL, 10)) || sizeof(av[2]) <= 0)
 		// 	{
 		// 	std::cerr << "Enter a valid password" << std::endl;
-		// 	return (1);
+		// 	return (1);  
 		// }
 		serv.setPort(strtol(av[1], NULL, 10));
 		serv.setPassword(av[2]);

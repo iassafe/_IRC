@@ -148,6 +148,36 @@ static int validCommand(std::string &cmd){
         return(1);
     return(0);
 }
+
+void Server::joinCommand(void){
+	std::cout << "valid command\n";
+}
+
+int Server::validArgsJoin(void){
+	if (!this->args[0] || this->args[0]== '\n' || this->args[0] != '#')
+	{
+		if (send(this->connectionID, "Invalid args\n", 13, 0) == -1)
+			throw (std::runtime_error("failed to send to client"));
+		return (0);
+	}
+	size_t fond = this->args.find_first_of(" \t\r\n");
+	if (fond == std::string::npos || this->args[fond] == '\n')
+		return (0);
+	// size_t fondComma = this->args.find_first_of(",");
+	// if (fondComma == std::string::npos)
+	// {
+
+	// }
+	return (1);
+}
+
+void Server::handleCommands1(void){
+	if (this->command == "join"){
+			if(validArgsJoin())
+				joinCommand();
+	}
+}
+
 void	Server::recieve_data(int fd){
 	char	buffer[1024];
 	Client	c;
@@ -179,18 +209,7 @@ void	Server::recieve_data(int fd){
 			std::cout << "new_buff :" << &new_buf[i] << std::endl;
 			to_lower(this->command);
 			if (validCommand(this->command)){
-				if (this->command == "join"){
-					if (!this->args[0] || this->args[0]== '\n')
-					{
-						if (send(this->connectionID, "Invalid args\n", 13, 0) == -1)
-							throw (std::runtime_error("failed to send to client"));
-					}
-					else
-					{
-						// joinCommand();
-					}
-					
-				}
+				handleCommands1();
         	}
 			else if(send(this->connectionID, "Invalid command\n", 16, 0) == -1)
 				throw (std::runtime_error("failed to send to client"));
