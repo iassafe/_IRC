@@ -164,10 +164,36 @@ void Server::joinCommand(void){
 		throw (std::runtime_error("failed to send to client"));
 }
 
+Channel* Server::findChannel(const std::string& ch){
+        for (std::vector<Channel>::iterator it = this->channels.begin(); it != this->channels.end(); ++it) {
+            if (it->getName() == ch) {
+                return &(*it);
+            }
+        }
+        return NULL;
+    }
+
 void Server::topicCommand(void){
 	std::cout << "----------[" << this->command << "][" << this->args << "]\n";
 	if (send(this->connectionID, "Topic Valid Command\n", 20, 0) == -1)
 		throw (std::runtime_error("failed to send to client"));
+	size_t found = this->args.find_first_of(" \t\r");
+    std::string channelName = this->args.substr(0, found);
+
+    // Find the channel
+    std::vector<Channel>::iterator it = channels.begin();
+    for (; it != channels.end(); ++it) {
+        if (it->getName() == channelName){
+            break;
+        }
+    }
+    // Check if the channel was found
+    if (it != channels.end()) {
+		it->setTopic(this->args.substr(found + 1, this->args.length()));
+		std::cout << "New topic is:------->" << it->getTopic() << std::endl;
+    } else {
+        // Channel not found
+    }
 }
 
 int Server::validArgsJoin(void){
