@@ -84,7 +84,6 @@ class Server{
 		int		validArgsTopic(void);
 		void	topicCommand(void);
 
-		Channel* findChannel(const std::string& ch);
 
 };
 
