@@ -164,11 +164,15 @@ void Server::joinCommand(void){
 		throw (std::runtime_error("failed to send to client"));
 }
 
+void Server::topicCommand(void){
+	std::cout << "----------[" << this->command << "][" << this->args << "]\n";
+	if (send(this->connectionID, "Topic Valid Command\n", 20, 0) == -1)
+		throw (std::runtime_error("failed to send to client"));
+}
+
 int Server::validArgsJoin(void){
 	if (!this->args[0] || this->args[0]== '\n' || this->args[0] != '#'
 		|| (this->args[0] == '#' && !isalpha(this->args[1]))){
-		if (send(this->connectionID, "Invalid args\n", 13, 0) == -1)
-			throw (std::runtime_error("failed to send to client"));
 		return (0);
 	}
 	size_t fond = this->args.find_first_of(" \t\r\n");
@@ -219,12 +223,47 @@ int Server::validArgsJoin(void){
 	return (1);
 }
 
+int Server::validArgsTopic(void){
+	if (!this->args[0] || this->args[0]== '\n' || this->args[0] != '#'
+		|| (this->args[0] == '#' && !isalpha(this->args[1]))){
+		return (0);
+	}
+	size_t fond = this->args.find_first_of(" \t\r\n");
+	if (fond == std::string::npos || this->args[fond] == '\n')
+		return (0);
+	std::string temp_args = this->args;
+	this->joinChannel[temp_args.substr(0, fond)] = temp_args.substr(fond + 1, temp_args.length());
+	while(fond < temp_args.length() && temp_args[fond] == ' '){
+		fond++;
+	};
+	temp_args = temp_args.substr(fond, temp_args.length());
+	size_t fond_sp = temp_args.find_first_of(" ");
+	if (fond_sp != std::string::npos){
+		temp_args = temp_args.substr(fond_sp + 1, temp_args.length());
+		size_t i;
+		for(i=0; i < temp_args.length() && temp_args[i] == ' '; ++i){
+		};
+		if (temp_args[i] != '\n')
+			return (0);
+	}
+	return (1);
+}
+
+
 void Server::handleCommands1(void){
 	if (this->command == "join"){
 			if(validArgsJoin())
 				joinCommand();
 			else{
-				if (send(this->connectionID, "Invalid args\n", 13, 0) == -1)
+				if (send(this->connectionID, "Invalid args join\n", 18, 0) == -1)
+					throw (std::runtime_error("failed to send to client"));
+			}
+	}
+	else if (this->command == "topic"){
+		if(validArgsTopic())
+				topicCommand();
+			else{
+				if (send(this->connectionID, "Invalid args topic\n", 19, 0) == -1)
 					throw (std::runtime_error("failed to send to client"));
 			}
 	}

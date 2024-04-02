@@ -81,6 +81,8 @@ class Server{
 		void	handleCommands1(void);
 		int		validArgsJoin(void);
 		void	joinCommand(void);
+		int		validArgsTopic(void);
+		void	topicCommand(void);
 
 };
 
