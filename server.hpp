@@ -83,6 +83,8 @@ class Server{
 		void	joinCommand(void);
 		int		validArgsTopic(void);
 		void	topicCommand(void);
+		int 	joinSingleChannel(size_t found);
+		int 	joinMultiChannels(size_t found);
 
 
 };
