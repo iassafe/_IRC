@@ -178,6 +178,8 @@ void	Server::recieve_data(int fd){
 			std::cout << "com:[" << this->command << "]--" << std::endl;
 			new_buf = new_buf.substr(fond+1, new_buf.size());
 			this->args = skip_spaces(commond.substr(sp + 1, commond.length()));
+			if (this->args[args.length()] == '\0')
+				std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@\n"; 
 			std::cout << "argu:[" << this->args << "]--" << std::endl;
 			std::cout << "new_buff :" << &new_buf[i] << std::endl;
 			to_lower(this->command);
@@ -289,13 +291,13 @@ void	Server::sendMsg(int clientFd, std::string msg){
 	std::cerr << clientFd << ">> Error: " << msg <<"\n";
 }
 
-void	Server::handleCommands(std::string &cmd, std::string &args, Client &client){
-	tolowercase(cmd);
-	if (cmd == "user")
-		userCommand(args, client);
-	else if (cmd == "nick")
-		nickCommand(args, client);
-	else if (cmd == "pass")
-		passCommand(args, client);
-}
+// void	Server::handleCommands(std::string &cmd, std::string &args, Client &client){
+// 	tolowercase(cmd);
+// 	if (cmd == "user")
+// 		userCommand(args, client);
+// 	else if (cmd == "nick")
+// 		nickCommand(args, client);
+// 	else if (cmd == "pass")
+// 		passCommand(args, client);
+// }
 

@@ -45,8 +45,8 @@ void Server::topicCommand(void){
 
 int Server::joinSingleChannel(size_t found){
 	std::string temp_args = this->args;
-		this->joinChannel[temp_args.substr(0, found)] = temp_args.substr(found + 1, temp_args.length());
-		while(found < temp_args.length() && temp_args[found] == ' '){
+	if (found != std::string::npos){
+		while(temp_args[found] == ' '){
 			found++;
 		};
 		temp_args = temp_args.substr(found, temp_args.length());
@@ -59,7 +59,8 @@ int Server::joinSingleChannel(size_t found){
 			if (temp_args[i] != '\n')
 				return (0);
 		}
-		return(1);
+	}
+	return(1);
 }
 
 std::string	skipSpaces(std::string str){
@@ -72,42 +73,53 @@ std::string	skipSpaces(std::string str){
 int Server::joinMultiChannels(size_t found){
 	std::string temp_args = this->args;
 		std::string channels = temp_args.substr(0, found);
-		std::string password = temp_args.substr(found + 1, temp_args.length());
-		int count_ch = countComma(channels);
-		int count_ps = countComma(password);
-		if (count_ch != count_ps)
-			return (0);
-		password = skipSpaces(password);
+		size_t found_commaps = 0;
+		int count_ch = 0;
+		std::string passWord = "";
+		int count_ps = 0;
+		count_ch = countComma(channels);
+		if (found != std::string::npos){
+			passWord = temp_args.substr(found + 1, temp_args.length());
+			count_ps = countComma(passWord);
+			if (count_ch != count_ps)
+				return (0);
+			passWord = skipSpaces(passWord);
+			found_commaps = passWord.find_first_of(",");
+
+		}
 		size_t found_commach = channels.find_first_of(",");
-		size_t found_commaps = password.find_first_of(",");
-		this->joinChannel[channels.substr(0, found_commach)] = password.substr(0, found_commaps);
-		std::cout << "[" << channels.substr(0, found_commach) <<"]["<< password.substr(0, found_commaps) <<"]\n";
+		this->joinChannel[channels.substr(0, found_commach)] = passWord.substr(0, found_commaps);
+		std::cout << "[" << channels.substr(0, found_commach) <<"][";
+		if (passWord != "")
+			std::cout << passWord.substr(0, found_commaps) <<"]\n";
 		channels = channels.substr(found_commach + 1, channels.length());
-		password = password.substr(found_commaps + 1, password.length());
+		if (passWord != "")
+			passWord = passWord.substr(found_commaps + 1, passWord.length());
 		for(int i = 0; i < count_ch; ++i){
 			found_commach = channels.find_first_of(",");
-			found_commaps = password.find_first_of(",");
-			this->joinChannel[channels.substr(0, found_commach)] = password.substr(0, found_commaps);
-			std::cout << "[" << channels.substr(0, found_commach) <<"]["<< password.substr(0, found_commaps) <<"]\n";
+			if (passWord != "")
+				found_commaps = passWord.find_first_of(",");
+			this->joinChannel[channels.substr(0, found_commach)] = passWord.substr(0, found_commaps);
+			std::cout << "[" << channels.substr(0, found_commach) <<"]["<< passWord.substr(0, found_commaps) <<"]\n";
 			channels = channels.substr(found_commach + 1, channels.length());
-			password = password.substr(found_commaps + 1, password.length());
+			if (passWord != "")
+				passWord = passWord.substr(found_commaps + 1, passWord.length());
 		}
 		return (1);
 }
 
 int Server::validArgsJoin(void){
+	this->args = skipSpaces(this->args);
 	if (!this->args[0] || this->args[0]== '\n' || this->args[0] != '#'
-		|| (this->args[0] == '#' && !isalpha(this->args[1]))){
+		|| (this->args[0] == '#' && (!isalpha(this->args[1]) && !isdigit(this->args[1])))){
 		return (0);
 	}
-	this->args = skipSpaces(this->args);
-	size_t found = this->args.find_first_of(" \t\r\n");
-	if (found == std::string::npos || this->args[found] == '\n')
-		return (0);
+	std::cout << "#################--[" << args << "]\n";
+	size_t found = this->args.find_first_of(" \r\t");
 	size_t foundComma = this->args.find_first_of(",");
 	if (foundComma == std::string::npos){
 		if(!joinSingleChannel(found))
-			return (0);
+			return (puts("-----------2222"),0);
 	}
 	else{
 		if(!joinMultiChannels(found))
@@ -121,18 +133,18 @@ int Server::validArgsTopic(void){
 		|| (this->args[0] == '#' && !isalpha(this->args[1]))){
 		return (0);
 	}
-	size_t fond = this->args.find_first_of(" \t\r\n");
-	if (fond == std::string::npos || this->args[fond] == '\n')
+	size_t found = this->args.find_first_of(" \t\r\n");
+	if (found == std::string::npos || this->args[found] == '\n')
 		return (0);
 	std::string temp_args = this->args;
-	this->joinChannel[temp_args.substr(0, fond)] = temp_args.substr(fond + 1, temp_args.length());
-	while(fond < temp_args.length() && temp_args[fond] == ' '){
-		fond++;
+	this->joinChannel[temp_args.substr(0, found)] = temp_args.substr(found + 1, temp_args.length());
+	while(temp_args[found] == ' '){
+		found++;
 	};
-	temp_args = temp_args.substr(fond, temp_args.length());
-	size_t fond_sp = temp_args.find_first_of(" ");
-	if (fond_sp != std::string::npos){
-		temp_args = temp_args.substr(fond_sp + 1, temp_args.length());
+	temp_args = temp_args.substr(found, temp_args.length());
+	size_t found_sp = temp_args.find_first_of(" ");
+	if (found_sp != std::string::npos){
+		temp_args = temp_args.substr(found_sp + 1, temp_args.length());
 		size_t i;
 		for(i=0; i < temp_args.length() && temp_args[i] == ' '; ++i){
 		};
@@ -147,18 +159,18 @@ int Server::validArgsKick(void){
 		|| (this->args[0] == '#' && !isalpha(this->args[1]))){
 		return (0);
 	}
-	size_t fond = this->args.find_first_of(" \t\r\n");
-	if (fond == std::string::npos || this->args[fond] == '\n')
+	size_t found = this->args.find_first_of(" \t\r\n");
+	if (found == std::string::npos || this->args[found] == '\n')
 		return (0);
 	std::string temp_args = this->args;
-	this->joinChannel[temp_args.substr(0, fond)] = temp_args.substr(fond + 1, temp_args.length());
-	while(fond < temp_args.length() && temp_args[fond] == ' '){
-		fond++;
+	this->joinChannel[temp_args.substr(0, found)] = temp_args.substr(found + 1, temp_args.length());
+	while(found < temp_args.length() && temp_args[found] == ' '){
+		found++;
 	};
-	temp_args = temp_args.substr(fond, temp_args.length());
-	size_t fond_sp = temp_args.find_first_of(" ");
-	if (fond_sp != std::string::npos){
-		temp_args = temp_args.substr(fond_sp + 1, temp_args.length());
+	temp_args = temp_args.substr(found, temp_args.length());
+	size_t found_sp = temp_args.find_first_of(" ");
+	if (found_sp != std::string::npos){
+		temp_args = temp_args.substr(found_sp + 1, temp_args.length());
 		size_t i;
 		for(i=0; i < temp_args.length() && temp_args[i] == ' '; ++i){
 		};

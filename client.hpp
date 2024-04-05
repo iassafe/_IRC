@@ -64,10 +64,10 @@ class Client{
 };
 
 //authentication utils
-void    tolowercase(std::string &str);
-bool    isValidNickName(std::string nickname);
-void    nickCommand(std::string &args, Client &c);
-void    userCommand(std::string &args, Client &c);
-void    passCommand(std::string &args, Client &c);
+// void    tolowercase(std::string &str);
+// bool    isValidNickName(std::string nickname);
+// void    nickCommand(std::string &args, Client &c);
+// void    userCommand(std::string &args, Client &c);
+// void    passCommand(std::string &args, Client &c);
 
 #endif
