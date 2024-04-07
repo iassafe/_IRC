@@ -110,6 +110,22 @@ int Server::joinMultiChannels(size_t found){
 
 int Server::validArgsJoin(void){
 	this->args = skipSpaces(this->args);
+	if (this->args == "")
+		return(0);
+	std::cout << "-------------------"<< this->args << "-------------------" << std::endl;
+	size_t found = this->args.find_first_of(" ");
+	if (found == std::string::npos)
+		return (2);
+	else{
+		while (this->args[found] == ' '){
+			found++;
+		}
+		if (this->args[found])
+			return (3);
+		else
+			return (2);
+	}
+	/*
 	if (!this->args[0] || this->args[0]== '\n' || this->args[0] != '#'
 		|| (this->args[0] == '#' && (!isalpha(this->args[1]) && !isdigit(this->args[1])))){
 		return (0);
@@ -126,6 +142,8 @@ int Server::validArgsJoin(void){
 			return (0);
 	}
 	return (1);
+	*/
+	return (1);
 }
 
 int Server::validArgsTopic(void){
@@ -136,7 +154,7 @@ int Server::validArgsTopic(void){
 	size_t found = this->args.find_first_of(" \t\r\n");
 	if (found == std::string::npos || this->args[found] == '\n')
 		return (0);
-	std::string temp_args = this->args;
+	std::string temp_args = this->args; 
 	this->joinChannel[temp_args.substr(0, found)] = temp_args.substr(found + 1, temp_args.length());
 	while(temp_args[found] == ' '){
 		found++;
@@ -183,8 +201,14 @@ int Server::validArgsKick(void){
 
 void Server::handleCommands1(void){
 	if (this->command == "join"){
-			if(validArgsJoin())
+			int check = validArgsJoin();
+			if(check){
+				// if (check == 2)
+				// 	whithoutPassword();
+				// else if (check == 3)
+				// 	whithPassword();
 				joinCommand();
+			}
 			else{
 				if (send(this->connectionID, "Invalid args join\n", 18, 0) == -1)
 					throw (std::runtime_error("failed to send to client"));

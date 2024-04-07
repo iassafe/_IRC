@@ -150,13 +150,12 @@ static int validCommand(std::string &cmd){
     return(0);
 }
 
-
 void	Server::recieve_data(int fd){
 	char	buffer[1024];
 	Client	c;
 
 	memset(buffer, 0, sizeof(buffer));
-	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0);
+	size_t	total = recv(fd, buffer, sizeof(buffer), 0);
 	if (total <= 0){
 		std::cout << "client gone" << std::endl;
 		clearClient(fd);
@@ -170,59 +169,119 @@ void	Server::recieve_data(int fd){
 			fond = new_buf.find_first_of("\n");
 			if (fond == std::string::npos)
 				return;
-			std::cout << "content of fond++" << new_buf[fond] << "++" << std::endl;	
+			// std::cout << "content of fond++" << new_buf[fond] << "++" << std::endl;	
 			std::string	commond = new_buf.substr(0, fond);
-			std::cout << "command:" << commond << "--" << std::endl;
-			size_t	sp = commond.find_first_of(" \t\r");
-			this->command = commond.substr(0, sp);
-			std::cout << "com:[" << this->command << "]--" << std::endl;
-			new_buf = new_buf.substr(fond+1, new_buf.size());
-			this->args = skip_spaces(commond.substr(sp + 1, commond.length()));
-			if (this->args[args.length()] == '\0')
-				std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@\n"; 
-			std::cout << "argu:[" << this->args << "]--" << std::endl;
-			std::cout << "new_buff :" << &new_buf[i] << std::endl;
-			to_lower(this->command);
+			size_t	sp = commond.find_first_of("\t\r ");
+			if (sp != std::string::npos){
+				size_t	ind = sp;
+				while (commond[ind] == '\t' || commond[ind] == '\r' || commond[ind] == ' ')
+					ind++;
+				// std::cout << "ind+1" << commond[ind] << std::endl;
+				if (commond[ind] == '\n')
+					this->args = "\0";
+				else
+					this->args = commond.substr(ind, fond);
+				this->command = commond.substr(0, sp);
+			}
+			else{
+				this->command = commond.substr(0, fond); 
+				this->args = "\0";//FIXED: I was passing character
+			}
+			// if (commond[fond+1] == '\n'){
+			// 	std::cout << "only one command" << std::endl;
+			// 	return ;
+			// }
+			// new_buf = new_buf.substr(fond+1, new_buf.size());
+			// std::cout << "new_buff :" << &new_buf[i] << "---" << std::endl;
+            to_lower(this->command);
 			if (validCommand(this->command)){
 				handleCommands1();
-        	}
+				// std::cout << "com:" << this->command << "--=" << std::endl;
+				// std::cout << "argu:" << this->args << "--=" << std::endl;
+				// std::cout << "args: \"" << this->args << "\"" << std::endl;
+
+			}
 			else if(send(this->connectionID, "Invalid command\n", 16, 0) == -1)
 				throw (std::runtime_error("failed to send to client"));
-		}
-		// this->password += "\n";
-		// if (strcmp(buffer, this->password.c_str())){
-		// 	if (send(this->connectionID, "password :", 10, 0) == -1)
-		// 		throw (std::runtime_error("failed to send to client"));
-		// 	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0);
-		// 	if (total <= 0){
-		// 		std::cout << "client gone" << std::endl;
-		// 		clearClient(fd);
-		// 		close(fd);
-		// 	}
-		// }
-		// if (send(this->connectionID, "nickname :", 10, 0) == -1)
-		// 		throw (std::runtime_error("failed to send to client"));
-		// this->nick = buffer;
-		// if (send(this->connectionID, "username :", 10, 0) == -1)
-		// 		throw (std::runtime_error("failed to send to client"));
-		// this->user = buffer;
-		// std::cout << "user = " << this->nick << std::endl;
-		// std::string	buf = buffer;
-		// size_t found = buf.find(' ');
-		// this->command = buf.substr(0, found);
-		// this->args = buf.substr(found + 1, buf.length());
-		// to_lower(this->command);
-		// if (this->command == "join\n")
-		// 	std::cout <<"join channel" << std::endl;
-		// else if (this->command == "invite\n")
-		// 	std::cout <<"invite user" << std::endl;
-		// else if (this->command == "kick\n")
-		// 	std::cout <<"kick user" << std::endl;
-		// std::cout << "command : " << this->command << " args :" << this->args << std::endl;
+			return ;
 
+		}
 	}
-		// this->Clients[fd].setBuffer(buffer);
 }
+
+
+// void	Server::recieve_data(int fd){
+// 	char	buffer[1024];
+// 	Client	c;
+
+// 	memset(buffer, 0, sizeof(buffer));
+// 	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0);
+// 	if (total <= 0){
+// 		std::cout << "client gone" << std::endl;
+// 		clearClient(fd);
+// 		close(fd);
+// 	}
+// 	else{
+// 		std::string	buf = buffer;
+// 		 size_t fond;
+// 		std::string	new_buf = skip_spaces(buf);
+// 		for(size_t i = 0; i <= new_buf.size(); i++){
+// 			fond = new_buf.find_first_of("\n");
+// 			if (fond == std::string::npos)
+// 				return;
+// 			std::cout << "content of fond++" << new_buf[fond] << "++" << std::endl;	
+// 			std::string	commond = new_buf.substr(0, fond);
+// 			std::cout << "command:" << commond << "--" << std::endl;
+// 			size_t	sp = commond.find_first_of(" \t\r");
+// 			this->command = commond.substr(0, sp);
+// 			std::cout << "com:[" << this->command << "]--" << std::endl;
+// 			new_buf = new_buf.substr(fond+1, new_buf.size());
+// 			this->args = skip_spaces(commond.substr(sp + 1, commond.length()));
+// 			// if (this->args[args.length()] == '\0')	
+// 			// 	std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@\n"; 
+// 			std::cout << "argu:[" << this->args << "]--" << std::endl;
+// 			std::cout << "new_buff :" << &new_buf[i] << std::endl;
+// 			to_lower(this->command);
+// 			if (validCommand(this->command)){
+// 				handleCommands1();
+//         	}
+// 			else if(send(this->connectionID, "Invalid command\n", 16, 0) == -1)
+// 				throw (std::runtime_error("failed to send to client"));
+// 		}
+// 		// this->password += "\n";
+// 		// if (strcmp(buffer, this->password.c_str())){
+// 		// 	if (send(this->connectionID, "password :", 10, 0) == -1)
+// 		// 		throw (std::runtime_error("failed to send to client"));
+// 		// 	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0);
+// 		// 	if (total <= 0){
+// 		// 		std::cout << "client gone" << std::endl;
+// 		// 		clearClient(fd);
+// 		// 		close(fd);
+// 		// 	}
+// 		// }
+// 		// if (send(this->connectionID, "nickname :", 10, 0) == -1)
+// 		// 		throw (std::runtime_error("failed to send to client"));
+// 		// this->nick = buffer;
+// 		// if (send(this->connectionID, "username :", 10, 0) == -1)
+// 		// 		throw (std::runtime_error("failed to send to client"));
+// 		// this->user = buffer;
+// 		// std::cout << "user = " << this->nick << std::endl;
+// 		// std::string	buf = buffer;
+// 		// size_t found = buf.find(' ');
+// 		// this->command = buf.substr(0, found);
+// 		// this->args = buf.substr(found + 1, buf.length());
+// 		// to_lower(this->command);
+// 		// if (this->command == "join\n")
+// 		// 	std::cout <<"join channel" << std::endl;
+// 		// else if (this->command == "invite\n")
+// 		// 	std::cout <<"invite user" << std::endl;
+// 		// else if (this->command == "kick\n")
+// 		// 	std::cout <<"kick user" << std::endl;
+// 		// std::cout << "command : " << this->command << " args :" << this->args << std::endl;
+
+// 	}
+// 		// this->Clients[fd].setBuffer(buffer);
+// }
 
 void	Server::multi_clients(){
 	while (Server::signal == false){
