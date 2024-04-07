@@ -85,8 +85,11 @@ class Server{
 		void	topicCommand(void);
 		int		validArgsKick(void);
 		void	kickCommand(void);
-		int 	joinSingleChannel(size_t found);
-		int 	joinMultiChannels(size_t found);
+		int 	joinSingleChannel(int pass);
+		int 	joinMultiChannels(int pass);
+
+		void 	whithoutPassword(void);
+		void 	whithPassword(void);
 
 
 };

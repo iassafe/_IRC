@@ -43,7 +43,9 @@ void Server::topicCommand(void){
     }
 }
 
-int Server::joinSingleChannel(size_t found){
+int Server::joinSingleChannel(int pass){
+	(void)pass;
+	size_t found = this->args.find_first_of(" \r\t");
 	std::string temp_args = this->args;
 	if (found != std::string::npos){
 		while(temp_args[found] == ' '){
@@ -70,8 +72,10 @@ std::string	skipSpaces(std::string str){
 	return (&str[i]);
 }
 
-int Server::joinMultiChannels(size_t found){
+int Server::joinMultiChannels(int pass){
+	(void)pass;
 	std::string temp_args = this->args;
+	size_t found = this->args.find_first_of(" \r\t");
 		std::string channels = temp_args.substr(0, found);
 		size_t found_commaps = 0;
 		int count_ch = 0;
@@ -110,26 +114,35 @@ int Server::joinMultiChannels(size_t found){
 
 int Server::validArgsJoin(void){
 	this->args = skipSpaces(this->args);
-	if (this->args == "")
-		return(0);
+	if (this->args == "" || this->args == "\n" || this->args[0] != '#'
+		|| (this->args[0] == '#' && (!isalpha(this->args[1]) && !isdigit(this->args[1])))){
+		return (0);
+	}
 	std::cout << "-------------------"<< this->args << "-------------------" << std::endl;
 	size_t found = this->args.find_first_of(" ");
-	if (found == std::string::npos)
+	if (found == std::string::npos)       
 		return (2);
 	else{
 		while (this->args[found] == ' '){
 			found++;
 		}
 		if (this->args[found])
+		{
+			std::string passWord = &this->args[found];
+			size_t foundSpace = passWord.find_first_of(" ");
+			if (passWord[foundSpace] == ' '){
+				while (this->args[foundSpace] == ' '){
+					foundSpace++;
+				}
+				if (passWord[foundSpace])
+					return (0);
+			}
 			return (3);
+		}
 		else
 			return (2);
 	}
 	/*
-	if (!this->args[0] || this->args[0]== '\n' || this->args[0] != '#'
-		|| (this->args[0] == '#' && (!isalpha(this->args[1]) && !isdigit(this->args[1])))){
-		return (0);
-	}
 	std::cout << "#################--[" << args << "]\n";
 	size_t found = this->args.find_first_of(" \r\t");
 	size_t foundComma = this->args.find_first_of(",");
@@ -143,7 +156,6 @@ int Server::validArgsJoin(void){
 	}
 	return (1);
 	*/
-	return (1);
 }
 
 int Server::validArgsTopic(void){
@@ -198,15 +210,30 @@ int Server::validArgsKick(void){
 	return (1);
 }
 
+void Server::whithoutPassword(void){
+	size_t foundComma = this->args.find_first_of(",");
+	if (foundComma != std::string::npos)
+		joinMultiChannels(0);
+	else
+		joinSingleChannel(0);
+}
+
+void Server::whithPassword(void){
+	size_t foundComma = this->args.find_first_of(",");
+	if (foundComma != std::string::npos)
+		joinMultiChannels(1);
+	else
+		joinSingleChannel(1);
+}
 
 void Server::handleCommands1(void){
 	if (this->command == "join"){
 			int check = validArgsJoin();
 			if(check){
-				// if (check == 2)
-				// 	whithoutPassword();
-				// else if (check == 3)
-				// 	whithPassword();
+				if (check == 2)
+					whithoutPassword();
+				else if (check == 3)
+					whithPassword();
 				joinCommand();
 			}
 			else{
