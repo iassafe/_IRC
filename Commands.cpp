@@ -44,22 +44,23 @@ void Server::topicCommand(void){
 }
 
 int Server::joinSingleChannel(int pass){
-	(void)pass;
 	size_t found = this->args.find_first_of(" \r\t");
 	std::string temp_args = this->args;
-	if (found != std::string::npos){
+	this->joinChannel.push_back(this->args.substr(0, found));
+	std::cout <<"channel:------->" << this->args.substr(0, found) << std::endl;
+	if (pass){
 		while(temp_args[found] == ' '){
 			found++;
 		};
 		temp_args = temp_args.substr(found, temp_args.length());
-		size_t found_sp = temp_args.find_first_of(" ");
+		size_t found_sp = temp_args.find_first_of(" \r\t");
 		if (found_sp != std::string::npos){
-			temp_args = temp_args.substr(found_sp + 1, temp_args.length());
-			size_t i;
-			for(i=0; i < temp_args.length() && temp_args[i] == ' '; ++i){
-			};
-			if (temp_args[i] != '\n')
-				return (0);
+			this->joinPassword.push_back(this->args.substr(found, found_sp));
+			std::cout <<"pass:------->" << this->args.substr(found, found_sp) << std::endl;
+		}
+		else{
+			this->joinPassword.push_back(this->args.substr(found, this->args.length()));
+			std::cout <<"pass:------->" << this->args.substr(found, this->args.length()) << std::endl;
 		}
 	}
 	return(1);
@@ -88,12 +89,10 @@ void Server::joinMultiChannels(int pass){
 			channels = channels.substr(found_commach + 1, channels.length());
 		}
 		if (pass){
-			size_t found_commaps = 0;
 			std::string passWord = temp_args.substr(found + 1, temp_args.length());
-			int count_ps = 0;
-			count_ps = countComma(passWord);
+			int count_ps = countComma(passWord);
 			passWord = skipSpaces(passWord);
-			found_commaps = passWord.find_first_of(",");
+			size_t found_commaps = passWord.find_first_of(",");
 			passWord = passWord.substr(found_commaps + 1, passWord.length());
 			for(int i = 0; i < count_ps; ++i){
 				found_commaps = passWord.find_first_of(",");
@@ -106,7 +105,7 @@ void Server::joinMultiChannels(int pass){
 
 int Server::validArgsJoin(void){
 	this->args = skipSpaces(this->args);
-	if (this->args == "" || this->args == "\n")
+	if (this->args == "")
 		return (0);
 	std::cout << "-------------------"<< this->args << "-------------------" << std::endl;
 	size_t found = this->args.find_first_of(" ");
@@ -124,8 +123,8 @@ int Server::validArgsJoin(void){
 				while (this->args[foundSpace] == ' '){
 					foundSpace++;
 				}
-				if (passWord[foundSpace])
-					return (0);
+				// if (passWord[foundSpace])
+				// 	return (0);
 			}
 			return (3);
 		}
