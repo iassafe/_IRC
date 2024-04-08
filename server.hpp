@@ -39,7 +39,8 @@ class Server{
         std::vector<Channel> channels; //Available channels in the server
 
 		// join
-		std::map<std::string, std::string> joinChannel;
+		std::vector<std::string> joinChannel;
+		std::vector<std::string> joinPassword;
     public:
         Server();
         ~Server();//close users fds before quitting
@@ -86,7 +87,7 @@ class Server{
 		int		validArgsKick(void);
 		void	kickCommand(void);
 		int 	joinSingleChannel(int pass);
-		int 	joinMultiChannels(int pass);
+		void	joinMultiChannels(int pass);
 
 		void 	whithoutPassword(void);
 		void 	whithPassword(void);
