@@ -145,18 +145,16 @@ int Server::validArgsJoin(void){
 	}
 	return (1);
 	*/
+
 }
 
 int Server::validArgsTopic(void){
-	if (!this->args[0] || this->args[0]== '\n' || this->args[0] != '#'
-		|| (this->args[0] == '#' && !isalpha(this->args[1]))){
+	if (!this->args[0])
 		return (0);
-	}
 	size_t found = this->args.find_first_of(" \t\r\n");
 	if (found == std::string::npos || this->args[found] == '\n')
 		return (0);
 	std::string temp_args = this->args; 
-	// this->joinChannel[temp_args.substr(0, found)] = temp_args.substr(found + 1, temp_args.length());
 	while(temp_args[found] == ' '){
 		found++;
 	};
@@ -167,22 +165,19 @@ int Server::validArgsTopic(void){
 		size_t i;
 		for(i=0; i < temp_args.length() && temp_args[i] == ' '; ++i){
 		};
-		if (temp_args[i] != '\n')
-			return (0);
+		// if (temp_args[i] != '\n')
+		// 	return (0);
 	}
 	return (1);
 }
 
 int Server::validArgsKick(void){
-	if (!this->args[0] || this->args[0]== '\n' || this->args[0] != '#'
-		|| (this->args[0] == '#' && !isalpha(this->args[1]))){
+	if (!this->args[0])
 		return (0);
-	}
 	size_t found = this->args.find_first_of(" \t\r\n");
 	if (found == std::string::npos || this->args[found] == '\n')
 		return (0);
 	std::string temp_args = this->args;
-	// this->joinChannel[temp_args.substr(0, found)] = temp_args.substr(found + 1, temp_args.length());
 	while(found < temp_args.length() && temp_args[found] == ' '){
 		found++;
 	};
