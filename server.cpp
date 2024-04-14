@@ -3,42 +3,38 @@
 
 bool	Server::signal = false;
 
-Server::Server(){
-	serverID = -1; 
-	password = "\0";
-	nick = "tikchbila";
-	user = "tiwliwla";
-}
-
-Server::~Server(){
-    for (unsigned int i = 0; i < clients.size(); i++)
-        close(clients[i].getSocketDescriptor());//close users fd before quitting 
-}
-
-//setters
-
-void	Server::setPort(int n){
-	port = n;
-}
-
-void	Server::setPassword(char *str){
-	password = str;
-}
-
-//getters
-
-std::string    Server::getPassword(){
-    return password;
-}
-
-
-//building the server
 void	Server::sigHandler(int signum){
 	(void)signum;
 	std::cout << "signal found!" << std::endl;
 	signal = true;//to stop the server
 }
+Server::Server(){
+	serverFD = -1; 
+	password = "\0";
+	fillSayingsBox("sayings.txt");
+}
 
+Server::~Server(){
+	clearClientslist();//do not forget to close clients fd
+	clearChannelslist();
+}
+
+void	Server::setPort(int n){
+	this->port = n;
+}
+
+void	Server::setPassword(char *str){
+	this->password = str;
+}
+int	Server::getPort(){
+	return(this->port);
+}
+std::string	Server::getPassword(){
+	return (this->password);
+}
+int	Server::getServerFD(){
+	return serverFD;
+}
 void	Server::clearClient(int fd){
 	for (size_t i = 0; i < fds.size(); ++i){//remove client from fds vector
 		if(fds[i].fd == fd){
@@ -47,20 +43,20 @@ void	Server::clearClient(int fd){
 		}
 	}
 	for (size_t i = 0; i < clients.size(); ++i){//remove client from Clients vector
-		if(clients[i].getClientID() == fd){
+		if(clients[i].getClientFD() == fd){
 			clients.erase(clients.begin() + i);
 			break ;
 		}
 	}
-}
-
-void	Server::closeFD(){
+}void	Server::closeFD(){
 	for (size_t i = 0; i < clients.size(); ++i){//close clients fd
 		std::cout << "client disconnected" << std::endl;
-		close(clients[i].getClientID());}
-	if (serverID == -1){//close server socket
+		close(clients[i].getClientFD());}
+	if (serverFD == -1){//close server socket
 		std::cout << "server disconnected" << std::endl;
-		close(serverID);}
+		close(serverFD);}
+	channels.clear();
+	clients.clear();
 }
 
 void		Server::create_socket(){
@@ -71,29 +67,28 @@ void		Server::create_socket(){
 	serveraddress.sin_port = htons(this->port);
 	serveraddress.sin_addr.s_addr = INADDR_ANY;//any local machine address
 
-	serverID = socket(AF_INET, SOCK_STREAM, 0);
-	if (serverID == -1)
+	serverFD = socket(AF_INET, SOCK_STREAM, 0);
+	if (serverFD == -1)
 		throw (std::runtime_error("Server failed to get created!"));
 	// std::cout << "Socket created successfully" << std::endl;
 	int	val = 1;
-	if (setsockopt(serverID, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val)) == -1)//SET OPTIONS OF SOCKET: SOL_SOCKET:the option is defined at socket level/ SO_REUSADDR : the option that allows to reuse local addresses which can be useful in scenarios where you want to quickly restart a server on the same address and port after it has been stopped.
+	if (setsockopt(serverFD, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val)) == -1)//SET OPTIONS OF SOCKET: SOL_SOCKET:the option is defined at socket level/ SO_REUSADDR : the option that allows to reuse local addresses which can be useful in scenarios where you want to quickly restart a server on the same address and port after it has been stopped.
 		throw (std::runtime_error("the reuse of the address has failed!"));
 	// std::cout << "Setsocketopt successfully" << std::endl;
-	if (fcntl(serverID, F_SETFL, O_NONBLOCK) == -1)//PERFORM OPERATIONS ON FD : F_SETFL: THE OPERATION IS TO SET FILE STATUS FLAGS/ O_NONBLOCK : SOCKET NONBLOCKING
+	if (fcntl(serverFD, F_SETFL, O_NONBLOCK) == -1)//PERFORM OPERATIONS ON FD : F_SETFL: THE OPERATION IS TO SET FILE STATUS FLAGS/ O_NONBLOCK : SOCKET NONBLOCKING
 		throw ("Failed to set nonblocking flag!");
 	std::cout << "fcntl successfully" << std::endl;
-	if (bind(serverID, (const sockaddr *)&serveraddress, sizeof(serveraddress)) == -1)//bind the server to a port and IP
+	if (bind(serverFD, (const sockaddr *)&serveraddress, sizeof(serveraddress)) == -1)//bind the server to a port and IP
 		throw(std::runtime_error("Binding to IP and port failed!"));
 	// std::cout << "Socket binded" << std::endl;
-	if (listen(serverID, SOMAXCONN) == -1)//socket is passive and listening to coming connections
+	if (listen(serverFD, SOMAXCONN) == -1)//socket is passive and listening to coming connections
 		throw (std::runtime_error("server isn't listening!"));
 	std::cout << "Socket listening ..." << std::endl;
-	pollf.fd = serverID;//initialize the fds with server
+	pollf.fd = serverFD;//initialize the fds with server
 	pollf.events = POLLIN;//flag to indicate theres data to read
 	fds.push_back(pollf);//initialize fds vector
 	std::cout << "server is listening from port : " << this->port << std::endl;
 }
-
 void	Server::launch_server(){
 	create_socket();
 	multi_clients();
@@ -106,12 +101,12 @@ void	Server::acceptClient(){
 	socklen_t			clientaddrlen = 0;
 
 	memset(&clientaddress, 0, sizeof(clientaddress));
-	this->connectionID = accept(serverID, (struct sockaddr *)&clientaddress, &clientaddrlen);//new socket to 	assure safe communication with multiple clients 
+	this->connectionID = accept(serverFD, (struct sockaddr *)&clientaddress, &clientaddrlen);//new socket to 	assure safe communication with multiple clients 
 	if (connectionID == -1){
 		std::cerr << "Failed to connect!" << std::endl;
 		return ;
 	}
-	if (send(connectionID, "enter: password, nickname, and username\n", 40, 0) == -1)
+	if (send(connectionID, "enter: password, nickname, and username\n", 41, 0) == -1)
 		throw (std::runtime_error("failed to send to client"));
 	if (fcntl(connectionID, F_SETFL, O_NONBLOCK) == -1){//server configuration can impact client's so we set new socket as server 
 		std::cerr << "failed to set nonblocking option!" << std::endl;
@@ -120,7 +115,7 @@ void	Server::acceptClient(){
 	newpool.fd = connectionID;
 	newpool.events = POLLIN;
 
-	client.setClientID(connectionID);
+	client.setClientFD(connectionID);
 	client.setIP(inet_ntoa(clientaddress.sin_addr));
 	clients.push_back(client);
 	fds.push_back(newpool);
@@ -132,30 +127,19 @@ void	to_lower(std::string &command){
 		command[i] = std::tolower(command[i]);
 	}
 }
-
 std::string	skip_spaces(std::string str){
 	for (size_t i = 0; i < str.size(); ++i){
 		if (str[i] != ' ')
 			return (&str[i]);
 	}
-	std::cout << "lets see" << str << std::endl;
 	return (str);
-}
-
-static int validCommand(std::string &cmd){
-    if (cmd == "join" || cmd == "privmsg" || cmd == "topic" \
-        || cmd == "kick" || cmd == "mode" || cmd == "pass" || \
-        cmd == "user" || cmd == "invite")
-        return(1);
-    return(0);
 }
 
 void	Server::recieve_data(int fd){
 	char	buffer[1024];
-	Client	c;
 
 	memset(buffer, 0, sizeof(buffer));
-	size_t	total = recv(fd, buffer, sizeof(buffer), 0);
+	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0);
 	if (total <= 0){
 		std::cout << "client gone" << std::endl;
 		clearClient(fd);
@@ -169,119 +153,30 @@ void	Server::recieve_data(int fd){
 			fond = new_buf.find_first_of("\n");
 			if (fond == std::string::npos)
 				return;
-			// std::cout << "content of fond++" << new_buf[fond] << "++" << std::endl;	
 			std::string	commond = new_buf.substr(0, fond);
 			size_t	sp = commond.find_first_of("\t\r ");
 			if (sp != std::string::npos){
 				size_t	ind = sp;
 				while (commond[ind] == '\t' || commond[ind] == '\r' || commond[ind] == ' ')
 					ind++;
-				// std::cout << "ind+1" << commond[ind] << std::endl;
 				if (commond[ind] == '\n')
-					this->args = "\0";
+					this->args = '\0';
 				else
 					this->args = commond.substr(ind, fond);
 				this->command = commond.substr(0, sp);
 			}
 			else{
 				this->command = commond.substr(0, fond); 
-				this->args = "\0";//FIXED: I was passing character
+				this->args = '\0';
 			}
-			// if (commond[fond+1] == '\n'){
-			// 	std::cout << "only one command" << std::endl;
-			// 	return ;
-			// }
-			// new_buf = new_buf.substr(fond+1, new_buf.size());
-			// std::cout << "new_buff :" << &new_buf[i] << "---" << std::endl;
-            to_lower(this->command);
-			if (validCommand(this->command)){
-				handleCommands1();
-				// std::cout << "com:" << this->command << "--=" << std::endl;
-				// std::cout << "argu:" << this->args << "--=" << std::endl;
-				// std::cout << "args: \"" << this->args << "\"" << std::endl;
-
-			}
-			else if(send(this->connectionID, "Invalid command\n", 16, 0) == -1)
-				throw (std::runtime_error("failed to send to client"));
-			return ;
+			new_buf = new_buf.substr(fond+1, new_buf.size());
+			handleCommands(fd);
+			command.clear();
+			args.clear();
 
 		}
 	}
 }
-
-
-// void	Server::recieve_data(int fd){
-// 	char	buffer[1024];
-// 	Client	c;
-
-// 	memset(buffer, 0, sizeof(buffer));
-// 	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0);
-// 	if (total <= 0){
-// 		std::cout << "client gone" << std::endl;
-// 		clearClient(fd);
-// 		close(fd);
-// 	}
-// 	else{
-// 		std::string	buf = buffer;
-// 		 size_t fond;
-// 		std::string	new_buf = skip_spaces(buf);
-// 		for(size_t i = 0; i <= new_buf.size(); i++){
-// 			fond = new_buf.find_first_of("\n");
-// 			if (fond == std::string::npos)
-// 				return;
-// 			std::cout << "content of fond++" << new_buf[fond] << "++" << std::endl;	
-// 			std::string	commond = new_buf.substr(0, fond);
-// 			std::cout << "command:" << commond << "--" << std::endl;
-// 			size_t	sp = commond.find_first_of(" \t\r");
-// 			this->command = commond.substr(0, sp);
-// 			std::cout << "com:[" << this->command << "]--" << std::endl;
-// 			new_buf = new_buf.substr(fond+1, new_buf.size());
-// 			this->args = skip_spaces(commond.substr(sp + 1, commond.length()));
-// 			// if (this->args[args.length()] == '\0')	
-// 			// 	std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@\n"; 
-// 			std::cout << "argu:[" << this->args << "]--" << std::endl;
-// 			std::cout << "new_buff :" << &new_buf[i] << std::endl;
-// 			to_lower(this->command);
-// 			if (validCommand(this->command)){
-// 				handleCommands1();
-//         	}
-// 			else if(send(this->connectionID, "Invalid command\n", 16, 0) == -1)
-// 				throw (std::runtime_error("failed to send to client"));
-// 		}
-// 		// this->password += "\n";
-// 		// if (strcmp(buffer, this->password.c_str())){
-// 		// 	if (send(this->connectionID, "password :", 10, 0) == -1)
-// 		// 		throw (std::runtime_error("failed to send to client"));
-// 		// 	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0);
-// 		// 	if (total <= 0){
-// 		// 		std::cout << "client gone" << std::endl;
-// 		// 		clearClient(fd);
-// 		// 		close(fd);
-// 		// 	}
-// 		// }
-// 		// if (send(this->connectionID, "nickname :", 10, 0) == -1)
-// 		// 		throw (std::runtime_error("failed to send to client"));
-// 		// this->nick = buffer;
-// 		// if (send(this->connectionID, "username :", 10, 0) == -1)
-// 		// 		throw (std::runtime_error("failed to send to client"));
-// 		// this->user = buffer;
-// 		// std::cout << "user = " << this->nick << std::endl;
-// 		// std::string	buf = buffer;
-// 		// size_t found = buf.find(' ');
-// 		// this->command = buf.substr(0, found);
-// 		// this->args = buf.substr(found + 1, buf.length());
-// 		// to_lower(this->command);
-// 		// if (this->command == "join\n")
-// 		// 	std::cout <<"join channel" << std::endl;
-// 		// else if (this->command == "invite\n")
-// 		// 	std::cout <<"invite user" << std::endl;
-// 		// else if (this->command == "kick\n")
-// 		// 	std::cout <<"kick user" << std::endl;
-// 		// std::cout << "command : " << this->command << " args :" << this->args << std::endl;
-
-// 	}
-// 		// this->Clients[fd].setBuffer(buffer);
-// }
 
 void	Server::multi_clients(){
 	while (Server::signal == false){
@@ -290,7 +185,7 @@ void	Server::multi_clients(){
 		for (size_t i = 0; i < fds.size(); ++i){
 			if (fds[i].revents & POLLIN)//returned event: data to read
 			{
-				if (fds[i].fd == serverID)
+				if (fds[i].fd == serverFD)
 					acceptClient();
 				else
 					recieve_data(fds[i].fd);
@@ -300,7 +195,15 @@ void	Server::multi_clients(){
 	closeFD();
 }
 
-//managing users
+// void    Server::addClient(Client const& client){
+//     this->clients.push_back(client);
+// }
+
+void	Server::sendMsg(int fd, std::string msg){
+	if (send(fd, msg.c_str(), msg.size(), 0) == -1)
+		throw (std::runtime_error("failed to send to client"));
+}
+
 bool    Server::isInUseNickname(std::string nickname){
     for (unsigned int i = 0; i < clients.size(); i++){
         if (clients[i].getNickname() == nickname)
@@ -309,18 +212,81 @@ bool    Server::isInUseNickname(std::string nickname){
     return false;
 }
 
-void    Server::addUser(Client const& client){
-    clients.push_back(client);
+void	Server::handleCommands(int fd){
+	tolowercase(command);
+	unsigned int i = 0;
+	for (i = 0; i < clients.size(); i++){
+		if (clients[i].getClientFD() == fd){
+			break ;
+		}	
+	}
+	if (i == clients.size()) //this is not part of the implementation just in case this happens
+		std::cout << "Client no found in container\n";
+	if (command == "user")
+		userCommand(args, this->clients[i], *this);
+	else if (command == "nick")
+		nickCommand(args, clients[i], *this);
+	else if (command == "pass")
+		passCommand(args, clients[i], *this);
+	else if (command == "invite")
+		inviteCommand(args, clients[i], *this);
+	else if (command == "mode")
+		modeCommand(args, clients[i], *this);
+	else if (command == "bot")
+		botCommand(clients[i], *this);
+	else if (this->command == "join"){
+			int check = validArgsJoin();
+			if(check){
+				if (check == 2)
+					whithoutPassword();
+				else if (check == 3)
+					whithPassword();
+				joinCommand();
+			}
+			else{
+				if (send(this->connectionID, "Invalid args join\n", 18, 0) == -1)
+					throw (std::runtime_error("failed to send to client"));
+			}
+	}
+	else if (this->command == "topic"){
+		if(validArgsTopic())
+				topicCommand();
+			else{
+				if (send(this->connectionID, "Invalid args topic\n", 19, 0) == -1)
+					throw (std::runtime_error("failed to send to client"));
+			}
+	}
+	else if (this->command == "kick"){
+		if(validArgsKick())
+				kickCommand();
+			else{
+				if (send(this->connectionID, "Invalid args kick\n", 18, 0) == -1)
+					throw (std::runtime_error("failed to send to client"));
+			}
+	}
+		
+	// std::cout << "----------------------from the server -------------------------------------\n";
+    //     std::cout << "------after cmd------\n";
+    //     std::cout << "nn = " << clients[i].getNickname() << "\n";
+    //     std::cout << "un = " << clients[i].getUsername() << "\n";
+    //     std::cout << "hn = " << clients[i].getHostname() << "\n";
+    //     std::cout << "sn = " << clients[i].getServername() << "\n";
+    //     std::cout << "rn = " << clients[i].getRealname() << "\n";
+    //     std::cout << "pw = " << clients[i].isPasswordSended() << "\n";
+    //     std::cout << "registered = " << clients[i].isRegistered() << "\n";
+    //     std::cout << "fd = " << clients[i].getClientFD() << "\n";
 }
 
-void    Server::removeUser(Client const& client){
-    for (std::vector<Client>::iterator it = clients.begin(); it != clients.end(); it++){
-        if (it->getNickname() == client.getNickname()){
-			close(client.getSocketDescriptor()); //close client fd
-            clients.erase(it);
-            return ;
-        }
+void    Server::addChannel(Channel const& channel){
+    channels.push_back(channel);
+}
+
+bool	Server::isRegistered(std::string nickname){
+	for (unsigned int i = 0; i < clients.size(); i++){
+        if (clients[i].getNickname() == nickname && clients[i].isRegistered())
+            return true;
     }
+	return false;
 }
 
 bool    Server::isInUseChName(std::string chName){
@@ -331,32 +297,52 @@ bool    Server::isInUseChName(std::string chName){
     return false;
 }
 
-void    Server::addChannel(Channel const& channel){
-    channels.push_back(channel);
-}
-
-void    Server::removeChannel(Channel const& channel){
-    for (std::vector<Channel>::iterator it = channels.begin(); it != channels.end(); it++){
-        if (it->getName() == channel.getName()){
-            channels.erase(it);
-            return ;
-        }
-    }
-}
-
-//other
-
-void	Server::sendMsg(int clientFd, std::string msg){
-	std::cerr << clientFd << ">> Error: " << msg <<"\n";
-}
-
-// void	Server::handleCommands(std::string &cmd, std::string &args, Client &client){
-// 	tolowercase(cmd);
-// 	if (cmd == "user")
-// 		userCommand(args, client);
-// 	else if (cmd == "nick")
-// 		nickCommand(args, client);
-// 	else if (cmd == "pass")
-// 		passCommand(args, client);
+// bool 	Server::isMember(Client &c, Channel &ch){
+// 	for (unsigned int i = 0; i < channels.size(); i++){
+//         if (channels[i].getName() == ch.getName() && ch.isMember(c))
+//             return true;
+//     }
+//     return false;
 // }
 
+Client		&Server::findClient(std::string nn){
+	unsigned int i;
+	for (i = 0; i < clients.size(); i++){
+		if (clients[i].getNickname() == nn)
+			return (clients[i]);
+	}
+	return clients[i]; //clients end if not found
+}
+
+Channel		&Server::findChannel(std::string chname){
+	unsigned int i;
+	for (i = 0; i < channels.size(); i++){
+		if (channels[i].getName() == chname)
+			return (channels[i]);
+	}
+	return channels[i];//channels end if not found
+}
+
+// void	Server::channelsInvited2(Client & c){
+// 	for (unsigned int i = 0; i < channels.size(); i++){
+// 		if (channels[i].isInvited(c));
+			
+// 	}
+// }
+
+void	Server::clearClientslist(){
+	channels.clear();
+}
+void	Server::clearChannelslist(){
+	clients.clear();
+}
+
+void	Server::fillSayingsBox(std::string fileName){
+	std::fstream base(fileName);
+    if (!base.is_open())
+        throw std::runtime_error("Can not open the sayings data base\n");
+    std::string line;
+    while (std::getline(base, line))
+        sayingsBox.push_back(line);
+    base.close();
+}

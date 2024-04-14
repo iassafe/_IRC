@@ -1,6 +1,5 @@
 #include"Server.hpp"
 
-
 int countComma(std::string str){
 	int count = 0;
 	for(size_t i=0; i < str.length(); i++){
@@ -208,37 +207,4 @@ void Server::whithPassword(void){
 		joinMultiChannels(1);
 	else
 		joinSingleChannel(1);
-}
-
-void Server::handleCommands1(void){
-	if (this->command == "join"){
-			int check = validArgsJoin();
-			if(check){
-				if (check == 2)
-					whithoutPassword();
-				else if (check == 3)
-					whithPassword();
-				joinCommand();
-			}
-			else{
-				if (send(this->connectionID, "Invalid args join\n", 18, 0) == -1)
-					throw (std::runtime_error("failed to send to client"));
-			}
-	}
-	else if (this->command == "topic"){
-		if(validArgsTopic())
-				topicCommand();
-			else{
-				if (send(this->connectionID, "Invalid args topic\n", 19, 0) == -1)
-					throw (std::runtime_error("failed to send to client"));
-			}
-	}
-	else if (this->command == "kick"){
-		if(validArgsKick())
-				kickCommand();
-			else{
-				if (send(this->connectionID, "Invalid args kick\n", 18, 0) == -1)
-					throw (std::runtime_error("failed to send to client"));
-			}
-	}
 }

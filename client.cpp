@@ -1,14 +1,14 @@
 
+
 #include "Client.hpp"
 
+
 Client::Client(){
-    nickname = username = hostname = servername = realname = "\0";
-    registered = PasswordSended = false;
-    socket = -1;
+    PasswordSended = registered = false;
+    clientFD = -1;
+    // std::cout << "++++++++was in constructor\n+++++++\n";
 }
 Client::~Client(){
-    server.removeUser(*this);//client's fd is closed in removeuser
-    PasswordSended = false; //to reautenticate the next time he connect to the server
 }
 
 //setters
@@ -18,8 +18,8 @@ void	Client::setIP(std::string IPaddr){
 void	Client::setBuffer(std::string rec){
 	this->buffer = rec;
 }
-void	Client::setClientID(int fd){
-	this->clientID = fd;
+void	Client::setClientFD(int fd){
+	this->clientFD = fd;
 }
 
 void Client::setNickname(std::string nn){
@@ -37,20 +37,17 @@ void Client::setServername(std::string sn){
 void Client::setRealname(std::string rn){
     realname = rn;
 }
-void Client::setSocketDescriptor(int sd){
-    socket = sd;
-}
+
 void Client::setRegistered(bool b){
     registered = b;
 }
-
 void Client::setPasswordSended(bool b){
     PasswordSended = b;
 }
 
 //getters
-int Client::getClientID(){
-	return (clientID);
+int Client::getClientFD(){
+	return (clientFD);
 }
 
 std::string Client::getNickname() const{
@@ -68,47 +65,52 @@ std::string Client::getRealname() const{
 std::string Client::getServername() const{
     return (servername);
 }
-int Client::getSocketDescriptor() const{
-    return (socket);
-}
 bool Client::isRegistered() const{
     return (registered);
 } 
 bool    Client::isPasswordSended(){
-    return true;
+    return PasswordSended;
 }
 
 //others
-
-void Client::registerClient(){
-    if (PasswordSended && !nickname.empty() && !username.empty()
+void    Client::clearAuthentication(){
+    nickname.clear();
+    username.clear();
+    hostname.clear();
+    servername.clear();
+    realname.clear();
+    setPasswordSended(false);
+    
+}
+void Client::registerClient(Server &s){
+    if (isPasswordSended() && !nickname.empty() && !username.empty()
     && !hostname.empty() && !servername.empty() && !realname.empty()){
         registered = true;
-        server.addUser(*this);
+        s.sendMsg(getClientFD(), RPL_WELCOME(getNickname(), getUsername()));
+        s.sendMsg(getClientFD(), ":ircserv 375 " + getNickname() + " ::ircserv message of the day\r\n");
+        s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :  Hello, World!\r\n");
+        s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :\r\n");
+        s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :  Welcome to the\r\n");
+        s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :        __  .______        ______     _______. _______ .______     ____    ____ \r\n");
+        s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :       |  | |   _  \\      /      |   /       ||   ____||   _  \\    \\   \\  /   / \r\n");
+        s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :       |  | |  |_)  |    |  ,----'  |   (----`|  |__   |  |_)  |    \\   \\/   /  \r\n");
+        s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :       |  | |      /     |  |        \\   \\    |   __|  |      /      \\      /   \r\n");
+        s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :       |  | |  |\\  \\----.|  `----.----)   |   |  |____ |  |\\  \\----.  \\    /    \r\n");
+        s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :       |__| | _| `._____| \\______|_______/    |_______|| _| `._____|   \\__/     \r\n");
+        s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :                                                               AUTONOMOUS ZONE\r\n");
+        s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :                                                                                      \r\n");
+        s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :  Thank you for using ircserv!\r\n");
+        s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :  End of message of the day.\r\n");
+        // s.sendMsg(getClientFD(), "You are successfully registered.\n");\r\n"
     }
+        std::cout << "------registered successfully------\n";
+        std::cout << "nn = " << getNickname() << "\n";
+        std::cout << "un = " << getUsername() << "\n";
+        std::cout << "hn = " << getHostname() << "\n";
+        std::cout << "sn = " << getServername() << "\n";
+        std::cout << "rn = " << getRealname() << "\n";
+        std::cout << "pw = " << isPasswordSended() << "\n";
+        std::cout << "registered = " << isRegistered() << "\n";
 }
 
 
-//     return 0;
-// }
-// // Certainly! After calling listen(), which sets up the server to accept incoming connections, the server enters a loop where it continuously waits for and handles incoming client connections. Here are the steps after listen():
-
-// // Initialize poll() Structures: Before entering the main loop, initialize a vector of pollfd structures to store file descriptors and events to monitor. Initially, add the server socket to this vector.
-
-// // Main Loop: Enter a loop that runs indefinitely, continuously checking for events on the monitored file descriptors using poll().
-
-// // Call poll(): Inside the loop, call poll() to wait for events on the file descriptors. The poll() function blocks until an event occurs or until the specified timeout (in this case, -1 indicates no timeout, meaning it will block indefinitely).
-
-// // Handle Events: After poll() returns, iterate through the pollfd structures to check which file descriptors have events pending.
-
-// // New Client Connection: If an event occurs on the server socket (indicating a new client connection), accept the connection using accept() function. Upon successful acceptance, add the new client socket to the vector of pollfd structures.
-
-// // Existing Client Socket: If an event occurs on an existing client socket, indicating data is available for reading, read from the socket using recv(). Process the received data as needed.
-
-// // Error Handling: Check for errors while reading from the client socket. If an error occurs or if the client closes the connection, handle the error gracefully by closing the client socket and removing it from the vector of pollfd structures.
-
-// // Loop Continuation: After handling the events, continue to the next iteration of the loop, where poll() will again be called to wait for new events.
-
-// // Clean-up: Upon exiting the loop (which in this case is infinite), close the server socket to release the associated resources.
-
-// // This loop effectively allows the server to handle multiple client connections concurrently without blocking on any single client's I/O operation. The server can respond to new client connections and incoming data from existing clients without being limited by the number of threads or processes.

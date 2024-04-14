@@ -1,58 +1,60 @@
 
+
+
 #ifndef SERVER_HPP
 #define SERVER_HPP
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <iostream>
+#include "Client.hpp"
+#include "Channel.hpp"
 #include <poll.h>
 #include <vector>
 #include <fcntl.h>
 #include <csignal>
 #include <cstring>
 #include <string>
+#include <cstdlib>
+#include <sstream>
 #include <map>
+#include <fstream>
 
-#include "Client.hpp"
-#include "Channel.hpp"
+#include "responses.hpp"
 
 class Client;
 class Channel;
+//TODO : need canonical form for classes
+class	Server{
+	private:
+		int									serverFD;
+		int									port;
+		static bool							signal;
+		std::string							password;
+		int									connectionID;
+		std::string 						command;
+		std::string 						args;
+		std::vector<struct pollfd>			fds;
+		// std::map<std::string, std::string>	map;
 
-class Server{
-    private:
-		int							serverID;
-		int							port;
-		int							connectionID;
-		static bool					signal;
-		std::string					password;
-		std::string					nick;
-		std::string					user;
-		std::string 				command;
-		std::string 				args;
-		std::vector<struct pollfd>	fds;
-
-        std::vector<Client> clients; //the currently connected clients in the server (the key in map is the client's nickname)
-        std::vector<Channel> channels; //Available channels in the server
-
-		// join
 		std::vector<std::string> joinChannel;
 		std::vector<std::string> joinPassword;
-    public:
-        Server();
-        ~Server();//close users fds before quitting
-
-        //setters
-        void		setPort(int n);
+	public:
+		std::vector<std::string>			sayingsBox;
+		std::vector<Client>					clients;
+		std::vector<Channel>				channels;
+		Server();
+		~Server();//close users fds before quitting
+		//--Setters--//
+		void		setPort(int n);
 		void		setPassword(char *str);
-        
-        //getters
-        std::string    getPassword();
-        
-        //building the server
+		//--Getters--//
+		int			getPort();
+		std::string	getPassword();
+		int			getServerFD();
+		//----//
 		void		create_socket();
 		void		launch_server();
 		void		multi_clients();
@@ -62,24 +64,24 @@ class Server{
 		void		closeFD();
 		void		clearClient(int fd);
 
-		void		sendMsg(int clientFd, std::string msg); //needed to send error messages to a specific client
+		void		addChannel(Channel const& channel);
+		bool    	isInUseNickname(std::string nickname);
+		bool    	isInUseChName(std::string chName);
+		void		sendMsg(int clientFd, std::string msg);
+		void		handleCommands(int i);
+		bool		isRegistered(std::string nickname);
+		// bool		isMember(Client &c, Channel &ch);
+		Client		&findClient(std::string nn);
+		Channel		&findChannel(std::string chname);
 
-        //managing users
-        bool    isInUseNickname(std::string nickname); //true if a nickname is already choosed by another client
-        void    addUser(Client const& client); //add the new client in the clients container (only once)
-        void    removeUser(Client const& client); //close fd when removing user
+		void		clearClientslist();
+		void		clearChannelslist();
+		// void	channelsInvited2(Client & c);
 
-        //managing channels
-        bool    isInUseChName(std::string chName); //true if there an other channel with the same name
-        void    addChannel(Channel const& channel);
-        void    removeChannel(Channel const& channel);
-
-		// other
-		void	handleCommands(std::string &cmd, std::string &args, Client &client);
+		void	fillSayingsBox(std::string fileName);
 
 
 		//
-		void	handleCommands1(void);
 		int		validArgsJoin(void);
 		void	joinCommand(void);
 		int		validArgsTopic(void);
@@ -91,8 +93,15 @@ class Server{
 
 		void 	whithoutPassword(void);
 		void 	whithPassword(void);
-
-
 };
+
+void    tolowercase(std::string &str);
+bool	isValidNickName(std::string nickname);
+void    nickCommand(std::string &args, Client &c, Server &s);
+void    userCommand(std::string &args, Client &c, Server &s);
+void    passCommand(std::string &args, Client &c, Server &s);
+void	inviteCommand(std::string &args, Client &c, Server &s);
+void    modeCommand(std::string &args, Client &c, Server &s);
+void    botCommand(Client &c, Server &s);
 
 #endif
