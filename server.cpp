@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/17 16:25:59 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/17 17:46:42 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ std::string	skip_spaces(std::string str){
 static int validCommand(std::string &cmd){
     if (cmd == "join" || cmd == "privmsg" || cmd == "topic" \
         || cmd == "kick" || cmd == "mode" || cmd == "pass" || \
-        cmd == "user" || cmd == "invite")
+        cmd == "user" || cmd == "invite" || cmd == "bot")
         return(1);
     return(0);
 }
