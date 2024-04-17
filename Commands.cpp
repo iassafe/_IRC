@@ -10,17 +10,17 @@ int countComma(std::string str){
 	return (count);
 }
 
-void Server::joinCommand(void){
+void Server::execJoinCommand(void){
 	if (send(this->connectionID, "Valid Command\n", 14, 0) == -1)
 		throw (std::runtime_error("failed to send to client"));
 }
 
-void Server::kickCommand(void){
+void Server::execKickCommand(void){
 	if (send(this->connectionID, "Valid Command\n", 14, 0) == -1)
 		throw (std::runtime_error("failed to send to client"));
 }
 
-void Server::topicCommand(void){
+void Server::execTopicCommand(void){
 	std::cout << "----------[" << this->command << "][" << this->args << "]\n";
 	if (send(this->connectionID, "Topic Valid Command\n", 20, 0) == -1)
 		throw (std::runtime_error("failed to send to client"));
@@ -193,5 +193,39 @@ void Server::whithPassword(void){
 		joinMultiChannels(1);
 	else
 		joinSingleChannel(1);
+}
+
+
+void Server::joinCommand(void){
+	int check = validArgsJoin();
+	if(check){
+		if (check == 2)
+			whithoutPassword();
+		else if (check == 3)
+			whithPassword();
+		execJoinCommand();
+	}
+	else{
+		if (send(this->connectionID, "Invalid args join\n", 18, 0) == -1)
+			throw (std::runtime_error("failed to send to client"));
+	}
+}
+
+void Server::topicCommand(void){
+	if(validArgsTopic())
+			execTopicCommand();
+	else{
+		if (send(this->connectionID, "Invalid args topic\n", 19, 0) == -1)
+			throw (std::runtime_error("failed to send to client"));
+	}
+}
+
+void Server::kickCommand(void){
+	if(validArgsKick())
+			execKickCommand();
+	else{
+		if (send(this->connectionID, "Invalid args kick\n", 18, 0) == -1)
+			throw (std::runtime_error("failed to send to client"));
+	}
 }
 

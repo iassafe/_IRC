@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/17 10:26:00 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/17 11:25:22 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,48 +239,24 @@ void	Server::handleCommands(int fd){//M
 	}
 	if (i == clients.size()) //this is not part of the implementation just in case this happens
 		std::cout << "Client no found in container\n";
-	if (command == "user")
+	if (this->command == "user")
 		userCommand(args, this->clients[i]);
-	else if (command == "nick")
+	else if (this->command == "nick")
 		nickCommand(args, clients[i]);
-	else if (command == "pass")
+	else if (this->command == "pass")
 		passCommand(args, clients[i]);
-	else if (command == "invite")
+	else if (this->command == "invite")
 		inviteCommand(args, clients[i]);
-	else if (command == "mode")
+	else if (this->command == "mode")
 		modeCommand(args, clients[i]);
-	else if (command == "bot")
+	else if (this->command == "bot")
 		botCommand(clients[i]);
-	else if (this->command == "join"){
-			int check = validArgsJoin();
-			if(check){
-				if (check == 2)
-					whithoutPassword();
-				else if (check == 3)
-					whithPassword();
-				joinCommand();
-			}
-			else{
-				if (send(this->connectionID, "Invalid args join\n", 18, 0) == -1)
-					throw (std::runtime_error("failed to send to client"));
-			}
-	}
-	else if (this->command == "topic"){
-		if(validArgsTopic())
-				topicCommand();
-			else{
-				if (send(this->connectionID, "Invalid args topic\n", 19, 0) == -1)
-					throw (std::runtime_error("failed to send to client"));
-			}
-	}
-	else if (this->command == "kick"){
-		if(validArgsKick())
-				kickCommand();
-			else{
-				if (send(this->connectionID, "Invalid args kick\n", 18, 0) == -1)
-					throw (std::runtime_error("failed to send to client"));
-			}
-	}
+	else if (this->command == "join")
+		joinCommand();
+	else if (this->command == "topic")
+		topicCommand();
+	else if (this->command == "kick")
+		kickCommand();
 		
 	// std::cout << "----------------------from the server -------------------------------------\n";
     //     std::cout << "------after cmd------\n";

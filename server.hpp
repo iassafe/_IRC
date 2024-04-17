@@ -85,10 +85,13 @@ class	Server{
 		// ikrame
 		int		validArgsJoin(void);
 		void	joinCommand(void);
+		void	execJoinCommand(void);
 		int		validArgsTopic(void);
-		void	topicCommand(void);
 		int		validArgsKick(void);
+		void	topicCommand(void);
+		void	execTopicCommand(void);
 		void	kickCommand(void);
+		void	execKickCommand(void);
 		int 	joinSingleChannel(int pass);
 		void	joinMultiChannels(int pass);
 
