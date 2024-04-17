@@ -1,9 +1,19 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/04/01 18:16:43 by khanhayf          #+#    #+#              #
+#    Updated: 2024/04/17 10:26:27 by iassafe          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
 
 NAME	= ircserv
 
-SRCS	= main.cpp Server.cpp Client.cpp authentication.cpp Channel.cpp \
-			invite.cpp mode.cpp bot.cpp Commands.cpp
+SRCS	= main.cpp Server.cpp Client.cpp authentication.cpp Channel.cpp invite.cpp mode.cpp bot.cpp Commands.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
 

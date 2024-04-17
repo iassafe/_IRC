@@ -1,6 +1,3 @@
-
-
-
 #ifndef SERVER_HPP
 #define SERVER_HPP
 #include <sys/types.h>
@@ -29,7 +26,7 @@ class Channel;
 //TODO : need canonical form for classes
 class	Server{
 	private:
-		int									serverFD;
+		int									serverFD; //M (name changed from serverID to severFD)
 		int									port;
 		static bool							signal;
 		std::string							password;
@@ -38,22 +35,23 @@ class	Server{
 		std::string 						args;
 		std::vector<struct pollfd>			fds;
 		// std::map<std::string, std::string>	map;
+		std::vector<std::string>			sayingsBox;//M
+		std::vector<Client>					clients;
+		std::vector<Channel>				channels; 
 
+		// join
 		std::vector<std::string> joinChannel;
 		std::vector<std::string> joinPassword;
 	public:
-		std::vector<std::string>			sayingsBox;
-		std::vector<Client>					clients;
-		std::vector<Channel>				channels;
 		Server();
-		~Server();//close users fds before quitting
+		~Server();//close users fds before quitting//M
 		//--Setters--//
 		void		setPort(int n);
 		void		setPassword(char *str);
 		//--Getters--//
 		int			getPort();
 		std::string	getPassword();
-		int			getServerFD();
+		int			getServerFD();//M
 		//----//
 		void		create_socket();
 		void		launch_server();
@@ -64,24 +62,27 @@ class	Server{
 		void		closeFD();
 		void		clearClient(int fd);
 
-		void		addChannel(Channel const& channel);
-		bool    	isInUseNickname(std::string nickname);
-		bool    	isInUseChName(std::string chName);
-		void		sendMsg(int clientFd, std::string msg);
-		void		handleCommands(int i);
-		bool		isRegistered(std::string nickname);
-		// bool		isMember(Client &c, Channel &ch);
-		Client		&findClient(std::string nn);
-		Channel		&findChannel(std::string chname);
+		void		addChannel(Channel const& channel);//M
+		bool    	isInUseNickname(std::string nickname);//M
+		bool    	isInUseChName(std::string chName);//M
+		void		sendMsg(int clientFd, std::string msg);//M
+		void		handleCommands(int i);//M
+		bool		isRegistered(std::string nickname);//M
+		Client		&findClient(std::string nn);//M
+		Channel		&findChannel(std::string chname);//M
 
-		void		clearClientslist();
-		void		clearChannelslist();
-		// void	channelsInvited2(Client & c);
+		void		clearClientslist();//M
+		void		clearChannelslist();//M
 
-		void	fillSayingsBox(std::string fileName);
+		void	fillSayingsBox(std::string fileName);//M
+        void    nickCommand(std::string &args, Client &c);//M
+        void    userCommand(std::string &args, Client &c);//M
+        void    passCommand(std::string &args, Client &c);//M
+        void	inviteCommand(std::string &args, Client &c);//M
+        void    modeCommand(std::string &args, Client &c);//M
+        void    botCommand(Client &c);//M
 
-
-		//
+		// ikrame
 		int		validArgsJoin(void);
 		void	joinCommand(void);
 		int		validArgsTopic(void);
@@ -93,15 +94,10 @@ class	Server{
 
 		void 	whithoutPassword(void);
 		void 	whithPassword(void);
+		//
 };
 
-void    tolowercase(std::string &str);
-bool	isValidNickName(std::string nickname);
-void    nickCommand(std::string &args, Client &c, Server &s);
-void    userCommand(std::string &args, Client &c, Server &s);
-void    passCommand(std::string &args, Client &c, Server &s);
-void	inviteCommand(std::string &args, Client &c, Server &s);
-void    modeCommand(std::string &args, Client &c, Server &s);
-void    botCommand(Client &c, Server &s);
+void    tolowercase(std::string &str);//M
+bool	isValidNickName(std::string nickname);//M
 
 #endif

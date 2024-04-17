@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   authentication.cpp                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/03/30 15:39:46 by khanhayf          #+#    #+#             */
+/*   Updated: 2024/04/16 16:22:44 by khanhayf         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "Server.hpp"
 
@@ -26,9 +37,9 @@ bool isValidNickName(std::string nickname){
     return true;
 }
 
-void    nickCommand(std::string &args, Client &c, Server &s){
+void    Server::nickCommand(std::string &args, Client &c){
     if (args.empty()){
-        s.sendMsg(c.getClientFD(), ERR_NONICKNAMEGIVEN(c.getNickname()));
+        sendMsg(c.getClientFD(), ERR_NONICKNAMEGIVEN(c.getNickname()));
         return ;
     }
     tolowercase(args); //Nicknames are generally case-insensitive
@@ -38,31 +49,31 @@ void    nickCommand(std::string &args, Client &c, Server &s){
     else
         param = args.substr(0, args.find_first_of(' '));
     if (!isValidNickName(param)){
-        s.sendMsg(c.getClientFD(), ERR_ERRONEUSNICKNAME(c.getNickname()));
+        sendMsg(c.getClientFD(), ERR_ERRONEUSNICKNAME(c.getNickname()));
         return;}
-    if (s.isInUseNickname(param)){// check this only if new client
+    if (isInUseNickname(param)){// check this only if new client
         if (c.getNickname() == param) //in case a client try to change his nn with the same nickname setted before
             return;
-    s.sendMsg(c.getClientFD(), ERR_NICKNAMEINUSE(c.getNickname()));
+    sendMsg(c.getClientFD(), ERR_NICKNAMEINUSE(c.getNickname()));
     return ;}
     c.setNickname(param); //in both case: choosing a nname for the first time or changing a nname 
     if (!c.isRegistered()) //he can change the nick name after registration 
-    c.registerClient(s);//client become registred in the server if the condition inside registerClient is true
+    c.registerClient(*this);//client become registred in the server if the condition inside registerClient is true
 }
 
-void    userCommand(std::string &args, Client &c, Server &s){
+void    Server::userCommand(std::string &args, Client &c){
     if (c.isRegistered()){
-        s.sendMsg(c.getClientFD(), ERR_ALREADYREGISTERED(c.getNickname()));
+        sendMsg(c.getClientFD(), ERR_ALREADYREGISTERED(c.getNickname()));
         return;}
     if (args[0] == ':'){//it's not standard practice to use colons before every parameter in IRC commands.//the colon is reserved specifically for the trailing(last) parameter.
-        s.sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
+        sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
         return;
     }
     std::istringstream iss(args);
     std::string un, hn, sn, rn;
     iss >> un >> hn >> sn;
     if (hn[0] == ':' || sn[0] == ':'){
-        s.sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
+        sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
         return ;
     }
     iss >> std::ws;
@@ -77,16 +88,16 @@ void    userCommand(std::string &args, Client &c, Server &s){
         c.setHostname(hn);
         c.setServername(sn);
         c.setRealname(rn);
-        c.registerClient(s);//client become registred in the server if the condition inside registerClient is true
+        c.registerClient(*this);//client become registred in the server if the condition inside registerClient is true
     }
     else
-        s.sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
+        sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
 }
 
-void    passCommand(std::string &args, Client &c, Server &s){
+void    Server::passCommand(std::string &args, Client &c){
     c.clearAuthentication();
     if (c.isRegistered()){
-        s.sendMsg(c.getClientFD(), ERR_ALREADYREGISTERED(c.getNickname()));
+        sendMsg(c.getClientFD(), ERR_ALREADYREGISTERED(c.getNickname()));
         return ;}
     if (!args.empty() && args[0]){
         std::string param;
@@ -94,15 +105,15 @@ void    passCommand(std::string &args, Client &c, Server &s){
             param = args.substr(1);
         else
             param = args.substr(0, args.find_first_of(' '));
-        if (param != s.getPassword()){
-            s.sendMsg(c.getClientFD(), ERR_PASSWDMISMATCH(c.getNickname()));
+        if (param != getPassword()){
+            sendMsg(c.getClientFD(), ERR_PASSWDMISMATCH(c.getNickname()));
             return;
         }
         else{
             c.setPasswordSended(true);  //leave a mark if pass cmd succeed the first time
-            c.registerClient(s);//client become registred in the server if the condition inside registerClient is true
+            c.registerClient(*this);//client become registred in the server if the condition inside registerClient is true
         }
     }
     else
-        s.sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
+        sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
 }

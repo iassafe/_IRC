@@ -1,5 +1,6 @@
 #include"Server.hpp"
 
+
 int countComma(std::string str){
 	int count = 0;
 	for(size_t i=0; i < str.length(); i++){
@@ -130,21 +131,6 @@ int Server::validArgsJoin(void){
 		else
 			return (2);
 	}
-	/*
-	std::cout << "#################--[" << args << "]\n";
-	size_t found = this->args.find_first_of(" \r\t");
-	size_t foundComma = this->args.find_first_of(",");
-	if (foundComma == std::string::npos){
-		if(!joinSingleChannel(found))
-			return (puts("-----------2222"),0);
-	}
-	else{
-		if(!joinMultiChannels(found))
-			return (0);
-	}
-	return (1);
-	*/
-
 }
 
 int Server::validArgsTopic(void){
@@ -208,3 +194,4 @@ void Server::whithPassword(void){
 	else
 		joinSingleChannel(1);
 }
+

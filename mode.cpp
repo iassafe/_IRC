@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mode.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/04 13:33:00 by khanhayf          #+#    #+#             */
+/*   Updated: 2024/04/16 15:14:28 by khanhayf         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "Server.hpp"
 
@@ -31,16 +42,15 @@
 //     }
 // }
 
-void    modeCommand(std::string &args, Client &c, Server &s){
-    Channel ch(c, "gogo", s);//for test
+void    Server::modeCommand(std::string &args, Client &c){
     if (args.empty() || !args[0]){
-        s.sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
+        sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
         return;}
     else if (args[0] == ':' && args[1] != '#'){
-        s.sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(args.substr(1), c.getNickname()));
+        sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(args.substr(1), c.getNickname()));
         return ;}
     else if (args[0] != '#' && args[0] != ':'){
-        s.sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(args.substr(0, args.find_first_of(" ")), c.getNickname()));
+        sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(args.substr(0, args.find_first_of(" ")), c.getNickname()));
         return ;}
     std::stringstream ss(args);
     std::string chan;
@@ -54,17 +64,15 @@ void    modeCommand(std::string &args, Client &c, Server &s){
         ss.clear();
         ss << args;
         ss >> chan;}
-        std::cout << chan << "|\n";
-        std::cout << s.channels[0].getName() << "|\n";
-    if (!s.isInUseChName(chan)){
-        s.sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(("#" + chan), c.getNickname()));
+    if (!isInUseChName(chan)){
+        sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(("#" + chan), c.getNickname()));
         return ;
     }
     if (ss.eof()) //there is no mode //mode #ch
         return ;
-    Channel &channel = s.findChannel(chan);
+    Channel &channel = findChannel(chan);
     if (!channel.isOperator(c)){
-        s.sendMsg(c.getClientFD(), ERR_NOTOP(c.getNickname(), ("#" + chan)));
+        sendMsg(c.getClientFD(), ERR_NOTOP(c.getNickname(), ("#" + chan)));
         return ;
     }
     std::string modestring, key, limit, user, list;
@@ -74,7 +82,7 @@ void    modeCommand(std::string &args, Client &c, Server &s){
     while (ss >> modestring){
     for (unsigned i = 0; i < modestring.size(); i++){
         if (modes.find(modestring[i]) == std::string::npos){
-            s.sendMsg(c.getClientFD(), ERR_UNKNOWNMODE(c.getNickname(), ("#" + chan), modestring[i]));
+            sendMsg(c.getClientFD(), ERR_UNKNOWNMODE(c.getNickname(), ("#" + chan), modestring[i]));
             return ;
         }
         else{
@@ -110,7 +118,7 @@ void    modeCommand(std::string &args, Client &c, Server &s){
                 }
             }
             else
-                s.sendMsg(c.getClientFD(), ERR_INVALIDMODEPARAM(c.getNickname(), ("#" + chan), 'k', "key"));
+                sendMsg(c.getClientFD(), ERR_INVALIDMODEPARAM(c.getNickname(), ("#" + chan), 'k', "key"));
         }
         else if (list[i] == 'l'){
             if (!limit.empty()){
@@ -127,7 +135,7 @@ void    modeCommand(std::string &args, Client &c, Server &s){
                 }
             }
             else
-                s.sendMsg(c.getClientFD(), ERR_INVALIDMODEPARAM(c.getNickname(), ("#" + chan), 'l', "limit"));
+                sendMsg(c.getClientFD(), ERR_INVALIDMODEPARAM(c.getNickname(), ("#" + chan), 'l', "limit"));
         }
         else if (list[i] == 'i'){
             if (sign == '+')
@@ -143,19 +151,19 @@ void    modeCommand(std::string &args, Client &c, Server &s){
         }
         else if (list[i] == 'o'){
             if (!user.empty()){
-                if (!s.isInUseNickname(user))
-                    s.sendMsg(c.getClientFD(), ERR_NOSUCHNICK(c.getNickname(), user));
-                if (channel.isMember(s.findClient(user))){
+                if (!isInUseNickname(user))
+                    sendMsg(c.getClientFD(), ERR_NOSUCHNICK(c.getNickname(), user));
+                if (channel.isMember(findClient(user))){
                     if (sign == '+')
-                        channel.addOperator(s.findClient(user)); //check if the nickname is in use and if its registered then add it in addoprator
+                        channel.addOperator(findClient(user)); //check if the nickname is in use and if its registered then add it in addoprator
                     else
-                        channel.addRegularUser(s.findClient(user)); //check if the nickname is in use and if its registered then add it in addoprator
+                        channel.addRegularUser(findClient(user)); //check if the nickname is in use and if its registered then add it in addoprator
                 }
                 else
-                    s.sendMsg(c.getClientFD(), ERR_USERNOTINCHANNEL(c.getNickname(), user, ("#" + chan)));
+                    sendMsg(c.getClientFD(), ERR_USERNOTINCHANNEL(c.getNickname(), user, ("#" + chan)));
             }
             else
-                s.sendMsg(c.getClientFD(), ERR_INVALIDMODEPARAM(c.getNickname(), ("#" + chan), 'o', "op"));
+                sendMsg(c.getClientFD(), ERR_INVALIDMODEPARAM(c.getNickname(), ("#" + chan), 'o', "op"));
         }
     }
 }
