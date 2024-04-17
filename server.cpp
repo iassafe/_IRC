@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/17 11:25:22 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/17 11:31:25 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,11 +252,11 @@ void	Server::handleCommands(int fd){//M
 	else if (this->command == "bot")
 		botCommand(clients[i]);
 	else if (this->command == "join")
-		joinCommand();
+		joinCommand(clients[i]);
 	else if (this->command == "topic")
-		topicCommand();
+		topicCommand(clients[i]);
 	else if (this->command == "kick")
-		kickCommand();
+		kickCommand(clients[i]);
 		
 	// std::cout << "----------------------from the server -------------------------------------\n";
     //     std::cout << "------after cmd------\n";

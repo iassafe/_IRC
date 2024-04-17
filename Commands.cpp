@@ -196,7 +196,7 @@ void Server::whithPassword(void){
 }
 
 
-void Server::joinCommand(void){
+void Server::joinCommand(Client &c){
 	int check = validArgsJoin();
 	if(check){
 		if (check == 2)
@@ -206,25 +206,25 @@ void Server::joinCommand(void){
 		execJoinCommand();
 	}
 	else{
-		if (send(this->connectionID, "Invalid args join\n", 18, 0) == -1)
+		if (send(c.getClientFD(), "Invalid args join\n", 18, 0) == -1)
 			throw (std::runtime_error("failed to send to client"));
 	}
 }
 
-void Server::topicCommand(void){
+void Server::topicCommand(Client &c){
 	if(validArgsTopic())
 			execTopicCommand();
 	else{
-		if (send(this->connectionID, "Invalid args topic\n", 19, 0) == -1)
+		if (send(c.getClientFD(), "Invalid args topic\n", 19, 0) == -1)
 			throw (std::runtime_error("failed to send to client"));
 	}
 }
 
-void Server::kickCommand(void){
+void Server::kickCommand(Client &c){
 	if(validArgsKick())
 			execKickCommand();
 	else{
-		if (send(this->connectionID, "Invalid args kick\n", 18, 0) == -1)
+		if (send(c.getClientFD(), "Invalid args kick\n", 18, 0) == -1)
 			throw (std::runtime_error("failed to send to client"));
 	}
 }
