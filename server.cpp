@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/17 11:31:25 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/17 16:25:59 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,16 @@ std::string	skip_spaces(std::string str){
 	return (str);
 }
 
+//
+static int validCommand(std::string &cmd){
+    if (cmd == "join" || cmd == "privmsg" || cmd == "topic" \
+        || cmd == "kick" || cmd == "mode" || cmd == "pass" || \
+        cmd == "user" || cmd == "invite")
+        return(1);
+    return(0);
+}
+//
+
 void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
 	char	buffer[1024];
 
@@ -187,7 +197,17 @@ void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
 				this->args = '\0';
 			}
 			new_buf = new_buf.substr(fond+1, new_buf.size());
-			handleCommands(fd);//M
+			to_lower(this->command);
+			unsigned int j = 0;
+			for (j = 0; j < this->clients.size(); j++){
+				if (clients[j].getClientFD() == fd){
+					break ;
+				}
+			}
+			if (validCommand(this->command))
+				handleCommands(fd);//M
+			else
+				sendMsg(fd, ERR_UNKNOWNCOMMAND(this->clients[j].getNickname(), this->command));
 			command.clear();//M
 			args.clear();//M
 
@@ -230,7 +250,7 @@ bool    Server::isInUseNickname(std::string nickname){
 }
 
 void	Server::handleCommands(int fd){//M
-	tolowercase(command);
+	// tolowercase(command);
 	unsigned int i = 0;
 	for (i = 0; i < clients.size(); i++){
 		if (clients[i].getClientFD() == fd){
