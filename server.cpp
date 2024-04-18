@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/17 17:46:42 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/18 16:07:22 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,7 @@ void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
 				while (commond[ind] == '\t' || commond[ind] == '\r' || commond[ind] == ' ')
 					ind++;
 				if (commond[ind] == '\n')
-					this->args = '\0';
+					this->args = "";
 				else
 					this->args = commond.substr(ind, fond);
 				this->command = commond.substr(0, sp);

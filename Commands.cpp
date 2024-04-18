@@ -1,6 +1,5 @@
 #include"Server.hpp"
 
-
 int countComma(std::string str){
 	int count = 0;
 	for(size_t i=0; i < str.length(); i++){
@@ -105,9 +104,7 @@ void Server::joinMultiChannels(int pass){
 
 int Server::validArgsJoin(void){
 	this->args = skipSpaces(this->args);
-	if (this->args == "")
-		return (0);
-	std::cout << "-------------------"<< this->args << "-------------------" << std::endl;
+	// std::cout << "-------------------"<< this->args.substr(this->args.find_first_of(" ")) << "-------------------" << std::endl;
 	size_t found = this->args.find_first_of(" ");
 	if (found == std::string::npos)       
 		return (2);
@@ -134,8 +131,7 @@ int Server::validArgsJoin(void){
 }
 
 int Server::validArgsTopic(void){
-	if (!this->args[0])
-		return (0);
+	
 	size_t found = this->args.find_first_of(" \t\r\n");
 	if (found == std::string::npos || this->args[found] == '\n')
 		return (0);
@@ -157,8 +153,6 @@ int Server::validArgsTopic(void){
 }
 
 int Server::validArgsKick(void){
-	if (!this->args[0])
-		return (0);
 	size_t found = this->args.find_first_of(" \t\r\n");
 	if (found == std::string::npos || this->args[found] == '\n')
 		return (0);
@@ -197,35 +191,44 @@ void Server::whithPassword(void){
 
 
 void Server::joinCommand(Client &c){
-	int check = validArgsJoin();
-	if(check){
-		if (check == 2)
-			whithoutPassword();
-		else if (check == 3)
-			whithPassword();
-		execJoinCommand();
-	}
+	std::cout << "-------------------"<< this->args << "-------------------" << std::endl;
+	this->args = skipSpaces(this->args);
+	if (this->args == "")
+		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
 	else{
-		if (send(c.getClientFD(), "Invalid args join\n", 18, 0) == -1)
-			throw (std::runtime_error("failed to send to client"));
+		int check = validArgsJoin();
+		if(check){
+			if (check == 2)
+				whithoutPassword();
+			else if (check == 3)
+				whithPassword();
+			execJoinCommand();
+		}
+		else
+			sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(this->args.substr(this->args.find_first_of(" \0\n")), c.getNickname()));
 	}
 }
 
 void Server::topicCommand(Client &c){
-	if(validArgsTopic())
-			execTopicCommand();
+	if (this->args == "")
+		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
 	else{
-		if (send(c.getClientFD(), "Invalid args topic\n", 19, 0) == -1)
-			throw (std::runtime_error("failed to send to client"));
+		if(validArgsTopic())
+				execTopicCommand();
+		else
+			sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(this->args.substr(this->args.find_first_of(" \0\n")), c.getNickname()));
+
 	}
 }
 
 void Server::kickCommand(Client &c){
-	if(validArgsKick())
-			execKickCommand();
+	if (this->args == "")
+		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
 	else{
-		if (send(c.getClientFD(), "Invalid args kick\n", 18, 0) == -1)
-			throw (std::runtime_error("failed to send to client"));
+		if(validArgsKick())
+				execKickCommand();
+		else
+			sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(this->args.substr(this->args.find_first_of(" \0\n")), c.getNickname()));
 	}
 }
 
