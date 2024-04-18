@@ -131,14 +131,26 @@ int Server::validArgsJoin(void){
 }
 
 int Server::validArgsTopic(void){
-	
+	this->args = skipSpaces(this->args);
+	int count_args = 1;
+	for(size_t i =0; i < this->args.length(); ++i){
+		if (this->args[i] == ' '){
+			count_args++;
+			for(; this->args[i] == ' '; ++i){}
+		}
+	}
+	std::cout << "couuuuuuunt_args:--->"<< count_args << std::endl;
+	if (count_args < 2)
+		return(0);
 	size_t found = this->args.find_first_of(" \t\r\n");
-	if (found == std::string::npos || this->args[found] == '\n')
-		return (0);
+	// if (found == std::string::npos || this->args[found] == '\n')
+	// 	return (0);
 	std::string temp_args = this->args; 
 	while(temp_args[found] == ' '){
 		found++;
 	};
+	// if (temp_args[found] == '\0')
+	// 	return(0);
 	temp_args = temp_args.substr(found, temp_args.length());
 	size_t found_sp = temp_args.find_first_of(" ");
 	if (found_sp != std::string::npos){
@@ -153,9 +165,20 @@ int Server::validArgsTopic(void){
 }
 
 int Server::validArgsKick(void){
+	this->args = skipSpaces(this->args);
+	int count_args = 1;
+	for(size_t i =0; i < this->args.length(); ++i){
+		if (this->args[i] == ' '){
+			count_args++;
+			for(; this->args[i] == ' '; ++i){}
+		}
+	}
+	std::cout << "couuuuuuunt_args:--->"<< count_args << std::endl;
+	if (count_args < 2)
+		return(0);
 	size_t found = this->args.find_first_of(" \t\r\n");
-	if (found == std::string::npos || this->args[found] == '\n')
-		return (0);
+	// if (found == std::string::npos || this->args[found] == '\n')
+	// 	return (0);
 	std::string temp_args = this->args;
 	while(found < temp_args.length() && temp_args[found] == ' '){
 		found++;
@@ -167,8 +190,8 @@ int Server::validArgsKick(void){
 		size_t i;
 		for(i=0; i < temp_args.length() && temp_args[i] == ' '; ++i){
 		};
-		if (temp_args[i] != '\n')
-			return (0);
+		// if (temp_args[i] != '\n')
+		// 	return (0);
 	}
 	return (1);
 }
@@ -210,25 +233,27 @@ void Server::joinCommand(Client &c){
 }
 
 void Server::topicCommand(Client &c){
+	this->args = skipSpaces(this->args);
 	if (this->args == "")
 		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
 	else{
 		if(validArgsTopic())
 				execTopicCommand();
 		else
-			sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(this->args.substr(this->args.find_first_of(" \0\n")), c.getNickname()));
+			sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
 
 	}
 }
 
 void Server::kickCommand(Client &c){
+	this->args = skipSpaces(this->args);
 	if (this->args == "")
 		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
 	else{
 		if(validArgsKick())
 				execKickCommand();
 		else
-			sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(this->args.substr(this->args.find_first_of(" \0\n")), c.getNickname()));
+			sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
 	}
 }
 
