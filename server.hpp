@@ -41,6 +41,7 @@ class	Server{
 
 
 		// join
+		int existPassword;
 		std::vector<std::string> joinChannel;
 		std::vector<std::string> joinPassword;
 		std::vector<std::pair<std::string, std::string> > channelPass;
@@ -94,11 +95,13 @@ class	Server{
 		void	execTopicCommand(void);
 		void	kickCommand(Client &c);
 		void	execKickCommand(void);
-		int 	joinSingleChannel(int pass);
-		void	joinMultiChannels(int pass);
+		int 	joinSingleChannel(void);
+		void	joinMultiChannels(void);
 
 		void 	whithoutPassword(void);
 		void 	whithPassword(void);
+
+		// void	sendingClient(Client &c);
 		//
 };
 
