@@ -48,8 +48,12 @@ void Server::execJoinCommand(Client &c){
 				if(!findingChannel.hasAKey())
 					findingChannel.addRegularUser(c);
 				else{
-					if (findingChannel.getKey() == this->channelPass[i].second)
-						findingChannel.addRegularUser(c);
+					if (findingChannel.getKey() == this->channelPass[i].second){
+						if (findingChannel.isMember(c)){
+							findingChannel.addRegularUser(c);
+							
+						}
+					}
 					else
 						std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@pass ghallaat\n";
 				}
