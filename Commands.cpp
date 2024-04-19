@@ -11,27 +11,32 @@ int countComma(std::string str){
 
 void Server::execJoinCommand(Client &c){
 	this->channelPass.resize(this->joinChannel.size());
-	// std::cout << "^^^^^^^^^^^^^^^^^^^^size:------>"<<this->channelPass.size() << "---\n";
 	for(size_t i = 0; i < this->joinChannel.size(); ++i){
 		if (this->joinChannel[i][0] != '#')
 			sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(this->joinChannel[i], c.getNickname()));
-		this->channelPass[i].first += this->joinChannel[i];
+		this->channelPass[i].first = this->joinChannel[i];
 		if (i < this->joinPassword.size()){
+
 			size_t found = this->joinPassword[i].find_first_of(" ");
 			if (i == (this->joinPassword.size() - 1) && found != std::string::npos){
 				this->channelPass[i].second = this->joinPassword[i].substr(0, found);
 			}
 			else
-				this->channelPass[i].second += this->joinPassword[i];
+				this->channelPass[i].second = this->joinPassword[i];
     	}
 		else
-			this->channelPass[i].second += "";
+			this->channelPass[i].second = "";
 	}
 	for(size_t i=0; i < this->channelPass.size(); ++i){
 		std::cout << "channel[" <<this->channelPass[i].first << "] pass[" << this->channelPass[i].second << "]\n";
 	}
-	this->channelPass.clear();
+	for (size_t i = 0; i < this->channelPass.size(); ++i){
+    	this->channelPass[i].first.clear();
+    	this->channelPass[i].second.clear();
+	}
+	this->channelPass.resize(this->joinChannel.size());
 	this->joinChannel.clear();
+	this->joinPassword.clear();
 }
 
 void Server::execKickCommand(void){
