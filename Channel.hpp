@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:17:26 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/19 17:09:55 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/19 18:10:28 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ class Channel{
         // std::vector<Client> invited; //list of invited client to this channel
     
     public:
-        Channel(Client &creator, std::string chname, Server &s);
+        Channel(Client &creator, std::string chname, std::string key, Server &s);
         ~Channel();
         
         //setters

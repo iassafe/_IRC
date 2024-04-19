@@ -6,14 +6,15 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:17:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/19 17:14:23 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/19 18:13:24 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
-
-Channel::Channel(Client &creator, std::string chname, Server &s)
-:name(chname), topicLock(false), modeLock(false), hasLimit(false), has_Key(false){
+ // ikrame 
+ // change in this and hasAkey''''''''''''
+Channel::Channel(Client &creator, std::string chname, std::string key,Server &s)
+:name(chname), key(key), topicLock(false), modeLock(false), hasLimit(false), has_Key(false){
     operators.push_back(creator); //the channel creator is considered an operator by default
     s.addChannel(*this);
 }

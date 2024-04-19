@@ -37,13 +37,14 @@ void Server::execJoinCommand(Client &c){
         		}
     		}
 			if (!existsChannel){
-				Channel newChannel(c, this->channelPass[i].first, *this);
+				Channel newChannel(c, this->channelPass[i].first, this->channelPass[i].second,*this);
 				this->channels.push_back(newChannel);
 				newChannel.addOperator(c);
 				std::cout << "add channel\n";
 			}
 			else{
 				Channel findingChannel = findChannel(this->channelPass[i].first);
+				std::cout << "naaame chaneeeeeeel; "<< findingChannel.getName() << " -key: " << findingChannel.getKey() << std::endl;
 				if(!findingChannel.hasAKey())
 					findingChannel.addRegularUser(c);
 				else{
