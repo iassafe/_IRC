@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:17:26 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/19 16:21:21 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/19 17:09:55 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ class Channel{
         bool topicLock; // true if only chanop can change the channel's topic
         bool modeLock; // true if only chanop can change the channel's mode
         bool hasLimit; // to be setted with true using mode +l or mode -l o let the number of members unlimited
-        bool hasKey;
+        bool has_Key;
         //containers
         std::vector<Client> regularUsers; //the list of non-operator users in the channel
         std::vector<Client> operators; // the list of clients who have operator status in the channel

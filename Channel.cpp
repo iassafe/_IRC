@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:17:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/16 16:40:48 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/04/19 17:14:23 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
 
 Channel::Channel(Client &creator, std::string chname, Server &s)
-:name(chname), topicLock(false), modeLock(false), hasLimit(false), hasKey(false){
+:name(chname), topicLock(false), modeLock(false), hasLimit(false), has_Key(false){
     operators.push_back(creator); //the channel creator is considered an operator by default
     s.addChannel(*this);
 }
@@ -47,7 +47,7 @@ void Channel::setLimit(unsigned int l){
 }
 
 void Channel::setHasKey(bool b){
-    hasKey = b;
+    has_Key = b;
 }
 
 //getters
@@ -77,7 +77,9 @@ bool Channel::hasALimit(){
     return hasLimit;
 }
 bool Channel::hasAKey(){
-    return hasKey;
+    if (this->key == "")
+        return(0);
+    return(1);
 }
 
 void Channel::removeRegularUser(Client & c){
