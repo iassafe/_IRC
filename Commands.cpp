@@ -9,9 +9,29 @@ int countComma(std::string str){
 	return (count);
 }
 
-void Server::execJoinCommand(void){
-	if (send(this->connectionID, "Valid Command\n", 14, 0) == -1)
-		throw (std::runtime_error("failed to send to client"));
+void Server::execJoinCommand(Client &c){
+	this->channelPass.resize(this->joinChannel.size());
+	// std::cout << "^^^^^^^^^^^^^^^^^^^^size:------>"<<this->channelPass.size() << "---\n";
+	for(size_t i = 0; i < this->joinChannel.size(); ++i){
+		if (this->joinChannel[i][0] != '#')
+			sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(this->joinChannel[i], c.getNickname()));
+		this->channelPass[i].first += this->joinChannel[i];
+		if (i < this->joinPassword.size()){
+			size_t found = this->joinPassword[i].find_first_of(" ");
+			if (i == (this->joinPassword.size() - 1) && found != std::string::npos){
+				this->channelPass[i].second = this->joinPassword[i].substr(0, found);
+			}
+			else
+				this->channelPass[i].second += this->joinPassword[i];
+    	}
+		else
+			this->channelPass[i].second += "";
+	}
+	for(size_t i=0; i < this->channelPass.size(); ++i){
+		std::cout << "channel[" <<this->channelPass[i].first << "] pass[" << this->channelPass[i].second << "]\n";
+	}
+	this->channelPass.clear();
+	this->joinChannel.clear();
 }
 
 void Server::execKickCommand(void){
@@ -92,6 +112,7 @@ void Server::joinMultiChannels(int pass){
 			int count_ps = countComma(passWord);
 			passWord = skipSpaces(passWord);
 			size_t found_commaps = passWord.find_first_of(",");
+			this->joinPassword.push_back(passWord.substr(0, found_commaps));
 			passWord = passWord.substr(found_commaps + 1, passWord.length());
 			for(int i = 0; i < count_ps; ++i){
 				found_commaps = passWord.find_first_of(",");
@@ -104,9 +125,8 @@ void Server::joinMultiChannels(int pass){
 
 int Server::validArgsJoin(void){
 	this->args = skipSpaces(this->args);
-	// std::cout << "-------------------"<< this->args.substr(this->args.find_first_of(" ")) << "-------------------" << std::endl;
 	size_t found = this->args.find_first_of(" ");
-	if (found == std::string::npos)       
+	if (found == std::string::npos) 
 		return (2);
 	else{
 		while (this->args[found] == ' '){
@@ -190,8 +210,6 @@ int Server::validArgsKick(void){
 		size_t i;
 		for(i=0; i < temp_args.length() && temp_args[i] == ' '; ++i){
 		};
-		// if (temp_args[i] != '\n')
-		// 	return (0);
 	}
 	return (1);
 }
@@ -225,7 +243,7 @@ void Server::joinCommand(Client &c){
 				whithoutPassword();
 			else if (check == 3)
 				whithPassword();
-			execJoinCommand();
+			execJoinCommand(c);
 		}
 		else
 			sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(this->args.substr(this->args.find_first_of(" \0\n")), c.getNickname()));
@@ -241,7 +259,6 @@ void Server::topicCommand(Client &c){
 				execTopicCommand();
 		else
 			sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
-
 	}
 }
 

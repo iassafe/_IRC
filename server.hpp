@@ -37,11 +37,13 @@ class	Server{
 		// std::map<std::string, std::string>	map;
 		std::vector<std::string>			sayingsBox;//M
 		std::vector<Client>					clients;
-		std::vector<Channel>				channels; 
+		std::vector<Channel>				channels;
+
 
 		// join
 		std::vector<std::string> joinChannel;
 		std::vector<std::string> joinPassword;
+		std::vector<std::pair<std::string, std::string> > channelPass;
 	public:
 		Server();
 		~Server();//close users fds before quitting//M
@@ -85,7 +87,7 @@ class	Server{
 		// ikrame
 		int		validArgsJoin(void);
 		void	joinCommand(Client &c);
-		void	execJoinCommand(void);
+		void	execJoinCommand(Client &c);
 		int		validArgsTopic(void);
 		int		validArgsKick(void);
 		void	topicCommand(Client &c);
