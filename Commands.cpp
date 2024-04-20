@@ -37,7 +37,7 @@ void Server::execJoinCommand(Client &c){
         		}
     		}
 			if (!existsChannel){
-				Channel newChannel(c, this->channelPass[i].first, this->channelPass[i].second,*this);
+				Channel newChannel(c, this->channelPass[i].first, *this);
 				this->channels.push_back(newChannel);
 				newChannel.addOperator(c);
 				std::cout << "add channel\n";
@@ -45,13 +45,17 @@ void Server::execJoinCommand(Client &c){
 			else{
 				Channel findingChannel = findChannel(this->channelPass[i].first);
 				std::cout << "naaame chaneeeeeeel; "<< findingChannel.getName() << " -key: " << findingChannel.getKey() << std::endl;
-				if(!findingChannel.hasAKey())
-					findingChannel.addRegularUser(c);
+				if(!findingChannel.hasAKey()){
+					if (!findingChannel.isMember(c)){
+						findingChannel.addRegularUser(c);
+						std::cout << "client join channel\n";
+					}
+				}
 				else{
 					if (findingChannel.getKey() == this->channelPass[i].second){
-						if (findingChannel.isMember(c)){
+						if (!findingChannel.isMember(c)){
 							findingChannel.addRegularUser(c);
-							
+							std::cout << "client join channel\n";
 						}
 					}
 					else

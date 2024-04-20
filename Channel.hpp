@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Channel.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/01 18:17:26 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/19 18:10:28 by iassafe          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
@@ -34,14 +22,14 @@ class Channel{
         bool topicLock; // true if only chanop can change the channel's topic
         bool modeLock; // true if only chanop can change the channel's mode
         bool hasLimit; // to be setted with true using mode +l or mode -l o let the number of members unlimited
-        bool has_Key;
+        bool hasKey;
         //containers
         std::vector<Client> regularUsers; //the list of non-operator users in the channel
         std::vector<Client> operators; // the list of clients who have operator status in the channel
         // std::vector<Client> invited; //list of invited client to this channel
     
     public:
-        Channel(Client &creator, std::string chname, std::string key, Server &s);
+        Channel(Client &creator, std::string chname, Server &s);
         ~Channel();
         
         //setters
