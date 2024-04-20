@@ -44,7 +44,7 @@ void Server::execJoinCommand(Client &c){
 				sendMsg(c.getClientFD(), RPL_ENDOFNAMES(c.getHostname(), c.getNickname(), newChannel.getName()));
 			}
 			else{
-				Channel findingChannel = findChannel(this->channelPass[i].first);
+				Channel &findingChannel = findChannel(this->channelPass[i].first);
 				if(!findingChannel.hasAKey()){
 					if (!findingChannel.isMember(c)){
 						findingChannel.addRegularUser(c);
@@ -67,7 +67,6 @@ void Server::execJoinCommand(Client &c){
 					else
 						sendMsg(c.getClientFD(), ERR_BADCHANNELKEY(c.getNickname(), findingChannel.getName()));
 				}
-
 			}
 		}
 	}

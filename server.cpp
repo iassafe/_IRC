@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/20 12:06:34 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/20 15:45:58 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -344,10 +344,10 @@ Channel		&Server::findChannel(std::string chname){//M
 // }
 
 void	Server::clearClientslist(){//M
-	channels.clear();
+	clients.clear();
 }
 void	Server::clearChannelslist(){//M
-	clients.clear();
+	channels.clear();
 }
 
 void	Server::fillSayingsBox(std::string fileName){//M

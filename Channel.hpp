@@ -71,6 +71,5 @@ class Channel{
 
         ///////ik
         void sendMsg2Members(Server &s, Client &c);
-
 };
 #endif

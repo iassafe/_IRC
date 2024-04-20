@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:17:06 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/20 11:17:27 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/20 14:47:36 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 Client::Client(){
     PasswordSended = registered = false;
-    clientFD = -1;
+    // clientFD = -1;
     // std::cout << "++++++++was in constructor\n+++++++\n";
 }
 Client::~Client(){
