@@ -116,11 +116,11 @@ void Server::joinMultiChannels(void){
 		}
 }
 
-int Server::validArgsJoin(void){
+int Server::argsJoin(void){
 	this->args = skipSpaces(this->args);
 	size_t found = this->args.find_first_of(" ");
 	if (found == std::string::npos) 
-		return (2);
+		return (0);
 	else{
 		while (this->args[found] == ' ' || this->args[found] == '\r' || this->args[found] == '\t'){
 			found++;
@@ -134,10 +134,10 @@ int Server::validArgsJoin(void){
 					foundSpace++;
 				}
 			}
-			return (3);
+			return (1);
 		}
 		else
-			return (2);
+			return (0);
 	}
 }
 
@@ -156,25 +156,4 @@ void Server::whithPassword(void){
 		joinMultiChannels();
 	else
 		joinSingleChannel();
-}
-
-void Server::joinCommand(Client &c){
-	this->existPassword = 0;
-	this->args = skipSpaces(this->args);
-	if (this->args == "")
-		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
-	else{
-		int check = validArgsJoin();
-		if(check){
-			if (check == 2)
-				whithoutPassword();
-			else if (check == 3){
-				this->existPassword = 1;
-				whithPassword();
-			}
-			execJoinCommand(c);
-		}
-		else
-			sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(this->args.substr(this->args.find_first_of(" \0\n")), c.getNickname()));
-	}
 }

@@ -86,7 +86,7 @@ class	Server{
         void    botCommand(Client &c);//M
 
 		// ikrame
-		int		validArgsJoin(void);
+		int		argsJoin(void);
 		void	joinCommand(Client &c);
 		void	execJoinCommand(Client &c);
 		int		validArgsTopic(void);

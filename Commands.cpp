@@ -132,3 +132,19 @@ void Server::kickCommand(Client &c){
 	}
 }
 
+void Server::joinCommand(Client &c){
+	this->existPassword = 0;
+	this->args = skipSpaces(this->args);
+	if (this->args == "")
+		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
+	else{
+		int check = argsJoin();
+		if (!check)
+			whithoutPassword();
+		else if (check){
+			this->existPassword = 1;
+			whithPassword();
+		}
+		execJoinCommand(c);
+	}
+}
