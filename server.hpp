@@ -100,12 +100,17 @@ class	Server{
 
 		void 	whithoutPassword(void);
 		void 	whithPassword(void);
+		void	createChannel(Client &c, int i);
+		void	addChannel(Client &c, int i);
 
-		// void	sendingClient(Client &c);
-		//
 };
 
 void    tolowercase(std::string &str);//M
 bool	isValidNickName(std::string nickname);//M
+
+
+///////
+std::string	skipSpaces(std::string str);
+int countComma(std::string str);
 
 #endif
