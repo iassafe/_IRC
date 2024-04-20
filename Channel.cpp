@@ -3,6 +3,7 @@
 Channel::Channel(Client &creator, std::string chname, Server &s)
 :name(chname), topicLock(false), modeLock(false), hasLimit(false), hasKey(false){
     operators.push_back(creator); //the channel creator is considered an operator by default
+    this->mode = "";//////ik
     s.addChannel(*this);
 }
 

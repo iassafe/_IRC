@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/20 15:45:58 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/20 18:23:24 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,24 +259,33 @@ void	Server::handleCommands(int fd){//M
 	}
 	if (i == clients.size()) //this is not part of the implementation just in case this happens
 		std::cout << "Client no found in container\n";
-	if (this->command == "user")
-		userCommand(args, this->clients[i]);
-	else if (this->command == "nick")
-		nickCommand(args, clients[i]);
-	else if (this->command == "pass")
-		passCommand(args, clients[i]);
-	else if (this->command == "invite")
-		inviteCommand(args, clients[i]);
-	else if (this->command == "mode")
-		modeCommand(args, clients[i]);
-	else if (this->command == "bot")
-		botCommand(clients[i]);
-	else if (this->command == "join")
-		joinCommand(clients[i]);
-	else if (this->command == "topic")
-		topicCommand(clients[i]);
-	else if (this->command == "kick")
-		kickCommand(clients[i]);
+	if (this->command == "user" || this->command == "nick" || this->command == "pass"){
+		if (this->command == "user")
+			userCommand(args, this->clients[i]);
+		else if (this->command == "nick")
+			nickCommand(args, clients[i]);
+		else if (this->command == "pass")
+			passCommand(args, clients[i]);
+	}
+	else{
+		if (!clients[i].isRegistered()){
+        	sendMsg(clients[i].getClientFD(), ERR_NOTREGISTERED(clients[i].getNickname()));
+        	return ;
+		}
+		if (this->command == "invite")
+			inviteCommand(args, clients[i]);
+		else if (this->command == "mode")
+			modeCommand(args, clients[i]);
+		else if (this->command == "bot")
+			botCommand(clients[i]);
+		else if (this->command == "join")
+			joinCommand(clients[i]);
+		else if (this->command == "topic")
+			topicCommand(clients[i]);
+		else if (this->command == "kick")
+			kickCommand(clients[i]);
+	} 
+		
 		
 	// std::cout << "----------------------from the server -------------------------------------\n";
     //     std::cout << "------after cmd------\n";

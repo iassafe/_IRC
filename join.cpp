@@ -11,7 +11,7 @@ void Server::createChannel(Client &c, int i){
 void Server::addChannel(Client &c, int i){
 	Channel &findingChannel = findChannel(this->channelPass[i].first);
 	if(!findingChannel.hasAKey()){
-		if (!findingChannel.isMember(c)){
+		if (!findingChannel.isMember(c) && findingChannel.getMode() != "invite-only"){
 			findingChannel.addRegularUser(c);
 			sendMsg(c.getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), findingChannel.getName(), c.getClientIP()));
 			sendMsg(c.getClientFD(), RPL_NAMREPLY(c.getNickname(), findingChannel.getName(), c.getNickname()));
@@ -21,7 +21,7 @@ void Server::addChannel(Client &c, int i){
 	}
 	else{
 		if (findingChannel.getKey() == this->channelPass[i].second){
-			if (!findingChannel.isMember(c)){
+			if (!findingChannel.isMember(c) && findingChannel.getMode() != "invite-only"){
 				findingChannel.addRegularUser(c);
 				sendMsg(c.getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), findingChannel.getName(), c.getClientIP()));
 				sendMsg(c.getClientFD(), RPL_NAMREPLY(c.getNickname(), findingChannel.getName(), c.getNickname()));
