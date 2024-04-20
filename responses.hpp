@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   responses.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
+/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 14:03:28 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/20 14:01:14 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/20 19:49:29 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #define RPL_WELCOME(nick, user) ":ircserv 001 " + nick + " :Welcome to the ft_irc IRC network " + nick + "!~" + user + "@127.0.0.1\r\n"
 #define ERR_ALREADYREGISTERED(nick) ":ircserv 462 " + nick + " :You may not reregister\r\n"
 #define ERR_PASSWDMISMATCH(nick) ":ircserv 464 " + nick + " :Password incorrect!\r\n"
-#define ERR_NEEDMOREPARAMS(nick) ":ircserv 461 " + nick + " :Not enough parameters!\r\n"
+#define ERR_NEEDMOREPARAMS(nick, cmd) ":ircserv 461 " + nick + " " + cmd + " :Not enough parameters!\r\n"
 #define ERR_NICKNAMEINUSE(nick) ":ircserv 433 " + nick + " :Nickname is already in use!\r\n"
 #define ERR_NONICKNAMEGIVEN(nick) ":ircserv 431 " + nick + " :No nickname given!\r\n"
 #define ERR_ERRONEUSNICKNAME(nick) ":ircserv 432 " + nick + " :Erroneus nickname!\r\n"
@@ -27,7 +27,7 @@
 #define ERR_NOSUCHCHANNEL(channel, nick) ":ircserv 403 " + nick + " " + channel + " :No such channel\r\n"
 #define ERR_NOSUCHNICK(nick, argument) ":ircserv 401 " + nick + " " + argument + " :No such nick\r\n" 
 #define ERR_NOTONCHANNEL(nick, channel) ":ircserv 442 " + channel + " " + ":You're not on that channel\r\n"
-#define ERR_NOTOP(nick, channel) ":ircserv 482 " + nick + channel + " " + ":You're not a channel operator\r\n"
+#define ERR_NOTOP(nick, channel, mode) ":ircserv 482 " + nick + " " + channel + " " + ":You must have channel halfop access or above to set channel mode " + mode + "\r\n"
 #define ERR_USERONCHANNEL(channel, guest, nick) ":ircserv 443 " + nick + " " + guest + " " + channel + "  :is already on channel\r\n"
 #define RPL_INVITE(nick, username, clienthostname, invited, channel) ":" + nick + "!~" + username + "@" + clienthostname + " INVITE " + invited + " :" + channel + "\r\n"
 #define RPL_ENDOFINVITE(nick) ":ircserv 337 " + nick + " :END of INVITE list\r\n"

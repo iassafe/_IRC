@@ -1,7 +1,7 @@
 #include "Channel.hpp"
 
 Channel::Channel(Client &creator, std::string chname, Server &s)
-:name(chname), topicLock(false), modeLock(false), hasLimit(false), hasKey(false){
+:name(chname), topic(chname), topicLock(false), hasLimit(false), hasKey(false){
     operators.push_back(creator); //the channel creator is considered an operator by default
     this->mode = "";//////ik
     s.addChannel(*this);
@@ -21,9 +21,9 @@ void Channel::setTopic(std::string newTopic){
 void Channel::setKey(std::string k){
     key = k;
 }
-void Channel::setModeLock(bool b){
-    modeLock = b;
-}
+// void Channel::setModeLock(bool b){
+//     modeLock = b;
+// }
 void Channel::setTopicLock(bool b){
     topicLock = b;
 }
@@ -55,9 +55,9 @@ std::string Channel::getKey() const{
 int Channel::getlimit() const{
     return limit;
 }
-bool Channel::isModelocked() const{
-    return modeLock;
-}
+// bool Channel::isModelocked() const{
+//     return modeLock;
+// }
 bool Channel::isTopiclocked() const{
     return topicLock;
 }

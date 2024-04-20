@@ -111,24 +111,24 @@ int Server::validArgsKick(void){
 void Server::topicCommand(Client &c){
 	this->args = skipSpaces(this->args);
 	if (this->args == "")
-		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
+		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), "TOPIC"));
 	else{
 		if(validArgsTopic())
 				execTopicCommand();
 		else
-			sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
+			sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), "TOPIC"));
 	}
 }
 
 void Server::kickCommand(Client &c){
 	this->args = skipSpaces(this->args);
 	if (this->args == "")
-		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
+		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), "KICK"));
 	else{
 		if(validArgsKick())
 				execKickCommand();
 		else
-			sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
+			sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), "KICK"));
 	}
 }
 
@@ -136,7 +136,7 @@ void Server::joinCommand(Client &c){
 	this->existPassword = 0;
 	this->args = skipSpaces(this->args);
 	if (this->args == "")
-		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname()));
+		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), "JOIN"));
 	else{
 		int check = argsJoin();
 		if (!check)

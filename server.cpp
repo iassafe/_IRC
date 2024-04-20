@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/20 18:23:24 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/20 20:31:18 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,41 +249,45 @@ bool    Server::isInUseNickname(std::string nickname){
     return false;
 }
 
-void	Server::handleCommands(int fd){//M
-	// tolowercase(command);
+void	Server::handleCommands(int fd){
 	unsigned int i = 0;
-	for (i = 0; i < clients.size(); i++){
-		if (clients[i].getClientFD() == fd){
+	for (i = 0; i < this->clients.size(); i++){
+		if (this->clients[i].getClientFD() == fd){
 			break ;
 		}	
 	}
-	if (i == clients.size()) //this is not part of the implementation just in case this happens
+	if (i == this->clients.size()) //this is not part of the implementation just in case this happens
 		std::cout << "Client no found in container\n";
+	this->args = skipSpaces(this->args);
+	if(this->args == ""){
+		sendMsg(this->clients[i].getClientFD(), ERR_NEEDMOREPARAMS(this->clients[i].getNickname(), this->command));
+		return ;
+	}
 	if (this->command == "user" || this->command == "nick" || this->command == "pass"){
 		if (this->command == "user")
 			userCommand(args, this->clients[i]);
 		else if (this->command == "nick")
-			nickCommand(args, clients[i]);
+			nickCommand(args, this->clients[i]);
 		else if (this->command == "pass")
-			passCommand(args, clients[i]);
+			passCommand(args, this->clients[i]);
 	}
 	else{
-		if (!clients[i].isRegistered()){
-        	sendMsg(clients[i].getClientFD(), ERR_NOTREGISTERED(clients[i].getNickname()));
+		if (!this->clients[i].isRegistered()){
+        	sendMsg(this->clients[i].getClientFD(), ERR_NOTREGISTERED(this->clients[i].getNickname()));
         	return ;
 		}
 		if (this->command == "invite")
-			inviteCommand(args, clients[i]);
+			inviteCommand(args, this->clients[i]);
 		else if (this->command == "mode")
-			modeCommand(args, clients[i]);
+			modeCommand(args, this->clients[i]);
 		else if (this->command == "bot")
-			botCommand(clients[i]);
+			botCommand(this->clients[i]);
 		else if (this->command == "join")
-			joinCommand(clients[i]);
+			joinCommand(this->clients[i]);
 		else if (this->command == "topic")
-			topicCommand(clients[i]);
+			topicCommand(this->clients[i]);
 		else if (this->command == "kick")
-			kickCommand(clients[i]);
+			kickCommand(this->clients[i]);
 	} 
 		
 		
