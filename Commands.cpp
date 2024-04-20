@@ -38,28 +38,34 @@ void Server::execJoinCommand(Client &c){
     		}
 			if (!existsChannel){
 				Channel newChannel(c, this->channelPass[i].first, *this);
-				this->channels.push_back(newChannel);
 				newChannel.addOperator(c);
-				std::cout << "add channel\n";
+				sendMsg(c.getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), newChannel.getName(), c.getClientIP()));
+				sendMsg(c.getClientFD(), RPL_NAMREPLY(c.getNickname(), newChannel.getName(),c.getNickname()));
+				sendMsg(c.getClientFD(), RPL_ENDOFNAMES(c.getHostname(), c.getNickname(), newChannel.getName()));
 			}
 			else{
 				Channel findingChannel = findChannel(this->channelPass[i].first);
-				std::cout << "naaame chaneeeeeeel; "<< findingChannel.getName() << " -key: " << findingChannel.getKey() << std::endl;
 				if(!findingChannel.hasAKey()){
 					if (!findingChannel.isMember(c)){
 						findingChannel.addRegularUser(c);
-						std::cout << "client join channel\n";
+						sendMsg(c.getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), findingChannel.getName(), c.getClientIP()));
+						sendMsg(c.getClientFD(), RPL_NAMREPLY(c.getNickname(), findingChannel.getName(), c.getNickname()));
+						sendMsg(c.getClientFD(), RPL_ENDOFNAMES(c.getHostname(), c.getNickname(), findingChannel.getName()));
+						findingChannel.sendMsg2Members(*this, c);
 					}
 				}
 				else{
 					if (findingChannel.getKey() == this->channelPass[i].second){
 						if (!findingChannel.isMember(c)){
 							findingChannel.addRegularUser(c);
-							std::cout << "client join channel\n";
+							sendMsg(c.getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), findingChannel.getName(), c.getClientIP()));
+							sendMsg(c.getClientFD(), RPL_NAMREPLY(c.getNickname(), findingChannel.getName(), c.getNickname()));
+							sendMsg(c.getClientFD(), RPL_ENDOFNAMES(c.getHostname(), c.getNickname(), findingChannel.getName()));
+							findingChannel.sendMsg2Members(*this, c);
 						}
 					}
 					else
-						std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@pass ghallaat\n";
+						sendMsg(c.getClientFD(), ERR_BADCHANNELKEY(c.getNickname(), findingChannel.getName()));
 				}
 
 			}

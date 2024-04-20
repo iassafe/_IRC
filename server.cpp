@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/18 16:07:22 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/20 12:06:34 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	Server::closeFD(){
 
 void		Server::create_socket(){
 	struct sockaddr_in serveraddress;
-	struct pollfd		pollf;		
+	struct pollfd		pollf;
 	memset(&serveraddress, 0, sizeof(serveraddress));
 	serveraddress.sin_family = AF_INET;
 	serveraddress.sin_port = htons(this->port);
@@ -156,7 +156,7 @@ std::string	skip_spaces(std::string str){
 static int validCommand(std::string &cmd){
     if (cmd == "join" || cmd == "privmsg" || cmd == "topic" \
         || cmd == "kick" || cmd == "mode" || cmd == "pass" || \
-        cmd == "user" || cmd == "invite" || cmd == "bot")
+        cmd == "user" || cmd == "invite" || cmd == "bot" || cmd == "nick")
         return(1);
     return(0);
 }

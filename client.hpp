@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:57 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/16 15:48:15 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/04/20 11:16:06 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ class	Client{
         std::string realname; //the real name of the client
         bool registered; //Indicates whether the client succeeded to register to the server or not
         bool PasswordSended; //set to true the first time the correct password is given by the client //M
+
 	public:
         Client();
         ~Client();
@@ -60,6 +61,9 @@ class	Client{
         std::string getRealname() const;//M
         bool		isRegistered() const; //return registred //M
         bool		isPasswordSended(); //return passwordsended //M
+
+        ////////ik
+        std::string getClientIP() const;//M
 		
 		//other
         void    clearAuthentication();//M

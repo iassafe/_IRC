@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 14:03:28 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/18 10:38:25 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/20 12:50:29 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,16 +54,12 @@
 
 #define ERR_BADCHANNELNAME(nick, channelname) ":" + "ircserv" + " 476 " + nick + " " + channelname + " :Invalid channel name." + "\r\n"
 #define ERR_CHANNELISFULL(nick, channelName) ":" + nick + " 471 " + channelName + " :Cannot join channel (+l)\r\n"
-#define ERR_BADCHANNELKEY(nick, channelName) ":" + "ircserv" + " 475 " + nick + " " + channelName + " :Cannot join channel (+K) - bad key\r\n"
 #define ERR_INVITEONLY(nick, channelName) ":" + nick + " 473 " + channelName + " :Cannot join channel (+i)\r\n"
 
-#define RPL_JOIN(nick, username, channelname, ipaddress) ":" + nick + "!~" + username + "@" + ipaddress + " JOIN " + channelname + "\r\n"
 #define RPL_TOPICDISPLAY(hostname, nick, channel, topic) ":" + "ircserv" + " 332 " + nick + " " + channel + " :" + topic + "\r\n"
 #define RPL_TOPIC(hostname, nick, channel, setter, topic) ":" + "ircserv" + " 332 " + nick + " " + channel + " :" + setter + " has set a new topic: " + topic + "\r\n"
 
 #define RPL_TOPICWHOTIME(topicsetter, time, nick, channelName) ":" + "ircserv" + " 333 " + nick + " " + channelName + " " + topicsetter + "!~" + topicsetter + "@" + "ircserv" + " " + time + "\r\n"
-#define RPL_NAMREPLY(hostname, clients, channelname, nick) ":" + "ircserv" + " 353 " + nick + " = " + channelname + " :" + clients + "\r\n"
-#define RPL_ENDOFNAMES(hostname, nick, channelname) ":" + "ircserv" + " 366 " + nick + " " + channelname + " :END of /NAMES list\r\n"
 
 #define RPL_MODEIS(channel, mode) ":" + "ircserv" + " MODE " + channel + " " + mode + "\r\n"
 #define RPL_MODEISLIMIT(channel, mode, newlimit) ":" + "ircserv" + " MODE " + channel + " " + mode + " " + newlimit + "\r\n"
@@ -86,8 +82,15 @@
 #define RPL_YOUREOPER(hostname, nick) ":" + "ircserv" + " 381 " + nick + ":You are now an IRC operator\r\n"
 #define RPL_KICK(kicker, username, host, channel, targetuser, reason) ":" + kicker + "!" + username + "@" + host + " KICK " + channel + " " + targetuser + " :" + reason + "\r\n"
 #define PRIVMSG_FORMAT(senderNick, senderUsername, senderHostname, receiver, message) ":" + senderNick + "!~" + senderUsername + "@" + senderHostname + " PRIVMSG " + receiver + " :" + message + "\r\n"
-#define ERR_UNKNOWNCOMMAND(nick, command) (":ircserv 421 " + nick + " " + command + " :Unknown command\r\n")//////////
 
 
+
+
+#define RPL_JOIN(nick, username, channelname, ipaddress) ":" + nick + "!~" + username + "@" + ipaddress + " JOIN :" + channelname + "\r\n"
+#define RPL_NAMREPLY(clients, channelname, nick) ":ircserv 353 " + nick + " = " + channelname + " :@" + clients + "\r\n"/////////////update
+#define RPL_ENDOFNAMES(hostname, nick, channelname) ":ircserv 366 " + nick + " " + channelname + " :END of /NAMES list\r\n"///////
+///////////
+#define ERR_UNKNOWNCOMMAND(nick, command) (":ircserv 421 " + nick + " " + command + " :Unknown command\r\n")
+#define ERR_BADCHANNELKEY(nick, channelName) ":ircserv 475 " + nick + " " + channelName + " :Cannot join channel (+K) - bad key\r\n"
 
 #endif

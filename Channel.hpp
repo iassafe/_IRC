@@ -67,5 +67,10 @@ class Channel{
         bool isMember(Client const& c); //the client is member if it is an operator or a regular user
         // bool isfull(); // true if operators.size() + regularUsers.size() == limit
 
+
+
+        ///////ik
+        void sendMsg2Members(Server &s, Client &c);
+
 };
 #endif

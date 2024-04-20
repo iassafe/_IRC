@@ -139,3 +139,18 @@ bool Channel::isMember(Client const& c){
 //     }
 //     return false;
 // }
+
+
+
+
+//////ik
+void Channel::sendMsg2Members(Server &s, Client &c){
+    for(size_t i = 0; i < this->operators.size(); ++i){
+        if (this->operators[i].getNickname() != c.getNickname())
+            s.sendMsg(this->operators[i].getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), this->getName(), this->operators[i].getClientIP()));
+    }
+    for(size_t i = 0; i < this->regularUsers.size(); ++i){
+        if (this->regularUsers[i].getNickname() != c.getNickname())
+            s.sendMsg(this->regularUsers[i].getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), this->getName(), this->regularUsers[i].getClientIP()));
+    }
+}
