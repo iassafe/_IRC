@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/20 20:31:18 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/21 10:40:52 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,29 +138,7 @@ void	Server::acceptClient(){
 	std::cout << "accepted!" << std::endl;
 }
 
-void	to_lower(std::string &command){
-	for (size_t i = 0; i < command.size(); ++i){
-		command[i] = std::tolower(command[i]);
-	}
-}
-std::string	skip_spaces(std::string str){
-	for (size_t i = 0; i < str.size(); ++i){
-		if (str[i] != ' ')
-			return (&str[i]);
-	}
-	// std::cout << "lets see" << str << std::endl;//M
-	return (str);
-}
 
-//
-static int validCommand(std::string &cmd){
-    if (cmd == "join" || cmd == "privmsg" || cmd == "topic" \
-        || cmd == "kick" || cmd == "mode" || cmd == "pass" || \
-        cmd == "user" || cmd == "invite" || cmd == "bot" || cmd == "nick")
-        return(1);
-    return(0);
-}
-//
 
 void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
 	char	buffer[1024];
@@ -175,7 +153,7 @@ void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
 	else{
 		std::string	buf = buffer;
 		 size_t fond;
-		std::string	new_buf = skip_spaces(buf);
+		std::string	new_buf = skipSpaces(buf);
 		for(size_t i = 0; i <= new_buf.size(); i++){
 			fond = new_buf.find_first_of("\n");
 			if (fond == std::string::npos)
@@ -197,17 +175,7 @@ void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
 				this->args = '\0';
 			}
 			new_buf = new_buf.substr(fond+1, new_buf.size());
-			to_lower(this->command);
-			unsigned int j = 0;
-			for (j = 0; j < this->clients.size(); j++){
-				if (clients[j].getClientFD() == fd){
-					break ;
-				}
-			}
-			if (validCommand(this->command))
-				handleCommands(fd);//M
-			else
-				sendMsg(fd, ERR_UNKNOWNCOMMAND(this->clients[j].getNickname(), this->command));
+			checkCommands(fd);
 			command.clear();//M
 			args.clear();//M
 
@@ -249,46 +217,7 @@ bool    Server::isInUseNickname(std::string nickname){
     return false;
 }
 
-void	Server::handleCommands(int fd){
-	unsigned int i = 0;
-	for (i = 0; i < this->clients.size(); i++){
-		if (this->clients[i].getClientFD() == fd){
-			break ;
-		}	
-	}
-	if (i == this->clients.size()) //this is not part of the implementation just in case this happens
-		std::cout << "Client no found in container\n";
-	this->args = skipSpaces(this->args);
-	if(this->args == ""){
-		sendMsg(this->clients[i].getClientFD(), ERR_NEEDMOREPARAMS(this->clients[i].getNickname(), this->command));
-		return ;
-	}
-	if (this->command == "user" || this->command == "nick" || this->command == "pass"){
-		if (this->command == "user")
-			userCommand(args, this->clients[i]);
-		else if (this->command == "nick")
-			nickCommand(args, this->clients[i]);
-		else if (this->command == "pass")
-			passCommand(args, this->clients[i]);
-	}
-	else{
-		if (!this->clients[i].isRegistered()){
-        	sendMsg(this->clients[i].getClientFD(), ERR_NOTREGISTERED(this->clients[i].getNickname()));
-        	return ;
-		}
-		if (this->command == "invite")
-			inviteCommand(args, this->clients[i]);
-		else if (this->command == "mode")
-			modeCommand(args, this->clients[i]);
-		else if (this->command == "bot")
-			botCommand(this->clients[i]);
-		else if (this->command == "join")
-			joinCommand(this->clients[i]);
-		else if (this->command == "topic")
-			topicCommand(this->clients[i]);
-		else if (this->command == "kick")
-			kickCommand(this->clients[i]);
-	} 
+
 		
 		
 	// std::cout << "----------------------from the server -------------------------------------\n";
@@ -301,7 +230,6 @@ void	Server::handleCommands(int fd){
     //     std::cout << "pw = " << clients[i].isPasswordSended() << "\n";
     //     std::cout << "registered = " << clients[i].isRegistered() << "\n";
     //     std::cout << "fd = " << clients[i].getClientFD() << "\n";
-}
 
 void    Server::addChannel(Channel const& channel){//M
     channels.push_back(channel);

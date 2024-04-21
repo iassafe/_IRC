@@ -1,5 +1,75 @@
 #include"Server.hpp"
 
+static void	toUpperCase(std::string &command){
+	for (size_t i = 0; i < command.size(); ++i){
+		command[i] = std::toupper(command[i]);
+	}
+}
+
+static int validCommand(std::string &cmd){
+    if (cmd == "JOIN" || cmd == "PRIVMSG" || cmd == "TOPIC" \
+        || cmd == "kick" || cmd == "MODE" || cmd == "PASS" || \
+        cmd == "USER" || cmd == "INVITE" || cmd == "BOT" || cmd == "NICK")
+        return(1);
+    return(0);
+}
+
+void	Server::handleCommands(int fd){
+	unsigned int i = 0;
+	for (i = 0; i < this->clients.size(); i++){
+		if (this->clients[i].getClientFD() == fd){
+			break ;
+		}	
+	}
+	if (i == this->clients.size()) //this is not part of the implementation just in case this happens
+		std::cout << "Client no found in container\n";
+	this->args = skipSpaces(this->args);
+	if(this->args == ""){
+		sendMsg(this->clients[i].getClientFD(), ERR_NEEDMOREPARAMS(this->clients[i].getNickname(), this->command));
+		return ;
+	}
+	if (this->command == "USER" || this->command == "NICK" || this->command == "PASS"){
+		if (this->command == "USER")
+			userCommand(args, this->clients[i]);
+		else if (this->command == "NICK")
+			nickCommand(args, this->clients[i]);
+		else if (this->command == "PASS")
+			passCommand(args, this->clients[i]);
+	}
+	else{
+		if (!this->clients[i].isRegistered()){
+        	sendMsg(this->clients[i].getClientFD(), ERR_NOTREGISTERED(this->clients[i].getNickname()));
+        	return ;
+		}
+		if (this->command == "INVITE")
+			inviteCommand(args, this->clients[i]);
+		else if (this->command == "MODE")
+			modeCommand(args, this->clients[i]);
+		else if (this->command == "BOT")
+			botCommand(this->clients[i]);
+		else if (this->command == "JOIN")
+			joinCommand(this->clients[i]);
+		else if (this->command == "TOPIC")
+			topicCommand(this->clients[i]);
+		else if (this->command == "KICK")
+			kickCommand(this->clients[i]);
+	} 
+}
+
+void Server::checkCommands(int fd){
+	toUpperCase(this->command);
+	unsigned int i = 0;
+	for (i = 0; i < this->clients.size(); i++){
+		if (this->clients[i].getClientFD() == fd){
+			break ;
+		}
+	}
+	if (validCommand(this->command))
+		handleCommands(fd);
+	else if (this->command != "" && this->clients[i].isRegistered())
+		sendMsg(fd, ERR_UNKNOWNCOMMAND(this->clients[i].getNickname(), this->command));
+}
+
 int countComma(std::string str){
 	int count = 0;
 	for(size_t i=0; i < str.length(); i++){

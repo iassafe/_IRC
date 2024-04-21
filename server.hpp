@@ -86,6 +86,7 @@ class	Server{
         void    botCommand(Client &c);//M
 
 		// ikrame
+		void	checkCommands(int fd);
 		int		argsJoin(void);
 		void	joinCommand(Client &c);
 		void	execJoinCommand(Client &c);
