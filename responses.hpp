@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 14:03:28 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/21 13:54:34 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/21 17:09:07 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@
 #define ERR_UNKNOWNMODE(nick, channel, character) ":ircserv 472 " + nick + " " + channel + " " + character + " :is unknown mode char to me\r\n"
 #define ERR_INVALIDMODEPARAM(nick, channel, flag, mode) ":ircserv 696 " + nick + " "  + channel + " " + flag + " * you must specifiy a parameter for the " + mode + " mode\r\n"
 #define ERR_USERNOTINCHANNEL(nick, user, channel) ":ircserv 441 " + nick + " " + user + " " + channel + " " + ":they aren't on that channel\r\n"
+
 
 
 
@@ -93,5 +94,6 @@
 #define RPL_ENDOFNAMES(hostname, nick, channelname) ":ircserv 366 " + nick + " " + channelname + " :END of /NAMES list\r\n"
 #define ERR_UNKNOWNCOMMAND(nick, command) (":ircserv 421 " + nick + " " + command + " :Unknown command\r\n")
 #define ERR_BADCHANNELKEY(nick, channelName) ":ircserv 475 " + nick + " " + channelName + " :Cannot join channel (+K) - bad key\r\n"
+#define ERR_NOTOPIC(channel, nick) ":ircserv 331 " + nick + " " + channel + " :No topic is set.\r\n"
 
 #endif

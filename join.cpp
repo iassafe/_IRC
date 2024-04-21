@@ -98,7 +98,6 @@ void Server::joinMultiChannels(void){
 		for(int i = 0; i < count_ch; ++i){
 			found_commach = channels.find_first_of(",");
 			this->joinChannel.push_back(channels.substr(0, found_commach));
-			std::cout << "[" << channels.substr(0, found_commach) <<"]\n";
 			channels = channels.substr(found_commach + 1, channels.length());
 		}
 		if (this->existPassword){
