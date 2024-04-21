@@ -45,6 +45,9 @@ class	Server{
 		std::vector<std::string> joinChannel;
 		std::vector<std::string> joinPassword;
 		std::vector<std::pair<std::string, std::string> > channelPass;
+		std::string ChannelTopic;
+		std::string topic;
+
 	public:
 		Server();
 		~Server();//close users fds before quitting//M
@@ -93,7 +96,7 @@ class	Server{
 		int		validArgsTopic(void);
 		int		validArgsKick(void);
 		void	topicCommand(Client &c);
-		void	execTopicCommand(void);
+		void	execTopicCommand(Client &c);
 		void	kickCommand(Client &c);
 		void	execKickCommand(void);
 		int 	joinSingleChannel(void);

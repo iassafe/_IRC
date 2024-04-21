@@ -51,7 +51,7 @@ void Server::execJoinCommand(Client &c){
 	}
 	for(size_t i=0; i < this->channelPass.size(); ++i){
 		if (this->channelPass[i].first[0] != '#' || (this->channelPass[i].first[0] == '#' && \
-			!isdigit(this->channelPass[i].first[1]) && !isalpha(this->channelPass[i].first[1])))
+			!isprint(this->channelPass[i].first[1])))
 			sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(this->channelPass[i].first, c.getNickname()));
 		else{
 			if (!this->isInUseChName(this->channelPass[i].first))
