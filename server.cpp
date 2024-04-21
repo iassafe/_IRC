@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/21 11:45:44 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/21 17:31:36 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,24 @@
 #include "Server.hpp"
 
 bool	Server::signal = false;
+
+std::string    Server::tolowercase(std::string str){
+    if (!str.empty()){
+        for (unsigned int i = 0; i < str.size(); ++i)
+            str[i] = std::tolower(str[i]);
+    }
+    return (str);
+}
+
+bool    Server::isInUseChName(std::string chName){//M chname lowercase before check
+   chName = tolowercase(chName);
+    for (unsigned int i = 0; i < channels.size(); ++i){
+        if (tolowercase(channels[i].getName()) == chName)//M
+            return true;
+    }
+    return false;
+}
+
 
 void	Server::sigHandler(int signum){
 	(void)signum;
@@ -243,13 +261,13 @@ bool	Server::isRegistered(std::string nickname){//M
 	return false;
 }
 
-bool    Server::isInUseChName(std::string chName){//M
-    for (unsigned int i = 0; i < channels.size(); i++){
-        if (channels[i].getName() == chName)
-            return true;
-    }
-    return false;
-}
+// bool    Server::isInUseChName(std::string chName){//M
+//     for (unsigned int i = 0; i < channels.size(); i++){
+//         if (channels[i].getName() == chName)
+//             return true;
+//     }
+//     return false;
+// }
 
 // bool 	Server::isMember(Client &c, Channel &ch){
 // 	for (unsigned int i = 0; i < channels.size(); i++){
@@ -261,6 +279,7 @@ bool    Server::isInUseChName(std::string chName){//M
 
 Client		&Server::findClient(std::string nn){//M
 	unsigned int i;
+	nn = tolowercase(nn);
 	for (i = 0; i < clients.size(); i++){
 		if (clients[i].getNickname() == nn)
 			return (clients[i]);
@@ -270,8 +289,9 @@ Client		&Server::findClient(std::string nn){//M
 
 Channel		&Server::findChannel(std::string chname){//M
 	unsigned int i;
+	chname = tolowercase(chname);
 	for (i = 0; i < channels.size(); i++){
-		if (channels[i].getName() == chname)
+		if (tolowercase(channels[i].getName()) == chname)
 			return (channels[i]);
 	}
 	return channels[i];//channels end if not found

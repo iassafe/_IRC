@@ -3,19 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   authentication.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 15:39:46 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/20 19:35:57 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/04/21 17:13:14 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-
-void    tolowercase(std::string &str){
-    for (unsigned int i = 0; i < str.size(); i++)
-        str[i] = std::tolower(str[i]);
-}
 
 bool isValidNickName(std::string nickname){
     if (!nickname.empty()){

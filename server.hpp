@@ -107,9 +107,10 @@ class	Server{
 		void	createChannel(Client &c, int i);
 		void	addChannel(Client &c, int i);
 
+		std::string    tolowercase(std::string str);
+
 };
 
-void    tolowercase(std::string &str);//M
 bool	isValidNickName(std::string nickname);//M
 
 
