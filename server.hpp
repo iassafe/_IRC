@@ -69,7 +69,7 @@ class	Server{
 		bool    	isInUseNickname(std::string nickname);//M
 		bool    	isInUseChName(std::string chName);//M
 		void		sendMsg(int clientFd, std::string msg);//M
-		void		handleCommands(int i);//M
+		void		handleCommands(Client &c);//M
 		bool		isRegistered(std::string nickname);//M
 		Client		&findClient(std::string nn);//M
 		Channel		&findChannel(std::string chname);//M

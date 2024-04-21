@@ -14,45 +14,37 @@ static int validCommand(std::string &cmd){
     return(0);
 }
 
-void	Server::handleCommands(int fd){
-	unsigned int i = 0;
-	for (i = 0; i < this->clients.size(); i++){
-		if (this->clients[i].getClientFD() == fd){
-			break ;
-		}	
-	}
-	if (i == this->clients.size()) //this is not part of the implementation just in case this happens
-		std::cout << "Client no found in container\n";
+void	Server::handleCommands(Client &c){
 	this->args = skipSpaces(this->args);
 	if(this->args == ""){
-		sendMsg(this->clients[i].getClientFD(), ERR_NEEDMOREPARAMS(this->clients[i].getNickname(), this->command));
+		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), this->command));
 		return ;
 	}
 	if (this->command == "USER" || this->command == "NICK" || this->command == "PASS"){
 		if (this->command == "USER")
-			userCommand(args, this->clients[i]);
+			userCommand(args, c);
 		else if (this->command == "NICK")
-			nickCommand(args, this->clients[i]);
+			nickCommand(args, c);
 		else if (this->command == "PASS")
-			passCommand(args, this->clients[i]);
+			passCommand(args, c);
 	}
 	else{
-		if (!this->clients[i].isRegistered()){
-        	sendMsg(this->clients[i].getClientFD(), ERR_NOTREGISTERED(this->clients[i].getNickname()));
+		if (!c.isRegistered()){
+        	sendMsg(c.getClientFD(), ERR_NOTREGISTERED(c.getNickname()));
         	return ;
 		}
 		if (this->command == "INVITE")
-			inviteCommand(args, this->clients[i]);
+			inviteCommand(args, c);
 		else if (this->command == "MODE")
-			modeCommand(args, this->clients[i]);
+			modeCommand(args, c);
 		else if (this->command == "BOT")
-			botCommand(this->clients[i]);
+			botCommand(c);
 		else if (this->command == "JOIN")
-			joinCommand(this->clients[i]);
+			joinCommand(c);
 		else if (this->command == "TOPIC")
-			topicCommand(this->clients[i]);
+			topicCommand(c);
 		else if (this->command == "KICK")
-			kickCommand(this->clients[i]);
+			kickCommand(c);
 	} 
 }
 
@@ -64,8 +56,10 @@ void Server::checkCommands(int fd){
 			break ;
 		}
 	}
+	if (i == this->clients.size()) //this is not part of the implementation just in case this happens
+		std::cout << "Client no found in container\n";
 	if (validCommand(this->command))
-		handleCommands(fd);
+		handleCommands(this->clients[i]);
 	else if (this->command != "" && this->clients[i].isRegistered())
 		sendMsg(fd, ERR_UNKNOWNCOMMAND(this->clients[i].getNickname(), this->command));
 }
