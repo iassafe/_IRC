@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:57 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/20 11:16:06 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/22 12:43:02 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,9 @@
 #include <iostream>
 #include <string>
 
-#include "Server.hpp"
 #include "responses.hpp"
+#include "Server.hpp"
+#include <vector>
 
 class Server;
 
@@ -35,6 +36,7 @@ class	Client{
         std::string realname; //the real name of the client
         bool registered; //Indicates whether the client succeeded to register to the server or not
         bool PasswordSended; //set to true the first time the correct password is given by the client //M
+        std::vector<std::string> invited2channels;
 
 	public:
         Client();
@@ -66,8 +68,11 @@ class	Client{
         std::string getClientIP() const;//M
 		
 		//other
-        void    clearAuthentication();//M
-		void    registerClient(Server &s);//M
+        void        clearAuthentication();//M
+		void        registerClient(Server &s);//M
+
+        bool        isInUseInvitedCh(std::string ChannelName);
+        std::string tolowercase(std::string str);
 
 };
 
