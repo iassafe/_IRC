@@ -47,6 +47,8 @@ class	Server{
 		std::vector<std::pair<std::string, std::string> > channelPass;
 		std::string ChannelTopic;
 		std::string topic;
+		std::string Channelkick;
+		std::vector<std::string> ClientsKick;
 
 	public:
 		Server();
@@ -106,6 +108,7 @@ class	Server{
 		void 	whithPassword(void);
 		void	createChannel(Client &c, int i);
 		void	addChannel(Client &c, int i);
+		void 	makeClientKick(std::string temp_args);
 
 		std::string    tolowercase(std::string str);
 

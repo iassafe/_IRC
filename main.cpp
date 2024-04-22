@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:17:48 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/16 16:48:25 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/04/22 16:24:15 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ int	main(int ac, char **av){
 			std::cerr << "Only numbers in port!" << std::endl;
 			return (1);
 		}
-
 		pas = serv.getPassword();
 		if (por < 1024 || por > 49151){
 			std::cerr << "Enter a valid port" << std::endl;

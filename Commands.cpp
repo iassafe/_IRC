@@ -8,7 +8,7 @@ static void	toUpperCase(std::string &command){
 
 static int validCommand(std::string &cmd){
     if (cmd == "JOIN" || cmd == "PRIVMSG" || cmd == "TOPIC" \
-        || cmd == "kick" || cmd == "MODE" || cmd == "PASS" || \
+        || cmd == "KICK" || cmd == "MODE" || cmd == "PASS" || \
         cmd == "USER" || cmd == "INVITE" || cmd == "BOT" || cmd == "NICK")
         return(1);
     return(0);
@@ -86,33 +86,58 @@ std::string	skipSpaces(std::string str){
 	return (&str[i]);
 }
 
+void Server::makeClientKick(std::string clKick){
+	clKick = skipSpaces(clKick);
+	size_t countClient = countComma(clKick);
+	if (!countClient)
+		this->ClientsKick.push_back(clKick);
+	else{
+		size_t found_comma = clKick.find_first_of(",");
+		this->ClientsKick.push_back(clKick.substr(0, found_comma));
+		clKick = clKick.substr(found_comma + 1, clKick.length());
+		for(size_t i = 0; i < countClient; ++i){
+			found_comma = clKick.find_first_of(",");
+			this->ClientsKick.push_back(clKick.substr(0, found_comma));
+			clKick = clKick.substr(found_comma + 1, clKick.length());
+		}
+	}
+	for(size_t i = 0; i < this->ClientsKick.size(); ++i){
+		std::cout << "###############-->[" << this->ClientsKick[i] << "]===";
+	}
+	std::cout << std::endl;
+}
+
 int Server::validArgsKick(void){
 	this->args = skipSpaces(this->args);
 	int count_args = 1;
 	for(size_t i =0; i < this->args.length(); ++i){
 		if (this->args[i] == ' '){
-			count_args++;
 			for(; this->args[i] == ' '; ++i){}
+			if (this->args[i])
+				count_args++;
 		}
 	}
-	std::cout << "couuuuuuunt_args:--->"<< count_args << std::endl;
 	if (count_args < 2)
 		return(0);
-	size_t found = this->args.find_first_of(" \t\r\n");
-	// if (found == std::string::npos || this->args[found] == '\n')
-	// 	return (0);
+	size_t found = this->args.find_first_of(" \t\r");
 	std::string temp_args = this->args;
-	while(found < temp_args.length() && temp_args[found] == ' '){
-		found++;
-	};
+	this->Channelkick = temp_args.substr(0, found);
 	temp_args = temp_args.substr(found, temp_args.length());
-	size_t found_sp = temp_args.find_first_of(" ");
-	if (found_sp != std::string::npos){
-		temp_args = temp_args.substr(found_sp + 1, temp_args.length());
-		size_t i;
-		for(i=0; i < temp_args.length() && temp_args[i] == ' '; ++i){
-		};
+	int exist2Points = 0;
+	temp_args = skipSpaces(temp_args);
+	if (temp_args[0] == ':'){
+		temp_args = temp_args.substr(1, temp_args.length());
+		exist2Points = 1;
 	}
+	size_t found_sp = temp_args.find_first_of(" \t\r");
+	if (found_sp != std::string::npos){
+		temp_args = skipSpaces(temp_args);
+		if(!exist2Points)
+			temp_args = temp_args.substr(0, found_sp);
+		else
+			temp_args = temp_args.substr(0, temp_args.length());
+	}
+	makeClientKick(temp_args);
 	return (1);
 }
 
