@@ -108,7 +108,7 @@ class	Server{
 		void 	whithPassword(void);
 		void	createChannel(Client &c, int i);
 		void	addChannel(Client &c, int i);
-		void 	makeClientKick(std::string temp_args);
+		void 	makeClientKick(std::string clKick, int exist2Points);
 
 		std::string    tolowercase(std::string str);
 

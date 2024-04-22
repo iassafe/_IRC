@@ -87,6 +87,7 @@ int Server::joinSingleChannel(void){
 	return(1);
 }
 
+
 void Server::joinMultiChannels(void){
 	std::string temp_args = this->args;
 	size_t found = this->args.find_first_of(" \r\t");

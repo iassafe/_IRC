@@ -86,25 +86,33 @@ std::string	skipSpaces(std::string str){
 	return (&str[i]);
 }
 
-void Server::makeClientKick(std::string clKick){
+void Server::makeClientKick(std::string clKick, int exist2Points){
+	std::vector<std::string> vec;
 	clKick = skipSpaces(clKick);
-	size_t countClient = countComma(clKick);
+	size_t countClient = 0;
+	if (!exist2Points)
+		countClient = countComma(clKick);
 	if (!countClient)
-		this->ClientsKick.push_back(clKick);
+		vec.push_back(clKick);
 	else{
 		size_t found_comma = clKick.find_first_of(",");
-		this->ClientsKick.push_back(clKick.substr(0, found_comma));
+		vec.push_back(clKick.substr(0, found_comma));
 		clKick = clKick.substr(found_comma + 1, clKick.length());
 		for(size_t i = 0; i < countClient; ++i){
 			found_comma = clKick.find_first_of(",");
-			this->ClientsKick.push_back(clKick.substr(0, found_comma));
-			clKick = clKick.substr(found_comma + 1, clKick.length());
+			if (found_comma != std::string::npos){
+				vec.push_back(clKick.substr(0, found_comma));
+				clKick = clKick.substr(found_comma + 1, clKick.length());
+			}
+			else
+				vec.push_back(clKick.substr(0, clKick.length()));
 		}
 	}
-	for(size_t i = 0; i < this->ClientsKick.size(); ++i){
-		std::cout << "###############-->[" << this->ClientsKick[i] << "]===";
+	for(size_t i = 0; i < vec.size(); ++i){
+		if (vec[i] != "")
+			this->ClientsKick.push_back(vec[i]);
 	}
-	std::cout << std::endl;
+	vec.clear();
 }
 
 int Server::validArgsKick(void){
@@ -137,7 +145,7 @@ int Server::validArgsKick(void){
 		else
 			temp_args = temp_args.substr(0, temp_args.length());
 	}
-	makeClientKick(temp_args);
+	makeClientKick(temp_args, exist2Points);
 	return (1);
 }
 
