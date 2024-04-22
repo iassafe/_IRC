@@ -6,7 +6,7 @@
 #    By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/01 18:16:43 by khanhayf          #+#    #+#              #
-#    Updated: 2024/04/22 13:04:44 by iassafe          ###   ########.fr        #
+#    Updated: 2024/04/22 19:04:17 by iassafe          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@
 NAME	= ircserv
 
 SRCS	= main.cpp Server.cpp Client.cpp authentication.cpp Channel.cpp \
-		invite.cpp mode.cpp bot.cpp Commands.cpp join.cpp topic.cpp
+		invite.cpp mode.cpp bot.cpp Commands.cpp join.cpp topic.cpp kick.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
 
