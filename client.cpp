@@ -1,17 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Client.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/01 18:17:06 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/20 18:28:21 by iassafe          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-
-
 #include "Client.hpp"
 
 
@@ -132,4 +118,21 @@ void Client::registerClient(Server &s){
 /////////////////IK
 std::string Client::getClientIP() const{
     return (this->clientIP);
+}
+
+std::string    Client::tolowercase(std::string str){
+    if (!str.empty()){
+        for (unsigned int i = 0; i < str.size(); ++i)
+            str[i] = std::tolower(str[i]);
+    }
+    return (str);
+}
+
+bool    Client::isInUseInvitedCh(std::string ChannelName){
+   ChannelName = tolowercase(ChannelName);
+    for (unsigned int i = 0; i < this->invited2channels.size(); ++i){
+        if (tolowercase(this->invited2channels[i]) == ChannelName)//M
+            return true;
+    }
+    return false;
 }

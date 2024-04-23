@@ -8,7 +8,7 @@ void Server::createChannel(Client &c, int i){
 	sendMsg(c.getClientFD(), RPL_ENDOFNAMES(c.getHostname(), c.getNickname(), newChannel.getName()));
 }
 
-void Server::addChannel(Client &c, int i){
+void Server::addChannel(Client& c, int i){
 	Channel &findingChannel = findChannel(this->channelPass[i].first);
 	if(!findingChannel.hasAKey()){
 		if (!findingChannel.isMember(c) && findingChannel.getMode() != "invite-only"){
@@ -20,7 +20,16 @@ void Server::addChannel(Client &c, int i){
 		}
 	}
 	else{
-		if (findingChannel.getKey() == this->channelPass[i].second){
+		if (c.isInUseInvitedCh(this->channelPass[i].first)){
+			if (!findingChannel.isMember(c) && findingChannel.getMode() != "invite-only"){
+				findingChannel.addRegularUser(c);
+				sendMsg(c.getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), findingChannel.getName(), c.getClientIP()));
+				sendMsg(c.getClientFD(), RPL_NAMREPLY(c.getNickname(), findingChannel.getName(), c.getNickname()));
+				sendMsg(c.getClientFD(), RPL_ENDOFNAMES(c.getHostname(), c.getNickname(), findingChannel.getName()));
+				findingChannel.sendMsg2Members(*this, c);
+			}
+		}
+		else if (findingChannel.getKey() == this->channelPass[i].second){
 			if (!findingChannel.isMember(c) && findingChannel.getMode() != "invite-only"){
 				findingChannel.addRegularUser(c);
 				sendMsg(c.getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), findingChannel.getName(), c.getClientIP()));
@@ -77,6 +86,8 @@ int Server::joinSingleChannel(void){
 		while(temp_args[found] == ' ' || temp_args[found] == '\r' || temp_args[found] == '\t'){
 			found++;
 		};
+		if (temp_args[found] == ':')
+			found++;
 		temp_args = temp_args.substr(found, temp_args.length());
 		size_t found_sp = temp_args.find_first_of(" \r\t");
 		if (found_sp != std::string::npos)
@@ -86,7 +97,6 @@ int Server::joinSingleChannel(void){
 	}
 	return(1);
 }
-
 
 void Server::joinMultiChannels(void){
 	std::string temp_args = this->args;
@@ -141,7 +151,6 @@ int Server::argsJoin(void){
 	}
 }
 
-
 void Server::whithoutPassword(void){
 	size_t foundComma = this->args.find_first_of(",");
 	if (foundComma != std::string::npos)
@@ -151,9 +160,27 @@ void Server::whithoutPassword(void){
 }
 
 void Server::whithPassword(void){
-	size_t foundComma = this->args.find_first_of(",");
+	std::string channls = this->args.substr(0, this->args.find_first_of(" \r\t"));
+	size_t foundComma = channls.find_first_of(",");
 	if (foundComma != std::string::npos)
 		joinMultiChannels();
 	else
 		joinSingleChannel();
+}
+
+void Server::joinCommand(Client &c){
+	this->existPassword = 0;
+	this->args = skipSpaces(this->args);
+	if (this->args == "")
+		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), "JOIN"));
+	else{
+		int check = argsJoin();
+		if (!check)
+			whithoutPassword();
+		else if (check){
+			this->existPassword = 1;
+			whithPassword();
+		}
+		execJoinCommand(c);
+	}
 }
