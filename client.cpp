@@ -111,10 +111,6 @@ void Client::registerClient(Server &s){
         std::cout << "registered = " << isRegistered() << "\n";
 }
 
-
-
-
-
 /////////////////IK
 std::string Client::getClientIP() const{
     return (this->clientIP);
@@ -135,4 +131,23 @@ bool    Client::isInUseInvitedCh(std::string ChannelName){
             return true;
     }
     return false;
+}
+
+// std::string& Client::findingInvitedCh(std::string ChannelName){
+//     unsigned int i;
+// 	ChannelName = tolowercase(ChannelName);
+// 	for (i = 0; i < this->invited2channels.size(); i++){
+// 		if (tolowercase(this->invited2channels[i]) == ChannelName)
+// 			return (this->invited2channels[i]);
+// 	}
+// 	return (this->invited2channels[i]);//channels end if not found
+// }
+
+void Client::removeInvitedCh(std::string ChannelName){
+    for (unsigned int i = 0; i < this->invited2channels.size(); i++){
+        if (this->invited2channels[i] == ChannelName){
+            this->invited2channels.erase(this->invited2channels.begin() + i);
+            break ;
+        }
+    }
 }

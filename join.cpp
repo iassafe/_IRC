@@ -22,6 +22,7 @@ void Server::addChannel(Client& c, int i){
 	else{
 		if (c.isInUseInvitedCh(this->channelPass[i].first)){
 			if (!findingChannel.isMember(c) && findingChannel.getMode() != "invite-only"){
+				c.removeInvitedCh(this->channelPass[i].first);
 				findingChannel.addRegularUser(c);
 				sendMsg(c.getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), findingChannel.getName(), c.getClientIP()));
 				sendMsg(c.getClientFD(), RPL_NAMREPLY(c.getNickname(), findingChannel.getName(), c.getNickname()));
