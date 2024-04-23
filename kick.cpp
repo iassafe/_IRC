@@ -17,6 +17,10 @@ void Server::execKickCommand(Client& c){
 					if (!findingChannel.isMember(findingClient))
 						sendMsg(c.getClientFD(), ERR_USERNOTINCHANNEL(c.getNickname(), findingClient.getNickname(), this->Channelkick));
 					else{
+						if(findingChannel.isOperator(findingClient))
+							findingChannel.removeOperator(findingClient);
+						else if (findingChannel.isRegularuser(findingClient))
+							findingChannel.removeRegularUser(findingClient);
 						sendMsg(c.getClientFD(), RPL_KICK(c.getNickname(), c.getUsername(), c.getHostname(), findingChannel.getName(), findingClient.getNickname()));
 					}
 				}
