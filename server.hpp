@@ -100,7 +100,7 @@ class	Server{
 		void	topicCommand(Client &c);
 		void	execTopicCommand(Client &c);
 		void	kickCommand(Client &c);
-		void	execKickCommand(void);
+		void	execKickCommand(Client &c);
 		int 	joinSingleChannel(void);
 		void	joinMultiChannels(void);
 

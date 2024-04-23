@@ -1,9 +1,29 @@
 #include"Server.hpp"
 
 
-void Server::execKickCommand(void){
-	if (send(this->connectionID, "Valid Command\n", 14, 0) == -1)
-		throw (std::runtime_error("failed to send to client"));
+void Server::execKickCommand(Client& c){
+	for (size_t i = 0; i < this->ClientsKick.size(); ++i){
+		if (!isInUseNickname(this->ClientsKick[i]))
+			sendMsg(c.getClientFD(), ERR_NOSUCHNICK(c.getNickname(), this->ClientsKick[i]));
+		else{
+			Client& findingClient = findClient(this->ClientsKick[i]);
+			if (!isInUseChName(this->Channelkick))
+				sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(this->Channelkick, c.getNickname()));
+			else{
+				Channel &findingChannel = findChannel(this->Channelkick);
+				if (!findingChannel.isOperator(c))
+					sendMsg(c.getClientFD(), ERR_CANNOTKICK(c.getNickname(), this->Channelkick));
+				else{
+					if (!findingChannel.isMember(findingClient))
+						sendMsg(c.getClientFD(), ERR_USERNOTINCHANNEL(c.getNickname(), findingClient.getNickname(), this->Channelkick));
+					else{
+						sendMsg(c.getClientFD(), RPL_KICK(c.getNickname(), c.getUsername(), c.getHostname(), findingChannel.getName(), findingClient.getNickname()));
+					}
+				}
+			}
+		}
+	}
+	this->ClientsKick.clear();
 }
 
 
@@ -76,7 +96,7 @@ void Server::kickCommand(Client &c){
 		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), "KICK"));
 	else{
 		if(validArgsKick())
-				execKickCommand();
+				execKickCommand(c);
 		else
 			sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), "KICK"));
 	}
