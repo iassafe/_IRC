@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:57 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/23 18:27:56 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/24 10:06:51 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ class	Client{
 
         bool            isInUseInvitedCh(std::string ChannelName);
         std::string     tolowercase(std::string str);
-        // std::string&    findingInvitedCh(std::string ChannelName);
         void            removeInvitedCh(std::string ChannelName);
 
 };

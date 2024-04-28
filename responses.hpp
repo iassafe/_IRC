@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 14:03:28 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/23 16:08:11 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/28 10:17:20 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,5 +89,6 @@
 #define ERR_UNKNOWNCOMMAND(nick, command) (":ircserv 421 " + nick + " " + command + " :Unknown command\r\n")
 #define ERR_BADCHANNELKEY(nick, channelName) ":ircserv 475 " + nick + " " + channelName + " :Cannot join channel (+K) - bad key\r\n"
 #define ERR_NOTOPIC(channel, nick) ":ircserv 331 " + nick + " " + channel + " :No topic is set.\r\n"
+#define ERR_USAGE(nick, command, msg) ":ircserv 650 " + nick + " " + command + " :" + msg + "\r\n"
 
 #endif

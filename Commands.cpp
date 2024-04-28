@@ -14,10 +14,33 @@ static int validCommand(std::string &cmd){
     return(0);
 }
 
+void Server::handleError(Client &c){
+    if (this->command == "USER")
+		sendMsg(c.getClientFD(), ERR_USAGE(c.getNickname(), this->command, "<username> <unused> <unused> :<realname>"));
+	else if (this->command == "NICK")
+		sendMsg(c.getClientFD(), ERR_USAGE(c.getNickname(), this->command, "<newnick>"));
+	else if (this->command == "PASS")
+		sendMsg(c.getClientFD(), ERR_USAGE(c.getNickname(), this->command, "<password>"));
+	else if (this->command == "MODE")
+		sendMsg(c.getClientFD(), ERR_USAGE(c.getNickname(), this->command, "<target> [[(+|-)]<modes> [<mode-parameters>]]"));
+	else if (this->command == "JOIN")
+		sendMsg(c.getClientFD(), ERR_USAGE(c.getNickname(), this->command, "<channel>[,<channel>]+ [<key>[,<key>]+]"));
+	else if (this->command == "TOPIC")
+		sendMsg(c.getClientFD(), ERR_USAGE(c.getNickname(), this->command, "<channel> [:<topic>]"));
+	else if (this->command == "KICK")
+		sendMsg(c.getClientFD(), ERR_USAGE(c.getNickname(), this->command, "<channel> <nick>[,<nick>]+ [:<reason>]"));
+    else if(this->command == "PRIVMSG")
+		sendMsg(c.getClientFD(), ERR_USAGE(c.getNickname(), this->command, "<target>[,<target>]+ :<message>"));
+	else if (this->command == "INVITE")
+		sendMsg(c.getClientFD(), RPL_ENDOFINVITE(c.getNickname()));
+}
+
 void	Server::handleCommands(Client &c){
 	this->args = skipSpaces(this->args);
 	if(this->args == ""){
-		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), this->command));
+        if(this->command != "INVITE")
+            sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), this->command));
+        handleError(c);
 		return ;
 	}
 	if (this->command == "USER" || this->command == "NICK" || this->command == "PASS"){
@@ -79,4 +102,3 @@ std::string	skipSpaces(std::string str){
 	}
 	return (&str[i]);
 }
-

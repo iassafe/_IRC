@@ -112,8 +112,10 @@ class	Server{
 
 		std::string    tolowercase(std::string str);
 
-};
+		///*******
+		void handleError(Client &c);
 
+};
 bool	isValidNickName(std::string nickname);//M
 
 
