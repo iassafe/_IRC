@@ -6,14 +6,12 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 14:03:28 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/28 13:12:48 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/28 15:02:37 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RESPONSES_HPP
 #define RESPONSES_HPP
-#include <iostream>
-
 
 
 #define RPL_WELCOME(nick, user) ":ircserv 001 " + nick + " :Welcome to the ft_irc IRC network " + nick + "!~" + user + "@127.0.0.1\r\n"
@@ -21,28 +19,34 @@
 #define ERR_PASSWDMISMATCH(nick) ":ircserv 464 " + nick + " :Password incorrect!\r\n"
 #define ERR_NEEDMOREPARAMS(nick, cmd) ":ircserv 461 " + nick + " " + cmd + " :Not enough parameters!\r\n"
 #define ERR_NICKNAMEINUSE(nick) ":ircserv 433 " + nick + " :Nickname is already in use!\r\n"
-#define ERR_NONICKNAMEGIVEN(nick) ":ircserv 431 " + nick + " :No nickname given!\r\n"
+// #define ERR_NONICKNAMEGIVEN(nick) ":ircserv 431 " + nick + " :No nickname given!\r\n"
 #define ERR_ERRONEUSNICKNAME(nick) ":ircserv 432 " + nick + " :Erroneus nickname!\r\n"
 #define ERR_NOTREGISTERED(nick) ":ircserv 451 " + nick + " :You have not registered !\r\n"
 #define ERR_NOSUCHCHANNEL(channel, nick) ":ircserv 403 " + nick + " " + channel + " :No such channel\r\n"
 #define ERR_NOSUCHNICK(nick, argument) ":ircserv 401 " + nick + " " + argument + " :No such nick\r\n" 
 #define ERR_NOTONCHANNEL(nick, channel) ":ircserv 442 " + channel + " " + ":You're not on that channel\r\n"
-#define ERR_NOTOP(nick, channel, mode) ":ircserv 482 " + nick + " " + channel + " " + ":You must have channel halfop access or above to set channel mode " + mode + "\r\n"
-#define ERR_NOACCCHTOPIC(nick, channel) ":ircserv 482 " + nick + " " + channel + " :You do not have access to change the topic on this channel\r\n" ///////
-#define ERR_CANNOTKICK(nick, channel) ":ircserv 482 " + nick + " " + channel + " :You're not a channel operator\r\n" ///////
+#define ERR_NOTOPMODES(nick, channel, mode) ":ircserv 482 " + nick + " " + channel + " " + ":You must have channel halfop access or above to set channel mode " + mode + "\r\n"
+#define ERR_NOTOP(nick, channel) ":ircserv 482 " + nick + " " + channel + " " + ":You must be a channel half-operator\r\n"
 #define ERR_USERONCHANNEL(channel, guest, nick) ":ircserv 443 " + nick + " " + guest + " " + channel + "  :is already on channel\r\n"
 #define RPL_INVITE(nick, username, clienthostname, invited, channel) ":" + nick + "!~" + username + "@" + clienthostname + " INVITE " + invited + " :" + channel + "\r\n"
 #define RPL_ENDOFINVITE(nick) ":ircserv 337 " + nick + " :END of INVITE list\r\n"
-#define RPL_INVITING(nick, invited, channel) ":ircserv 341 " + nick + " Inviting " + invited + " to " + channel + "\r\n"
-#define ERR_UNKNOWNMODE(nick, channel, character) ":ircserv 472 " + nick + " " + channel + " " + character + " :is unknown mode char to me\r\n"
-#define ERR_INVALIDMODEPARAM(nick, channel, flag, mode) ":ircserv 696 " + nick + " "  + channel + " " + flag + " * you must specifiy a parameter for the " + mode + " mode\r\n"
+#define RPL_INVITING(nick, invited, channel) ":ircserv 341 " + nick + " " + invited + " :" + channel + "\r\n"
+#define ERR_UNKNOWNMODE(nick, channel, character) ":ircserv 472 " + nick + " " + channel + " " + character + " :is not a recognised channel mode.\r\n"//M
+#define ERR_INVALIDMODEPARAM(nick, channel, flag, mode) ":ircserv 696 " + nick + " "  + channel + " " + flag + " * you must specifiy a parameter for the " + mode + " mode.\r\n"
+#define ERR_INVALIDMODELIMITPARAM(nick, channel, argument) ":ircserv 696 " + nick + " " + channel + " " + argument + " :Invalid limit mode parameter.\r\n"
 #define ERR_USERNOTINCHANNEL(nick, user, channel) ":ircserv 441 " + nick + " " + user + " " + channel + " " + ":they aren't on that channel\r\n"
+#define ERR_KEYALREADYSET(nick, channel) ":ircserv 467 " + nick + " " + channel + " " + ":Channel key already set\r\n"//M
+#define ERR_NOACCCHTOPIC(nick, channel) ":ircserv 482 " + nick + " " + channel + " :You do not have access to change the topic on this channel\r\n" ///////
+#define ERR_CANNOTKICK(nick, channel) ":ircserv 482 " + nick + " " + channel + " :You must be a channel half-operator\r\n" ///////
 
 
 #define RPL_YOURHOST(nick) ":" + "ircserv" + " 002 " + nick + " :Your host is " + "ircserv" + " running version 1.0 !\r\n"
 #define RPL_CREATED(nick) ":" + "ircserv" + " 003 " + nick + " :This server was created 2023-9-15 !\r\n"
 #define RPL_MYINFO(nick) ":" + "ircserv" + " 004 " + nick + " :Host: " + "ircserv" + ", Version: 1.0, User mode: none, Channel modes: o, t, k, i !\r\n"
 
+//AZMARA
+#define ERR_NO_RECIPIENT(nick) "ircserv 411 " + nick + " " + ":No recipient given (PRIVMSG)\r\n"
+#define ERR_NO_TEXT(nick) "ircserv 412 " + nick + " " + ":No text to send\r\n"
 
 #define RPL_NICKCHANGE(oldNick, nick) ":" + oldNick + " NICK " + nick + "\r\n"
 

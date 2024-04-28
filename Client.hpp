@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
+/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:57 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/24 10:06:51 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/27 20:31:24 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,34 +45,36 @@ class	Client{
         //setters
         void	setIP(std::string IPaddr);
 		void	setBuffer(std::string rec);
-		void	setClientFD(int fd);//M (setClientFD instead setClientID)
-        void    setNickname(std::string nn);//M
-        void    setUsername(std::string un);//M
-        void    setHostname(std::string hn);//M
-        void    setServername(std::string sn);//M
-        void    setRealname(std::string rn);//M
-        void    setRegistered(bool b);//M
-        void    setPasswordSended(bool b);//M
+		void	setClientFD(int fd);
+        void    setNickname(std::string nn);
+        void    setUsername(std::string un);
+        void    setHostname(std::string hn);
+        void    setServername(std::string sn);
+        void    setRealname(std::string rn);
+        void    setRegistered(bool b);
+        void    setPasswordSended(bool b);
     
         //getters
-        int         getClientFD();//M
-        std::string getNickname() const;//M
-        std::string getUsername() const;//M
-        std::string getHostname() const;//M
-        std::string getServername() const;//M
-        std::string getRealname() const;//M
-        bool		isRegistered() const; //return registred //M
-        bool		isPasswordSended(); //return passwordsended //M
+        int         getClientFD();
+        std::string getNickname() const;
+        std::string getUsername() const;
+        std::string getHostname() const;
+        std::string getServername() const;
+        std::string getRealname() const;
+        bool		isRegistered() const; //return registred 
+        bool		isPasswordSended(); //return passwordsended 
 
         ////////ik
-        std::string getClientIP() const;//M
+        std::string getClientIP() const;
 		
 		//other
-        void        clearAuthentication();//M
-		void        registerClient(Server &s);//M
+        void        clearAuthentication();
+		void        registerClient(Server &s);
+        void    invite2channel(std::string chName);//M add a new channel to the invited2channels list
 
         bool            isInUseInvitedCh(std::string ChannelName);
         std::string     tolowercase(std::string str);
+        // std::string&    findingInvitedCh(std::string ChannelName);
         void            removeInvitedCh(std::string ChannelName);
 
 };

@@ -1,0 +1,69 @@
+privmsg tttt helloooo
+privmsg//************DONE*************//
+:Seattle.WA.US.Undernet.Org 411 kk :No recipient given (PRIVMSG)
+privmsg :tttt goooo//*************DONE***************//
+:Seattle.WA.US.Undernet.Org 412 kk :No text to send
+
+privmsg kjfkljfk okkk//*************DONE***************//
+:Seattle.WA.US.Undernet.Org 401 kk kjfkljfk :No such nick
+privmsg uu jjjjj,kkkkk,//*************DONE***************//
+:Seattle.WA.US.Undernet.Org 401 kk uu :No such nick
+
+privmsg jklj,kjklj kfj//*************DONE***************//
+:Seattle.WA.US.Undernet.Org 401 kk jklj :No such nick
+:Seattle.WA.US.Undernet.Org 401 kk kjklj :No such nick
+privmsg haha,jsjs,jsjs ksjsjksks//*************DONE***************//
+:Seattle.WA.US.Undernet.Org 401 kk jsjs :No such nick
+privmsg ikrame,khadija,asmae jbjhbhj//*************DONE***************//
+:Seattle.WA.US.Undernet.Org 401 kk ikrame :No such nick
+
+privmsg khhh,tttt salam//*************DONE***************//
+:Seattle.WA.US.Undernet.Org 401 kk khhh :No such nick
+privmsg tttt salam 3alikom
+privmsg tttt hhhh iiii jhhhh oooo
+privmsg tttt :salam 3alikom jami3an
+privmsg #chchch,tttt hallllo
+privmsg tttt jjjjj,kkkk,pppp
+privmsg ikram,khadija, asmae
+:Seattle.WA.US.Undernet.Org 401 kk ikram :No such nick
+:Seattle.WA.US.Undernet.Org 401 kk khadija :No such nick
+:Seattle.WA.US.Undernet.Org 401 kk khadija :No such nick
+:Seattle.WA.US.Undernet.Org 401 kk asmae :No such nick
+privmsg ikrame,tttt hshhh
+:Seattle.WA.US.Undernet.Org 401 kk ikrame :No such nick
+//-----------------------------------------------------//
+:kk!~k@197.230.30.146 PRIVMSG tttt :helloooo/1
+:kk!~k@197.230.30.146 PRIVMSG tttt :salam/14
+:kk!~k@197.230.30.146 PRIVMSG tttt :3alikom/16
+:kk!~k@197.230.30.146 PRIVMSG tttt :oooo/17
+
+:kk!~k@197.230.30.146 PRIVMSG tttt :salam 3alikom jami3an/18
+join #chchch
+:tttt!~t@197.230.30.146 JOIN #chchch
+:LosAngeles.CA.US.Undernet.Org 353 tttt = #chchch :@tttt
+:LosAngeles.CA.US.Undernet.Org 366 tttt #chchch :End of /NAMES list.
+:kk!~k@197.230.30.146 PRIVMSG #chchch :hallllo/19
+:kk!~k@197.230.30.146 PRIVMSG tttt :hallllo/19
+:kk!~k@197.230.30.146 PRIVMSG tttt :jjjjj,kkkk,pppp/22
+:kk!~k@197.230.30.146 PRIVMSG tttt :hshhh
+
+
+
+//****NEW TESTS
+privmsg #do hooo
+:stockholm.se.quakenet.org 403 jiji #do :No such channel
+join #do
+:jiji!~w@197.230.30.146 JOIN #do
+:stockholm.se.quakenet.org 353 jiji = #do :@jiji
+:stockholm.se.quakenet.org 366 jiji #do :End of /NAMES list.
+privmsg #do
+:stockholm.se.quakenet.org 412 jiji :No text to send
+privmsg #do salam
+privmsg #do,jiji salaaaaaaaaam
+:jiji!~w@197.230.30.146 PRIVMSG jiji :salaaaaaaaaam
+
+
+//TODO
+*0*privmsg fifi :salam wa fin SEND ALL MESSAGE
+*1*send msg to many channels still seg faults
+*2*while storing clients and channels, only first elemets get stored, but if only clients or only channels, they all get stored

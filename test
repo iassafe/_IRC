@@ -1,0 +1,27 @@
+while true
+do
+lsof -c ircser;echo "#########################"
+sleep 1
+done
+
+
+cat /dev/random| nc pawssword port //should not abort
+
+
+////////////////
+
+:ff!~f@freenode-obu.d75.6g0qj4.IP JOIN :#ee
+:*.freenode.net 353 ff = #ee :ff @pp <<<<<<<<<<<<<<<<<<<<<<<creator nick name
+:*.freenode.net 366 ff #ee :End of /NAMES list.
+
+:ddd!~d@freenode-obu.d75.6g0qj4.IP JOIN :#ww
+:*.freenode.net 353 ddd = #ww :@pp @xx ddd
+:*.freenode.net 366 ddd #ww :End of /NAMES list.
+
+join #ee
+:*.freenode.net 471 ll #ee :Cannot join channel (channel is full)
+
+join normally if invited even thought the channel is full
+
+
+inform other clients when someone quit

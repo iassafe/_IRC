@@ -62,10 +62,10 @@ bool Channel::isTopiclocked() const{
     return this->topicLock;
 }
 
-bool Channel::hasALimit(){
+bool Channel::getHasLimit(){
     return this->hasLimit;
 }
-bool Channel::hasAKey(){
+bool Channel::getHasKey(){
     return this->hasKey;
 }
 
@@ -154,4 +154,46 @@ void Channel::sendMsg2Members(Server &s, Client &c){
         if (this->operators[i].getNickname() != c.getNickname())
             s.sendMsg(this->operators[i].getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), this->getName(), this->operators[i].getClientIP()));
     }
+}
+
+void Channel::channelStatusMsg(Server &s,std::string modestring, std::string newOp){//M
+    std::string str = "";
+    for (unsigned int i = 0; i < modestring.size(); i++){
+        if (this->getHasKey())
+            str += 'k';
+        if (this->getHasLimit())
+            str += 'l';
+        if (this->getMode() == "invite-only")
+            str += 'i';
+        if (this->getHasKey())
+            str += ' ' + this->getKey();
+        if (this->getHasLimit())
+            str += ' ' + this->getlimit();
+        if (!newOp.empty())
+            str += " :" + newOp;
+        for(unsigned int i = 0; i < this->regularUsers.size(); ++i){
+            std::string msg = ":" + this->regularUsers[i].getNickname() + "!~" + this->regularUsers[i].getUsername() + " " + s.getCommand() + this->getName() + " " + modestring + str + "\n";
+            s.sendMsg(this->regularUsers[i].getClientFD(), msg);
+        }
+        for(unsigned int i = 0; i < this->operators.size(); ++i){
+            std::string msg = ":" + this->operators[i].getNickname() + "!~" + this->operators[i].getUsername() + " " + s.getCommand() + this->getName() + " " + modestring + str + "\n";
+            s.sendMsg(this->operators[i].getClientFD(), msg);
+        }
+    }
+}
+//         mode #ww klito 77 5 jj
+// :tt!~t@freenode-obu.d75.6g0qj4.IP MODE #ww +klio 77 5 :jj
+
+//AZMARA
+void	Channel::sendmsg2chanRegulars(Server S, std::string message){
+	for (size_t i = 0; i < this->regularUsers.size(); ++i){
+		S.sendMsg(regularUsers[i].getClientFD(), message);
+		S.sendMsg(regularUsers[i].getClientFD(), "\n");
+	}
+}
+void	Channel::sendmsg2chanOperators(Server S, std::string message){
+	for (size_t i = 0; i < this->operators.size(); ++i){
+		S.sendMsg(operators[i].getClientFD(), message);
+		S.sendMsg(operators[i].getClientFD(), "\n");
+	}
 }

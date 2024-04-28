@@ -10,7 +10,7 @@ void Server::createChannel(Client &c, int i){
 
 void Server::addChannel(Client& c, int i){
 	Channel &findingChannel = findChannel(this->channelPass[i].first);
-	if(!findingChannel.hasAKey()){
+	if(!findingChannel.getHasKey()){
 		if (!findingChannel.isMember(c) && findingChannel.getMode() != "invite-only"){
 			findingChannel.addRegularUser(c);
 			sendMsg(c.getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), findingChannel.getName(), c.getClientIP()));

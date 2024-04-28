@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
+/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/28 10:17:16 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/27 21:54:29 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,10 @@ int	Server::getServerFD(){//M
 	return this->serverFD;//M
 }//M
 
+std::string Server::getCommand(){ //M
+	return command;
+}
+
 void	Server::clearClient(int fd){
 	for (size_t i = 0; i < fds.size(); ++i){//remove client from fds vector
 		if(fds[i].fd == fd){
@@ -89,8 +93,9 @@ void	Server::closeFD(){
 	if (serverFD == -1){//close server socket
 		std::cout << "server disconnected" << std::endl;
 		close(serverFD);}
-	channels.clear();//M
-	clients.clear();//M
+	this->channels.clear();
+	this->clients.clear();
+	this->sayingsBox.clear();//M
 }
 
 void		Server::create_socket(){
@@ -193,9 +198,9 @@ void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
 				this->args = '\0';
 			}
 			new_buf = new_buf.substr(fond+1, new_buf.size());
-			checkCommands(fd);
-			command.clear();//M
-			args.clear();//M
+			checkCommands(fd);//M
+			command.clear();
+			args.clear();
 
 		}
 	}
@@ -228,8 +233,11 @@ void	Server::sendMsg(int fd, std::string msg){
 }
 
 bool    Server::isInUseNickname(std::string nickname){
+	nickname = tolowercase(nickname);
     for (unsigned int i = 0; i < clients.size(); i++){
-        if (clients[i].getNickname() == nickname)
+		std::string cltnick;
+		cltnick = tolowercase(clients[i].getNickname());
+        if (cltnick == nickname)
             return true;
     }
     return false;
@@ -307,12 +315,19 @@ Channel		&Server::findChannel(std::string chname){//M
 void	Server::clearClientslist(){//M
 	clients.clear();
 }
-
 void	Server::clearChannelslist(){//M
 	channels.clear();
 }
+/* // Convert std::string to const char*
+    if (!base.is_open())
+        throw std::runtime_error("Can not open the sayings data base\n");
+    std::string line;
+    while (std::getline(base, line))
+        sayingsBox.push_back(line);
+    base.close();
+}*/
 
-void	Server::fillSayingsBox(std::string fileName){//M
+void	Server::fillSayingsBox(std::string fileName){//
 	std::fstream base(fileName);
     if (!base.is_open())
         throw std::runtime_error("Can not open the sayings data base\n");

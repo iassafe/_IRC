@@ -6,12 +6,11 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 23:26:29 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/20 19:48:05 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/04/26 16:10:16 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-
 
 void	Server::inviteCommand(std::string &args, Client &c){
 // invite #ggg hh
@@ -24,17 +23,18 @@ void	Server::inviteCommand(std::string &args, Client &c){
 // :*.freenode.net 337 uu :End of INVITE list
 // invite tt #ff
 // :*.freenode.net 442 tt #ff :You're not on that channel!
-    if (!c.isRegistered()){
-        sendMsg(c.getClientFD(), ERR_NOTREGISTERED(c.getNickname()));
-        return ;
-    }
+
+    // if (!c.isRegistered()){
+    //     sendMsg(c.getClientFD(), ERR_NOTREGISTERED(c.getNickname()));
+    //     return ;
+    // }
+    
     std::stringstream ss(args);
     std::string guest;
     std::string chan;
     if (args[0] == ':' && args[1] != '#'){
-        args = args.substr(1);
         ss.clear();
-        ss << args;
+        ss << args.substr(1);
         getline(ss, guest);}
     else if ((args[0] != ':' && args[1] != '#') && args[0] != '#') //if the user gives the channel only without nickname
         ss >> guest;
@@ -43,46 +43,37 @@ void	Server::inviteCommand(std::string &args, Client &c){
         return ;
     }
     else{
-        if (ss.peek() == ':')
+        if (ss.peek() == ':'){
             getline(ss, chan);
+            chan = chan.substr(1);
+        }
         else
             ss >> chan;
     }
-    if (chan[0] == ':' && chan[1] == '#')
-        chan = chan.substr(1);
-    else if (chan[0] == '#'){
-            sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(chan, c.getNickname()));
-            return ;
-    }
-    if (isInUseNickname(guest)){
-        Client &clt = findClient(guest);
-        if (!clt.isRegistered()){
-            sendMsg(c.getClientFD(), ERR_NOSUCHNICK(c.getNickname(), guest));
-            return ;}
-        if (!isInUseChName(chan)){
-            sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(chan, c.getNickname()));
-                return ;
-        }
-        else{
-            Channel &ch = findChannel(chan);//If a channel is set to invite-only (mode +i), a channel operator can use the INVITE command to invite a client to join the channel.
-            if (!ch.isMember(c)){
-                sendMsg(c.getClientFD(), ERR_NOTONCHANNEL(c.getNickname(), chan));
-                return ;
-            }
-            if (ch.isMember(clt)){
-                sendMsg(c.getClientFD(), ERR_USERONCHANNEL(chan, guest, c.getNickname()));
-                return ;
-            }
-            if (!ch.isOperator(c)){
-                sendMsg(c.getClientFD(), ERR_NOTOP(c.getNickname(), chan, "????"));//M
-                return ;
-            }
-            sendMsg(clt.getClientFD(), RPL_INVITE(c.getNickname(), c.getUsername(), clt.getHostname(), guest, chan));
-        }
-    }
-    else{
-        // sendMsg(getServerFD(), RPL_INVITING(c.getNickname(), guest, chan)); 
-        sendMsg(c.getClientFD(), ERR_NOSUCHNICK(c.getNickname(), guest));
+    if (chan[0] != '#' || !isInUseChName(chan)){
+        sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(chan, c.getNickname()));
         return ;
+    }
+    if (!isInUseNickname(guest) || !findClient(guest).isRegistered()){
+        sendMsg(c.getClientFD(), ERR_NOSUCHNICK(c.getNickname(), guest));
+        return ;}
+    else{
+        Client &clt = findClient(guest);
+        Channel &ch = findChannel(chan);//If a channel is set to invite-only (mode +i), a channel operator can use the INVITE command to invite a client to join the channel.
+        if (!ch.isMember(c)){
+            sendMsg(c.getClientFD(), ERR_NOTONCHANNEL(c.getNickname(), chan));
+            return ;
+        }
+        if (ch.isMember(clt)){
+            sendMsg(c.getClientFD(), ERR_USERONCHANNEL(chan, guest, c.getNickname()));
+            return ;
+        }
+        if (!ch.isOperator(c)){
+            sendMsg(c.getClientFD(), ERR_NOTOP(c.getNickname(), chan));//M
+            return ;
+        }
+        sendMsg(c.getClientFD(), RPL_INVITING(c.getNickname(), guest, ch.getName())); 
+        sendMsg(clt.getClientFD(), RPL_INVITE(c.getNickname(), c.getUsername(), clt.getClientIP(), guest, ch.getName()));
+        clt.invite2channel(chan);
     }
 }

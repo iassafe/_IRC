@@ -18,7 +18,7 @@
 #include <sstream>
 #include <map>
 #include <fstream>
-
+#include <cctype> //M toupper
 #include "responses.hpp"
 
 class Client;
@@ -38,7 +38,11 @@ class	Server{
 		std::vector<std::string>			sayingsBox;//M
 		std::vector<Client>					clients;
 		std::vector<Channel>				channels;
-
+		//AZMARA
+		std::string							target;//NEW
+		std::string							message;//NEW
+		std::vector<std::string>			vec_cl;//NEW
+		std::vector<std::string>			vec_ch;//NEW
 
 		// join
 		int existPassword;
@@ -60,6 +64,7 @@ class	Server{
 		int			getPort();
 		std::string	getPassword();
 		int			getServerFD();//M
+		std::string getCommand(); //M
 		//----//
 		void		create_socket();
 		void		launch_server();
@@ -111,12 +116,15 @@ class	Server{
 		void 	makeClientKick(std::string clKick, int exist2Points);
 
 		std::string    tolowercase(std::string str);
+		bool	isValidNickName(std::string nickname);//M
+		//AZMARA
+		//AZMARA
+		void	privmsgCommand(std::string &args, Client &cli);//NEW
+		int		validArgsPriv(std::string &args, Client &cli);//NEW
 
-		///*******
 		void handleError(Client &c);
-
 };
-bool	isValidNickName(std::string nickname);//M
+
 
 
 ///////
