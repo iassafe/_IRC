@@ -311,7 +311,9 @@ void	Server::clearClientslist(){//M
 void	Server::clearChannelslist(){//M
 	channels.clear();
 }
-/* // Convert std::string to const char*
+
+void	Server::fillSayingsBox(std::string fileName){//M
+	std::fstream base(fileName);
     if (!base.is_open())
         throw std::runtime_error("Can not open the sayings data base\n");
     std::string line;
@@ -319,4 +321,3 @@ void	Server::clearChannelslist(){//M
         sayingsBox.push_back(line);
     base.close();
 }
-
