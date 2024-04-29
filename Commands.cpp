@@ -30,17 +30,23 @@ void Server::handleError(Client &c){
 		sendMsg(c.getClientFD(), ERR_USAGE(c.getNickname(), this->command, "<channel> <nick>[,<nick>]+ [:<reason>]"));
     else if(this->command == "PRIVMSG")
 		sendMsg(c.getClientFD(), ERR_USAGE(c.getNickname(), this->command, "<target>[,<target>]+ :<message>"));
-	else if (this->command == "INVITE")
-		sendMsg(c.getClientFD(), RPL_ENDOFINVITE(c.getNickname()));
 }
 
 void	Server::handleCommands(Client &c){
 	this->args = skipSpaces(this->args);
 	if(this->args.empty() && this->command != "BOT"){ //M add command != "BOT" if bot is command because bot don't need to have parameters
-		if(this->command != "INVITE")
-    	        sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), this->command));
-    	    handleError(c);
-			return ;
+		if(this->command != "INVITE"){
+			sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), this->command));
+			if (c.isRegistered())
+				handleError(c);
+		}
+		else if (this->command == "INVITE"){
+			if (c.isRegistered())
+				sendMsg(c.getClientFD(), RPL_ENDOFINVITE(c.getNickname()));
+			else
+				sendMsg(c.getClientFD(), ERR_NOTREGISTERED(this->command));
+		}
+		return ;
 	}
 	if (this->command == "USER" || this->command == "NICK" || this->command == "PASS"){
 		if (this->command == "USER")
@@ -52,7 +58,7 @@ void	Server::handleCommands(Client &c){
 	}
 	else{
 		if (!c.isRegistered()){
-        	sendMsg(c.getClientFD(), ERR_NOTREGISTERED(c.getNickname()));
+        	sendMsg(c.getClientFD(), ERR_NOTREGISTERED(this->command));
         	return ;
 		}
 		if (this->command == "INVITE")
