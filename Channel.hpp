@@ -75,5 +75,9 @@ class Channel{
         void	sendmsg2chanRegulars(Server S, std::string message);//NEW
 		void	sendmsg2chanOperators(Server S, std::string message);//NEW
 
+
+        ////////UPPPPPPPP
+        bool islimited(void);
+
 };
 #endif

@@ -21,26 +21,31 @@ void Server::addChannel(Client& c, int i){
 			}
 	}
 	else{
-		if(!findingChannel.getHasKey()){
-			if (!findingChannel.isMember(c) && findingChannel.getMode() != "invite-only"){
-				findingChannel.addRegularUser(c);
-				sendMsg(c.getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), findingChannel.getName(), c.getClientIP()));
-				sendMsg(c.getClientFD(), RPL_NAMREPLY(c.getNickname(), findingChannel.getName(), c.getNickname()));
-				sendMsg(c.getClientFD(), RPL_ENDOFNAMES(c.getHostname(), c.getNickname(), findingChannel.getName()));
-				findingChannel.sendMsg2Members(*this, c);
+		if(!findingChannel.islimited()){
+			if(!findingChannel.getHasKey()){
+				if (!findingChannel.isMember(c) && findingChannel.getMode() != "invite-only"){
+					findingChannel.addRegularUser(c);
+					sendMsg(c.getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), findingChannel.getName(), c.getClientIP()));
+					sendMsg(c.getClientFD(), RPL_NAMREPLY(c.getNickname(), findingChannel.getName(), c.getNickname()));
+					sendMsg(c.getClientFD(), RPL_ENDOFNAMES(c.getHostname(), c.getNickname(), findingChannel.getName()));
+					findingChannel.sendMsg2Members(*this, c);
+				}
 			}
-		}
-		else if (findingChannel.getKey() == this->channelPass[i].second){
-			if (!findingChannel.isMember(c) && findingChannel.getMode() != "invite-only"){
-				findingChannel.addRegularUser(c);
-				sendMsg(c.getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), findingChannel.getName(), c.getClientIP()));
-				sendMsg(c.getClientFD(), RPL_NAMREPLY(c.getNickname(), findingChannel.getName(), c.getNickname()));
-				sendMsg(c.getClientFD(), RPL_ENDOFNAMES(c.getHostname(), c.getNickname(), findingChannel.getName()));
-				findingChannel.sendMsg2Members(*this, c);
+			else if (findingChannel.getKey() == this->channelPass[i].second){
+				if (!findingChannel.isMember(c) && findingChannel.getMode() != "invite-only"){
+					findingChannel.addRegularUser(c);
+					sendMsg(c.getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), findingChannel.getName(), c.getClientIP()));
+					sendMsg(c.getClientFD(), RPL_NAMREPLY(c.getNickname(), findingChannel.getName(), c.getNickname()));
+					sendMsg(c.getClientFD(), RPL_ENDOFNAMES(c.getHostname(), c.getNickname(), findingChannel.getName()));
+					findingChannel.sendMsg2Members(*this, c);
+				}
 			}
+			else
+				sendMsg(c.getClientFD(), ERR_BADCHANNELKEY(c.getNickname(), findingChannel.getName()));
+
 		}
 		else
-			sendMsg(c.getClientFD(), ERR_BADCHANNELKEY(c.getNickname(), findingChannel.getName()));
+			sendMsg(c.getClientFD(), ERR_CHANNELISFULL(c.getNickname(), findingChannel.getName()));
 	}
 }
 

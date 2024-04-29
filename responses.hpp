@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 14:03:28 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/29 10:05:59 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/04/29 10:38:48 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #define ERR_NICKNAMEINUSE(nick) ":ircserv 433 " + nick + " :Nickname is already in use!\r\n"
 // #define ERR_NONICKNAMEGIVEN(nick) ":ircserv 431 " + nick + " :No nickname given!\r\n"
 #define ERR_ERRONEUSNICKNAME(nick) ":ircserv 432 " + nick + " :Erroneus nickname!\r\n"
-#define ERR_NOTREGISTERED(cmd) ":ircserv 451 * " + cmd + " :You have not registered.\r\n"
+#define ERR_NOTREGISTERED(cmd) ":ircserv 451 * " + cmd + " :You have not registered.\r\n" /////////UPPPPPPPPP
 #define ERR_NOSUCHCHANNEL(channel, nick) ":ircserv 403 " + nick + " " + channel + " :No such channel\r\n"
 #define ERR_NOSUCHNICK(nick, argument) ":ircserv 401 " + nick + " " + argument + " :No such nick\r\n" 
 #define ERR_NOTONCHANNEL(nick, channel) ":ircserv 442 " + channel + " " + ":You're not on that channel\r\n"

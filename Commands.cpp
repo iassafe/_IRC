@@ -13,6 +13,7 @@ static int validCommand(std::string &cmd){
         return(1);
     return(0);
 }
+
 void Server::handleError(Client &c){
     if (this->command == "USER")
 		sendMsg(c.getClientFD(), ERR_USAGE(c.getNickname(), this->command, "<username> <unused> <unused> :<realname>"));

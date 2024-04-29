@@ -197,3 +197,11 @@ void	Channel::sendmsg2chanOperators(Server S, std::string message){
 		S.sendMsg(operators[i].getClientFD(), "\n");
 	}
 }
+
+
+////////UPPPPPPPP
+bool Channel::islimited(void){
+    if((this->operators.size() + this->regularUsers.size()) >= this->limit)
+        return (true);
+    return (false);
+}
