@@ -18,7 +18,7 @@
 #include <sstream>
 #include <map>
 #include <fstream>
-#include <cctype> //M toupper
+#include <cctype> // toupper
 #include "responses.hpp"
 
 class Client;
@@ -26,7 +26,7 @@ class Channel;
 //TODO : need canonical form for classes
 class	Server{
 	private:
-		int									serverFD; //M (name changed from serverID to severFD)
+		int									serverFD; // (name changed from serverID to severFD)
 		int									port;
 		static bool							signal;
 		std::string							password;
@@ -35,7 +35,7 @@ class	Server{
 		std::string 						args;
 		std::vector<struct pollfd>			fds;
 		// std::map<std::string, std::string>	map;
-		std::vector<std::string>			sayingsBox;//M
+		std::vector<std::string>			sayingsBox;
 		std::vector<Client>					clients;
 		std::vector<Channel>				channels;
 		//AZMARA
@@ -56,15 +56,15 @@ class	Server{
 
 	public:
 		Server();
-		~Server();//close users fds before quitting//M
+		~Server();//close users fds before quitting
 		//--Setters--//
 		void		setPort(int n);
 		void		setPassword(char *str);
 		//--Getters--//
 		int			getPort();
 		std::string	getPassword();
-		int			getServerFD();//M
-		std::string getCommand(); //M
+		int			getServerFD();
+		std::string getCommand();
 		//----//
 		void		create_socket();
 		void		launch_server();
@@ -75,25 +75,25 @@ class	Server{
 		void		closeFD();
 		void		clearClient(int fd);
 
-		void		addChannel(Channel const& channel);//M
-		bool    	isInUseNickname(std::string nickname);//M
-		bool    	isInUseChName(std::string chName);//M
-		void		sendMsg(int clientFd, std::string msg);//M
-		void		handleCommands(Client &c);//M
-		bool		isRegistered(std::string nickname);//M
-		Client		&findClient(std::string nn);//M
-		Channel		&findChannel(std::string chname);//M
+		void		addChannel(Channel const& channel);
+		bool    	isInUseNickname(std::string nickname);
+		bool    	isInUseChName(std::string chName);
+		void		sendMsg(int clientFd, std::string msg);
+		void		handleCommands(Client &c);
+		bool		isRegistered(std::string nickname);
+		Client		&findClient(std::string nn);
+		Channel		&findChannel(std::string chname);
 
-		void		clearClientslist();//M
-		void		clearChannelslist();//M
+		void		clearClientslist();
+		void		clearChannelslist();
 
-		void	fillSayingsBox(std::string fileName);//M
-        void    nickCommand(std::string &args, Client &c);//M
-        void    userCommand(std::string &args, Client &c);//M
-        void    passCommand(std::string &args, Client &c);//M
-        void	inviteCommand(std::string &args, Client &c);//M
-        void    modeCommand(std::string &args, Client &c);//M
-        void    botCommand(Client &c);//M
+		void	fillSayingsBox(std::string fileName);
+        void    nickCommand(std::string &args, Client &c);
+        void    userCommand(std::string &args, Client &c);
+        void    passCommand(std::string &args, Client &c);
+        void	inviteCommand(std::string &args, Client &c);
+        void    modeCommand(std::string &args, Client &c);
+        void    botCommand(Client &c);
 
 		// ikrame
 		void	checkCommands(int fd);
@@ -116,7 +116,7 @@ class	Server{
 		void 	makeClientKick(std::string clKick, int exist2Points);
 
 		std::string    tolowercase(std::string str);
-		bool	isValidNickName(std::string nickname);//M
+		bool	isValidNickName(std::string nickname);
 		//AZMARA
 		//AZMARA
 		void	privmsgCommand(std::string &args, Client &cli);//NEW

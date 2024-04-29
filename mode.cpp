@@ -6,7 +6,7 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 13:33:00 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/28 11:42:31 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/04/29 15:59:16 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,12 @@ void    Server::modeCommand(std::string &args, Client &c){
         sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(chan, c.getNickname()));
         return ;
     }
-    if (ss.eof()) //there is no mode //mode #ch
-        return ;
     Channel &channel = findChannel(chan);
+    if (ss.eof()){ //there is no mode // mode #ch
+        sendMsg(c.getClientFD(), RPL_CHANNELMODES(channel.getName(), c.getNickname(), channel.channelModes()));
+        // mode #ww klit 123 9
+        return ;
+    }
     std::string modestring, key, limit, user, list = "";
     int k, o, l;
     k = o = l = 0;
@@ -73,22 +76,25 @@ void    Server::modeCommand(std::string &args, Client &c){
                                 channel.setKey(key);
                                 channel.setHasKey(true);
                                 std::cout << "key-->" << channel.getKey() << "--\n";
-                                // channel.channelStatusMsg(*this, modestring, "");
-                                if (modestring[i + 1] == '\0')
-                                    return;
+                                if (modestring[i + 1] == '\0'){
+                                    channel.channelStatusMsg(*this, modestring, "");
+                                    return;}
                             }
                         }
                         else{
                             if (channel.getHasKey() && key == channel.getKey()){
+                                if (modestring[i + 1] == '\0')//important to print the old key before deleting it
+                                    channel.channelStatusMsg(*this, modestring, "");
                                 channel.setKey("");
                                 channel.setHasKey(false);
                                 std::cout << "key-->" << channel.getKey() << "--\n";
                             }
-                            else
+                            else{
                                 sendMsg(c.getClientFD(), ERR_KEYALREADYSET(c.getNickname(), chan)); 
-                            std::cout << "key-->" << channel.getKey() << "--\n";
+                                std::cout << "key-->" << channel.getKey() << "--\n";
+                                }
                             if (modestring[i + 1] == '\0')
-                            return ;
+                                return ;        
                         }
                         key = "";
                     }
@@ -109,21 +115,25 @@ void    Server::modeCommand(std::string &args, Client &c){
                         if (!ss.fail() && sign == '+'){
                                 channel.setLimit(nb);
                                 channel.setHasLimit(true);
-                                std::cout << "limit--" << channel.getlimit() << "--\n";
-                                if (modestring[i + 1] == '\0')
+                                std::cout << "limit--" << channel.getLimit() << "--\n";
+                                if (modestring[i + 1] == '\0'){
+                                    channel.channelStatusMsg(*this, modestring, "");
                                     return ;
+                                }
                         }
                         else if (ss.fail() && sign == '+'){
                             sendMsg(c.getClientFD(), ERR_INVALIDMODELIMITPARAM(c.getNickname(), chan, limit));
                             if (modestring[i + 1] == '\0')
-                                    return ;
+                                return ;
                         }
                         else{
                             channel.setLimit(0);
                             channel.setHasLimit(false);
-                            std::cout << "limit--" << channel.getlimit() << "--\n";
-                            if (modestring[i + 1] == '\0')
+                            std::cout << "limit--" << channel.getLimit() << "--\n";
+                            if (modestring[i + 1] == '\0'){
+                                channel.channelStatusMsg(*this, modestring, "");
                                 return;
+                            }
                         }
                         std::cout << "key-->" << channel.getKey() << "--\n";
                         limit = "";
@@ -135,28 +145,35 @@ void    Server::modeCommand(std::string &args, Client &c){
                     if (sign == '+'){
                         channel.setMode("invite-only");
                         std::cout << "mode--" << channel.getMode() << "--\n";
-                        if (modestring[i + 1] == '\0')
-                        return ;
+                        if (modestring[i + 1] == '\0'){
+                            channel.channelStatusMsg(*this, modestring, "");
+                            return ;
+                        }
                     }
                     else{
                         channel.setMode("");
                         std::cout << "mode--" << channel.getMode() << "--\n";
-                        if (modestring[i + 1] == '\0')
-                        return ;
+                        if (modestring[i + 1] == '\0'){
+                            channel.channelStatusMsg(*this, modestring, "");
+                            return ;
+                        }
                     }
-                    }
+                }
                 else if (modestring[i] == 't'){
                     if (sign == '+'){
                         channel.setTopicLock(true);
                         std::cout << "topic--" << channel.isTopiclocked() << "--\n";
-                        if (modestring[i + 1] == '\0')
+                        if (modestring[i + 1] == '\0'){
+                            channel.channelStatusMsg(*this, modestring, "");
                             return ;
+                        }
                     }
                     else{
                         channel.setTopicLock(false);
                         std::cout << "topic--" << channel.isTopiclocked() << "--\n";
-                        if (modestring[i + 1] == '\0')
-                            return ;
+                        if (modestring[i + 1] == '\0'){
+                            channel.channelStatusMsg(*this, modestring, "");
+                            return ;}
                     }
                     
                 }
@@ -175,14 +192,18 @@ void    Server::modeCommand(std::string &args, Client &c){
                             if (sign == '+'){
                                 channel.addOperator(findClient(user)); //check if the nickname is in use and if its registered then add it in addoprator
                                 // std::cout << "operator--" << "added or deleted" << "--\n";
-                                if (modestring[i + 1] == '\0')
-                                return;
+                                if (modestring[i + 1] == '\0'){
+                                    channel.channelStatusMsg(*this, modestring, user);
+                                    return;
+                                }
                             }
                             else{
                                 channel.addRegularUser(findClient(user)); //check if the nickname is in use and if its registered then add it in addoprator
                                 std::cout << "operator--" << "added or deleted" << "--\n";
-                                if (modestring[i + 1] == '\0')
-                                return;
+                                if (modestring[i + 1] == '\0'){
+                                    channel.channelStatusMsg(*this, modestring, user);
+                                    return;
+                                }
                             }
                             
                         }
@@ -194,6 +215,7 @@ void    Server::modeCommand(std::string &args, Client &c){
                 }
             }
         }
+        // channel.channelStatusMsg(*this, modestring, "");
     }
     else{
         getline (ss, modestring);

@@ -6,7 +6,7 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/27 21:54:29 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/04/29 15:59:43 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,10 @@ std::string    Server::tolowercase(std::string str){
     return (str);
 }
 
-bool    Server::isInUseChName(std::string chName){//M chname lowercase before check
+bool    Server::isInUseChName(std::string chName){// chname lowercase before check
    chName = tolowercase(chName);
     for (unsigned int i = 0; i < channels.size(); ++i){
-        if (tolowercase(channels[i].getName()) == chName)//M
+        if (tolowercase(channels[i].getName()) == chName)
             return true;
     }
     return false;
@@ -43,13 +43,13 @@ Server::Server(){
 	password = "\0";
 	// nick = "tikchbila";
 	// user = "tiwliwla";
-	fillSayingsBox("sayings.txt");//M
+	fillSayingsBox("sayings.txt");
 }
 
-Server::~Server(){//M
-	clearClientslist();//do not forget to close clients fd //M
-	clearChannelslist();//M
-}//M
+Server::~Server(){
+	clearClientslist();//do not forget to close clients fd 
+	clearChannelslist();
+}
 
 void	Server::setPort(int n){
 	this->port = n;
@@ -64,11 +64,11 @@ int	Server::getPort(){
 std::string	Server::getPassword(){
 	return (this->password);
 }
-int	Server::getServerFD(){//M
-	return this->serverFD;//M
-}//M
+int	Server::getServerFD(){
+	return this->serverFD;
+}
 
-std::string Server::getCommand(){ //M
+std::string Server::getCommand(){
 	return command;
 }
 
@@ -95,7 +95,7 @@ void	Server::closeFD(){
 		close(serverFD);}
 	this->channels.clear();
 	this->clients.clear();
-	this->sayingsBox.clear();//M
+	this->sayingsBox.clear();
 }
 
 void		Server::create_socket(){
@@ -163,7 +163,7 @@ void	Server::acceptClient(){
 
 
 
-void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
+void	Server::recieve_data(int fd){// (this is the last version of recieve_data)
 	char	buffer[1024];
 
 	memset(buffer, 0, sizeof(buffer));
@@ -198,7 +198,7 @@ void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
 				this->args = '\0';
 			}
 			new_buf = new_buf.substr(fond+1, new_buf.size());
-			checkCommands(fd);//M
+			checkCommands(fd);
 			command.clear();
 			args.clear();
 
@@ -257,11 +257,11 @@ bool    Server::isInUseNickname(std::string nickname){
     //     std::cout << "registered = " << clients[i].isRegistered() << "\n";
     //     std::cout << "fd = " << clients[i].getClientFD() << "\n";
 
-void    Server::addChannel(Channel const& channel){//M
+void    Server::addChannel(Channel const& channel){
     channels.push_back(channel);
 }
 
-bool	Server::isRegistered(std::string nickname){//M
+bool	Server::isRegistered(std::string nickname){
 	for (unsigned int i = 0; i < clients.size(); i++){
         if (clients[i].getNickname() == nickname && clients[i].isRegistered())
             return true;
@@ -269,7 +269,7 @@ bool	Server::isRegistered(std::string nickname){//M
 	return false;
 }
 
-// bool    Server::isInUseChName(std::string chName){//M
+// bool    Server::isInUseChName(std::string chName){
 //     for (unsigned int i = 0; i < channels.size(); i++){
 //         if (channels[i].getName() == chName)
 //             return true;
@@ -285,7 +285,7 @@ bool	Server::isRegistered(std::string nickname){//M
 //     return false;
 // }
 
-Client		&Server::findClient(std::string nn){//M
+Client		&Server::findClient(std::string nn){
 	unsigned int i;
 	nn = tolowercase(nn);
 	for (i = 0; i < clients.size(); i++){
@@ -295,7 +295,7 @@ Client		&Server::findClient(std::string nn){//M
 	return clients[i]; //clients end if not found
 }
 
-Channel		&Server::findChannel(std::string chname){//M
+Channel		&Server::findChannel(std::string chname){
 	unsigned int i;
 	chname = tolowercase(chname);
 	for (i = 0; i < channels.size(); i++){
@@ -312,10 +312,10 @@ Channel		&Server::findChannel(std::string chname){//M
 // 	}
 // }
 
-void	Server::clearClientslist(){//M
+void	Server::clearClientslist(){
 	clients.clear();
 }
-void	Server::clearChannelslist(){//M
+void	Server::clearChannelslist(){
 	channels.clear();
 }
 /* // Convert std::string to const char*

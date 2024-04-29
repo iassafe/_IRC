@@ -35,18 +35,10 @@ void Server::handleError(Client &c){
 
 void	Server::handleCommands(Client &c){
 	this->args = skipSpaces(this->args);
-	if(this->args.empty() && this->command != "BOT"){ //M add command != "BOT" if bot is command because bot don't need to have parameters
-		if(this->command != "INVITE"){
-			sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), this->command));
-			if (c.isRegistered())
-				handleError(c);
-		}
-		else if (this->command == "INVITE"){
-			if (c.isRegistered())
-				sendMsg(c.getClientFD(), RPL_ENDOFINVITE(c.getNickname()));
-			else
-				sendMsg(c.getClientFD(), ERR_NOTREGISTERED(this->command));
-		}
+	if(this->args.empty() && this->command != "BOT" && this->command != "INVITE"){//M
+		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), this->command));
+		if (c.isRegistered())
+			handleError(c);
 		return ;
 	}
 	if (this->command == "USER" || this->command == "NICK" || this->command == "PASS"){
@@ -88,10 +80,10 @@ void Server::checkCommands(int fd){
 		}
 	}
 	if (i == clients.size()) //this is not part of the implementation just in case this happens 
-		throw(std::runtime_error("Client no found in the server container\n")); //M
+		throw(std::runtime_error("Client no found in the server container\n")); 
 	if (validCommand(this->command))
 		handleCommands(this->clients[i]);
-	else if (this->command != "" && this->clients[i].isRegistered()) //M else without conditons is enough
+	else if (this->command != "" && this->clients[i].isRegistered()) // else without conditons is enough
 		sendMsg(fd, ERR_UNKNOWNCOMMAND(this->clients[i].getNickname(), this->command));
 }
 

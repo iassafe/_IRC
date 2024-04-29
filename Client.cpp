@@ -6,7 +6,7 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:17:06 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/27 21:33:07 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/04/29 14:16:05 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ std::string    Client::tolowercase(std::string str){
 bool    Client::isInUseInvitedCh(std::string ChannelName){
    ChannelName = tolowercase(ChannelName);
     for (unsigned int i = 0; i < this->invited2channels.size(); ++i){
-        if (tolowercase(this->invited2channels[i]) == ChannelName)//M
+        if (tolowercase(this->invited2channels[i]) == ChannelName)
             return true;
     }
     return false;
@@ -163,7 +163,7 @@ void Client::removeInvitedCh(std::string ChannelName){
     }
 }
 
-void    Client::invite2channel(std::string chName){//M in case needed to add a new channel to the invited2channels list
+void    Client::invite2channel(std::string chName){
     if (!isInUseInvitedCh(chName))
         invited2channels.push_back(chName);
 }

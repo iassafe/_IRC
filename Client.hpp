@@ -6,7 +6,7 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:57 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/27 20:31:24 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/04/29 14:17:19 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ class Server;
 
 class	Client{
 	private:
-        int			clientFD;//The socket descriptor for the client's connection //M (clientFD instead of clientID)
+        int			clientFD;//The socket descriptor for the client's connection (clientFD instead of clientID)
 		std::string	clientIP;
 		std::string	buffer;
 
@@ -35,7 +35,7 @@ class	Client{
         std::string servername; //the IRC server to which the user is connecting
         std::string realname; //the real name of the client
         bool registered; //Indicates whether the client succeeded to register to the server or not
-        bool PasswordSended; //set to true the first time the correct password is given by the client //M
+        bool PasswordSended; //set to true the first time the correct password is given by the client 
         std::vector<std::string> invited2channels;
 
 	public:
@@ -70,7 +70,7 @@ class	Client{
 		//other
         void        clearAuthentication();
 		void        registerClient(Server &s);
-        void    invite2channel(std::string chName);//M add a new channel to the invited2channels list
+        void    invite2channel(std::string chName);// add a new channel to the invited2channels list
 
         bool            isInUseInvitedCh(std::string ChannelName);
         std::string     tolowercase(std::string str);

@@ -6,13 +6,11 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 15:39:46 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/27 21:25:01 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/04/29 15:58:30 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-
-//tolowercase deleted from here
 
 bool Server::isValidNickName(std::string nickname){
     nickname = tolowercase(nickname);
@@ -89,7 +87,7 @@ void    Server::userCommand(std::string &args, Client &c){
         sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), "USER"));
 }
 
-void    Server::passCommand(std::string &args, Client &c){//M
+void    Server::passCommand(std::string &args, Client &c){
     c.clearAuthentication();
     if (c.isRegistered()){
         sendMsg(c.getClientFD(), ERR_ALREADYREGISTERED(c.getNickname()));

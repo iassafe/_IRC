@@ -98,7 +98,7 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 	//------skip white spaces------//
 		for(; (args[i] == ' ' || args[i] == '\r' || args[i] == '\t'); i++)
 		this->target = args.substr(0, index);
-		this->message = (args.substr(msg_begin + 1, args.size()));//TODO: NEED TO GET ONLY FIRST PART//max 150 characters?
+		this->message = (args.substr(msg_begin + 1, args.size()));//TODO: NEED TO GET ONLY FIRST PART// max 150 characters?
 		std::cout << "target[0]:" << this->target[0] << "------+++++" << std::endl;
 		std::cout << "message in case of one element:" << this->message << "------+++++" << std::endl;
 		// size_t m;

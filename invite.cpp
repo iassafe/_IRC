@@ -6,7 +6,7 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 23:26:29 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/26 16:10:16 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/04/29 15:02:27 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	Server::inviteCommand(std::string &args, Client &c){
             return ;
         }
         if (!ch.isOperator(c)){
-            sendMsg(c.getClientFD(), ERR_NOTOP(c.getNickname(), chan));//M
+            sendMsg(c.getClientFD(), ERR_NOTOP(c.getNickname(), chan));
             return ;
         }
         sendMsg(c.getClientFD(), RPL_INVITING(c.getNickname(), guest, ch.getName())); 
