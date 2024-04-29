@@ -122,6 +122,8 @@ class	Server{
 		void	privmsgCommand(std::string &args, Client &cli);//NEW
 		int		validArgsPriv(std::string &args, Client &cli);//NEW
 
+
+		////////UPPPPPPPP
 		void handleError(Client &c);
 };
 

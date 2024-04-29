@@ -200,8 +200,21 @@ void	Channel::sendmsg2chanOperators(Server S, std::string message){
 
 
 ////////UPPPPPPPP
-bool Channel::islimited(void){
+bool Channel::hasLimitCantJ(void){
     if((this->operators.size() + this->regularUsers.size()) >= this->limit)
         return (true);
     return (false);
+}
+
+std::string Channel::makeStringMember(void){
+	std::string member;
+	for(size_t i = 0; i < this->operators.size(); ++i){
+		if (i != 0)
+			member += " ";
+		member += "@" + this->operators[i].getNickname();
+	}
+	for(size_t i = 0; i < this->regularUsers.size(); ++i){
+		member += " " + this->regularUsers[i].getNickname();
+	}
+	return (member);
 }

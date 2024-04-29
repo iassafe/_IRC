@@ -77,7 +77,8 @@ class Channel{
 
 
         ////////UPPPPPPPP
-        bool islimited(void);
+        bool hasLimitCantJ(void);
+        std::string makeStringMember(void);
 
 };
 #endif
