@@ -12,7 +12,7 @@ void Server::addChannel(Client& c, int i){
 	Channel &findingChannel = findChannel(this->channelPass[i].first);
 	std::string member = findingChannel.makeStringMember();
 	if (c.isInUseInvitedCh(findingChannel.getName())){
-			if (!findingChannel.isMember(c) && findingChannel.getMode() != "invite-only"){
+			if (!findingChannel.isMember(c)){
 				member += " " + c.getNickname();
 				c.removeInvitedCh(this->channelPass[i].first);
 				findingChannel.addRegularUser(c);
@@ -24,8 +24,8 @@ void Server::addChannel(Client& c, int i){
 	}
 	else{
 		if(findingChannel.getHasLimit()){
-			if(findingChannel.hasLimitCantJ()){
-				sendMsg(c.getClientFD(), ERR_BADCHANNELKEY(c.getNickname(), findingChannel.getName()));
+			if(!findingChannel.hasLimitCanJ()){
+				sendMsg(c.getClientFD(), ERR_CHANNELISFULL(c.getNickname(), findingChannel.getName()));
 				return ;
 			}
 		}
@@ -49,7 +49,7 @@ void Server::addChannel(Client& c, int i){
 				findingChannel.sendMsg2Members(*this, c);
 			}
 		}
-		else
+		else if (!findingChannel.isMember(c))
 			sendMsg(c.getClientFD(), ERR_BADCHANNELKEY(c.getNickname(), findingChannel.getName()));
 	}
 }

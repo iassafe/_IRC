@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   responses.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 14:03:28 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/29 15:48:47 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/04/30 10:24:54 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@
 
 // #define ERR_ALREADYREGISTERED(nick) ":" + "ircserv" + " 462 " + nick + " :You may not reregister !\r\n"
 
-#define ERR_BADCHANNELNAME(nick, channelname) ":" + "ircserv" + " 476 " + nick + " " + channelname + " :Invalid channel name." + "\r\n"
-#define ERR_CHANNELISFULL(nick, channelName) ":" + nick + " 471 " + channelName + " :Cannot join channel (+l)\r\n"
+#define ERR_BADCHANNELNAME(nick, channelname) ":ircserv 476 " + nick + " " + channelname + " :Invalid channel name." + "\r\n"
+#define ERR_CHANNELISFULL(nick, channelName) ":ircserv 471 " + nick + " " + channelName + " :Cannot join channel (+l)\r\n"
 #define ERR_INVITEONLY(nick, channelName) ":" + nick + " 473 " + channelName + " :Cannot join channel (+i)\r\n"
 
 #define RPL_TOPICDISPLAY(hostname, nick, channel, topic) ":" + "ircserv" + " 332 " + nick + " " + channel + " :" + topic + "\r\n"
