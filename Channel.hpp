@@ -62,8 +62,8 @@ class Channel{
         // void    addInvited(Client & c);
         // bool    isInvited(Client & c);
 
-        bool isOperator(Client const& c) const; //true if a given client is an operator in the channel
-        bool isRegularuser(Client const& c) const; //true if a given client is a member in the channel 
+        bool isOperator(Client const& c); //true if a given client is an operator in the channel
+        bool isRegularuser(Client const& c); //true if a given client is a member in the channel 
         bool isMember(Client const& c); //the client is member if it is an operator or a regular user
         // bool isfull(); // true if operators.size() + regularUsers.size() == limit
 
@@ -83,6 +83,10 @@ class Channel{
         std::string makeStringMember(void);
 
         void	updateAmemNickName(Client c, std::string newNick);//M new
+
+        //$$$$$$$$
+        std::string    toLowerCase(std::string str);
+        void sendMsgKick2Members(Server s, Client c);
 
 
 };

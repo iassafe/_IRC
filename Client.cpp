@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:17:06 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/30 20:30:51 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/05/01 15:21:29 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ std::string    Client::tolowercase(std::string str){
 bool    Client::isInUseInvitedCh(std::string ChannelName){
    ChannelName = tolowercase(ChannelName);
     for (unsigned int i = 0; i < this->invited2channels.size(); ++i){
-        if (tolowercase(this->invited2channels[i]) == ChannelName)
+        if (tolowercase(this->invited2channels[i]) == tolowercase(ChannelName))
             return true;
     }
     return false;
@@ -156,7 +156,7 @@ bool    Client::isInUseInvitedCh(std::string ChannelName){
 
 void Client::removeInvitedCh(std::string ChannelName){
     for (unsigned int i = 0; i < this->invited2channels.size(); i++){
-        if (this->invited2channels[i] == ChannelName){
+        if (tolowercase(this->invited2channels[i]) == tolowercase(ChannelName)){
             this->invited2channels.erase(this->invited2channels.begin() + i);
             break ;
         }

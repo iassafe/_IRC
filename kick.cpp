@@ -22,6 +22,7 @@ void Server::execKickCommand(Client& c){
 						else if (findingChannel.isRegularuser(findingClient))
 							findingChannel.removeRegularUser(findingClient);
 						sendMsg(c.getClientFD(), RPL_KICK(c.getNickname(), c.getUsername(), c.getHostname(), findingChannel.getName(), findingClient.getNickname()));
+						findingChannel.sendMsgKick2Members(*this, c);
 					}
 				}
 			}
