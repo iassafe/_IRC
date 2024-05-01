@@ -4,7 +4,7 @@ void Server::createChannel(Client &c, int i){
 	Channel newChannel(c, this->channelPass[i].first, *this);
 	newChannel.addOperator(c);
 	sendMsg(c.getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), newChannel.getName(), c.getClientIP()));
-	sendMsg(c.getClientFD(), RPL_NAMREPLY(c.getNickname(), newChannel.getName(),c.getNickname()));
+	sendMsg(c.getClientFD(), RPL_NAMREPLY(("@" + c.getNickname()), newChannel.getName(),c.getNickname()));
 	sendMsg(c.getClientFD(), RPL_ENDOFNAMES(c.getHostname(), c.getNickname(), newChannel.getName()));
 }
 
