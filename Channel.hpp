@@ -70,6 +70,7 @@ class Channel{
 
         ///////ik
         void sendMsg2Members(Server &s, Client &c);
+        void sendNickMsg2All(Server S, std::string message, Client c);//M new
          //AZMARA
         void	sendmsg2chanRegulars(Server S, std::string message);//NEW
 		void	sendmsg2chanOperators(Server S, std::string message);//NEW
@@ -80,6 +81,9 @@ class Channel{
         ////////UPPPPPPPP
         bool hasLimitCanJ(void);
         std::string makeStringMember(void);
+
+        void	updateAmemNickName(Client c, std::string newNick);//M new
+
 
 };
 #endif

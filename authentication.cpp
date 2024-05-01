@@ -6,11 +6,13 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 15:39:46 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/29 15:58:30 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/05/01 14:49:26 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+
+//M modified
 
 bool Server::isValidNickName(std::string nickname){
     nickname = tolowercase(nickname);
@@ -49,17 +51,27 @@ void    Server::nickCommand(std::string &args, Client &c){
     if (isInUseNickname(param)){// check this only if new client
         sendMsg(c.getClientFD(), ERR_NICKNAMEINUSE(c.getNickname()));
         return ;}
+    if (c.isRegistered()){//M
+        std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + " NICK :" + param + "\n";
+        sendMsg(c.getClientFD(), msg);
+        sendNickMsg2Mem(msg, c);//M
+    }
+    if (c.isRegistered()){
+        for (unsigned int i = 0; i < channels.size(); i++){
+		    if (channels[i].isMember(c))
+                channels[i].updateAmemNickName(c, param);
+        }
+    }
     c.setNickname(param);
     if (!c.isRegistered())
         c.registerClient(*this);
 }
 
 void    Server::userCommand(std::string &args, Client &c){
-    if (c.isRegistered()){
-        sendMsg(c.getClientFD(), ERR_ALREADYREGISTERED(c.getNickname()));
-        return;}
     if (args[0] == ':'){//it's not standard practice to use colons before every parameter in IRC commands.//the colon is reserved specifically for the trailing(last) parameter.
         sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), "USER"));
+        if (c.isRegistered())
+			handleError(c);
         return;
     }
     std::istringstream iss(args);
@@ -67,6 +79,8 @@ void    Server::userCommand(std::string &args, Client &c){
     iss >> un >> hn >> sn;
     if (hn[0] == ':' || sn[0] == ':'){
         sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), "USER"));
+        if (c.isRegistered())
+			handleError(c);
         return ;
     }
     iss >> std::ws;
@@ -76,15 +90,28 @@ void    Server::userCommand(std::string &args, Client &c){
     }
     else
         iss >> rn;
-    if (!iss.fail() && !un.empty() && !hn.empty() && !sn.empty() && !rn.empty()){
+    if (iss.fail() || un.empty() || hn.empty() || sn.empty() || rn.empty()){
+        sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), "USER"));
+        if (c.isRegistered())
+			handleError(c);
+        return;
+    }
+    else{
+        if (c.isRegistered()){
+            sendMsg(c.getClientFD(), ERR_ALREADYREGISTERED(c.getNickname()));
+            return;}
         c.setUsername(un);
         c.setHostname(hn);
         c.setServername(sn);
         c.setRealname(rn);
         c.registerClient(*this);
+        if (c.isRegistered()){
+            for (unsigned int i = 0;  i < clients.size(); i++){//M
+                if ((tolowercase(clients[i].getNickname()) == tolowercase(c.getNickname())) && !clients[i].isRegistered())
+                    clients[i].setNickname("");
+            }
+        }
     }
-    else
-        sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), "USER"));
 }
 
 void    Server::passCommand(std::string &args, Client &c){

@@ -25,3 +25,40 @@ join normally if invited even thought the channel is full
 
 
 inform other clients when someone quit
+
+//////////////////
+mode #aa il 1
+:jj!~k MODE #aa +il 1
+:ircserv 324 jj #aa +li 1
+
+join #aa
+:ircserv 475 ll #aa :Cannot join channel (+K) - bad key
+it has not a key
+///////
+invite ll #aa
+:ircserv 341 jj ll :#aa
+
+invite ll #aa
+:ircserv 341 jj ll :#aa
+didn't join 
+
+//////////
+
+mode #ww l 1
+:hh!~g MODE #ww +l 1
+
+join #ww
+:ircserv 475 jj #ww :Cannot join channel (+K) - bad key
+///////
+
+kick #ww LL
+:ircserv 441 KK  #ww :they aren't on that channel
+kick #ww ll
+:ircserv 441 KK  #ww :they aren't on that channel
+
+join #ww
+:LL!~JJ@0.0.0.0 JOIN :#WW
+:ircserv 353 LL = #WW :@KK LL
+:ircserv 366 LL #WW :END of /NAMES list
+
+///////

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
+/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/30 10:09:08 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/05/01 14:35:05 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -327,7 +327,7 @@ void	Server::clearChannelslist(){
     base.close();
 }*/
 
-void	Server::fillSayingsBox(std::string fileName){//
+void	Server::fillSayingsBox(std::string fileName){
 	std::fstream base(fileName);
     if (!base.is_open())
         throw std::runtime_error("Can not open the sayings data base\n");
@@ -336,3 +336,13 @@ void	Server::fillSayingsBox(std::string fileName){//
         sayingsBox.push_back(line);
     base.close();
 }
+
+
+void Server::sendNickMsg2Mem(std::string msg, Client c){//M new
+	for (unsigned int i = 0; i < channels.size(); i++){
+		if (channels[i].isMember(c)){
+			channels[i].sendNickMsg2All(*this, msg, c);
+		}
+	}
+}
+

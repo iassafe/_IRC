@@ -170,12 +170,23 @@ void	Channel::sendmsg2chanOperators(Server S, std::string message){
 	}
 }
 
+void Channel::sendNickMsg2All(Server S, std::string message, Client c){//M new
+	for (size_t i = 0; i < this->regularUsers.size(); ++i){
+        if (regularUsers[i].getNickname() != c.getNickname())
+		    S.sendMsg(regularUsers[i].getClientFD(), message);
+	}
+    for (size_t i = 0; i < this->operators.size(); ++i){
+        if (operators[i].getNickname() != c.getNickname())
+		    S.sendMsg(operators[i].getClientFD(), message);
+	}
+}
+
 
 ////////UPPPPPPPP
 bool Channel::hasLimitCanJ(void){
     if((this->operators.size() + this->regularUsers.size()) >= this->limit)
-        return (false);
-    return (true);
+        return (true);
+    return (false);
 }
 
 std::string Channel::makeStringMember(void){
@@ -194,7 +205,7 @@ std::string Channel::makeStringMember(void){
 void Channel::channelStatusMsg(Server &s,std::string modestring, std::string newOp){
     std::string str = "";
     std::string sign;
-    if (modestring.find_first_of("+-") == std::string::npos)
+    if (modestring.find_first_of("+-") == std::string::npos && !modestring.empty()) //M
         sign = "+";
     for (unsigned int i = 0; i < modestring.size(); i++){
         if (modestring[i] == 'k' && this->getHasKey()){
@@ -244,4 +255,19 @@ std::string Channel::channelModes(){
     }
     std::cout << "str==" << str << "\n";
     return (str);
+}
+
+void	Channel::updateAmemNickName(Client c, std::string newNick){//M new
+    for (unsigned int i = 0; i < operators.size(); i++){
+        if (operators[i].getNickname() == c.getNickname()){
+            operators[i].setNickname (newNick);
+            return ;
+        }
+    }
+    for (unsigned int i = 0; i < regularUsers.size(); i++){
+        if (regularUsers[i].getNickname() == c.getNickname()){
+            regularUsers[i].setNickname (newNick);
+            return ;
+        }
+    }
 }
