@@ -147,11 +147,11 @@ bool Channel::isMember(Client const& c){
 //////ik
 void Channel::sendMsg2Members(Server &s, Client &c){
     for(size_t i = 0; i < this->regularUsers.size(); ++i){
-        if (this->regularUsers[i].getNickname() != c.getNickname())
+        if (toLowerCase(this->regularUsers[i].getNickname()) != toLowerCase(c.getNickname()))
             s.sendMsg(this->regularUsers[i].getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), this->getName(), this->regularUsers[i].getClientIP()));
     }
     for(size_t i = 0; i < this->operators.size(); ++i){
-        if (this->operators[i].getNickname() != c.getNickname())
+        if (toLowerCase(this->operators[i].getNickname()) != toLowerCase(c.getNickname()))
             s.sendMsg(this->operators[i].getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), this->getName(), this->operators[i].getClientIP()));
     }
 }
@@ -172,11 +172,11 @@ void	Channel::sendmsg2chanOperators(Server S, std::string message){
 
 void Channel::sendNickMsg2All(Server S, std::string message, Client c){//M new
 	for (size_t i = 0; i < this->regularUsers.size(); ++i){
-        if (this->regularUsers[i].getNickname() != c.getNickname())
+        if (toLowerCase(this->regularUsers[i].getNickname()) != toLowerCase(c.getNickname()))
 		    S.sendMsg(this->regularUsers[i].getClientFD(), message);
 	}
     for (size_t i = 0; i < this->operators.size(); ++i){
-        if (this->operators[i].getNickname() != c.getNickname())
+        if (toLowerCase(this->operators[i].getNickname()) != toLowerCase(c.getNickname()))
 		    S.sendMsg(this->operators[i].getClientFD(), message);
 	}
 }
@@ -281,13 +281,13 @@ std::string    Channel::toLowerCase(std::string str){
     return (str);
 }
 
-void Channel::sendMsgKick2Members(Server s, Client c){
+void Channel::sendMsgKick2Members(Server &s, Client &c){
     for (size_t i = 0; i < this->regularUsers.size(); ++i){
-        if ((this->regularUsers[i].getNickname()) != c.getNickname())
+        if (toLowerCase(this->regularUsers[i].getNickname()) != toLowerCase(c.getNickname()))
 		    s.sendMsg(this->regularUsers[i].getClientFD(), RPL_KICK(this->regularUsers[i].getNickname(), c.getUsername(), c.getHostname(), this->getName(), c.getNickname()));
 	}
     for (size_t i = 0; i < this->operators.size(); ++i){
-        if (this->operators[i].getNickname() != c.getNickname())
+        if (toLowerCase(this->operators[i].getNickname()) != toLowerCase(c.getNickname()))
 		    s.sendMsg(this->operators[i].getClientFD(), RPL_KICK(this->operators[i].getNickname(), c.getUsername(), c.getHostname(), this->getName(), c.getNickname()));
 	}
 }
