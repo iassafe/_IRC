@@ -49,14 +49,12 @@ void Server::execTopicCommand(Client &c){
     else{
         Channel &findingChannel = this->findChannel(this->ChannelTopic);
         if (findingChannel.isOperator(c)){
-            std::cout << "old: " << findingChannel.getTopic() << "  new: " << this->topic << std::endl;
             if (findingChannel.getTopic() != this->topic){
                 findingChannel.setTopic(this->topic);
                 this->sendMsg(c.getClientFD(), RPL_SETTOPIC(c.getNickname(), this->ChannelTopic, this->topic));
             }
         }
         else if (findingChannel.isRegularuser(c)){
-            std::cout << "old: " << findingChannel.getTopic() << "  new: " << this->topic << std::endl;
             if (!findingChannel.isTopiclocked()){
                 if (findingChannel.getTopic() != this->topic){
                     findingChannel.setTopic(this->topic);
@@ -85,8 +83,5 @@ void Server::topicCommand(Client &c){
 			else
 				sendMsg(c.getClientFD(), ERR_NOTOPIC(this->ChannelTopic, c.getNickname()));
 		}
-
-
-
 	}
 }

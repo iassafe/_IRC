@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:17:48 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/27 17:44:39 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/05/02 10:04:17 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,6 @@ int	main(int ac, char **av){
 	}
 	catch(const std::exception &e){
 		serv.closeFD();
-		std::cout << e.what() << std::endl;
+		std::cerr << e.what() << std::endl;
 	}
 }
