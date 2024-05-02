@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   responses.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 14:03:28 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/29 15:48:47 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/05/02 12:00:46 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@
 //AZMARA
 #define ERR_NO_RECIPIENT(nick) "ircserv 411 " + nick + " " + ":No recipient given (PRIVMSG)\r\n"
 #define ERR_NO_TEXT(nick) "ircserv 412 " + nick + " " + ":No text to send\r\n"
+#define ERR_CANNOTSENDTOCHANNEL(channel, nick) ":ircserv 404 " + nick + " " + channel + " :Cannot send to channel\r\n"
+#define RPL_NICKCHANGE(oldNick, nick) ":" + oldNick + " NICK " + nick + "\r\n"
 
 #define RPL_NICKCHANGE(oldNick, nick) ":" + oldNick + " NICK " + nick + "\r\n"
 
