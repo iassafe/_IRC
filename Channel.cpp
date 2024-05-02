@@ -281,7 +281,7 @@ std::string    Channel::toLowerCase(std::string str){
     return (str);
 }
 
-void Channel::sendMsgKick2M(Server &s, Client &c, std::string name){
+void Channel::sendMsgKick2Members(Server &s, Client &c, std::string name){
     for (size_t i = 0; i < this->regularUsers.size(); ++i){
 		s.sendMsg(this->regularUsers[i].getClientFD(), RPL_KICK(c.getNickname(), \
         c.getUsername(), c.getHostname(), this->getName(), name));

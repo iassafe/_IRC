@@ -86,7 +86,7 @@ class Channel{
 
         //$$$$$$$$
         std::string    toLowerCase(std::string str);
-        void sendMsgKick2M(Server &s, Client &c, std::string name);
+        void sendMsgKick2Members(Server &s, Client &c, std::string name);
 
 };
 #endif

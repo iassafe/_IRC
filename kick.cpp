@@ -1,35 +1,34 @@
 #include"Server.hpp"
 
-
 void Server::execKickCommand(Client& c){
 	for (size_t i = 0; i < this->ClientsKick.size(); ++i){
-		if (!isInUseNickname(this->ClientsKick[i]))
-			sendMsg(c.getClientFD(), ERR_NOSUCHNICK(c.getNickname(), this->ClientsKick[i]));
-		else{
-			Client& findingClient = findClient(this->ClientsKick[i]);
 			if (!isInUseChName(this->Channelkick))
 				sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(this->Channelkick, c.getNickname()));
 			else{
-				Channel &findingChannel = findChannel(this->Channelkick);
-				if (!findingChannel.isOperator(c))
-					sendMsg(c.getClientFD(), ERR_CANNOTKICK(c.getNickname(), this->Channelkick));
+				if (!isInUseNickname(this->ClientsKick[i]))
+					sendMsg(c.getClientFD(), ERR_NOSUCHNICK(c.getNickname(), this->ClientsKick[i]));
 				else{
-					if (!findingChannel.isMember(findingClient))
-						sendMsg(c.getClientFD(), ERR_USERNOTINCHANNEL(c.getNickname(), findingClient.getNickname(), this->Channelkick));
+					Client& findingClient = findClient(this->ClientsKick[i]);
+					Channel &findingChannel = findChannel(this->Channelkick);
+					if (!findingChannel.isOperator(c))
+						sendMsg(c.getClientFD(), ERR_CANNOTKICK(c.getNickname(), this->Channelkick));
 					else{
-						findingChannel.sendMsgKick2M(*this, c, findingClient.getNickname());
-						if(findingChannel.isOperator(findingClient))
-							findingChannel.removeOperator(findingClient);
-						else if (findingChannel.isRegularuser(findingClient))
-							findingChannel.removeRegularUser(findingClient);
+						if (!findingChannel.isMember(findingClient))
+							sendMsg(c.getClientFD(), ERR_USERNOTINCHANNEL(c.getNickname(), findingClient.getNickname(), this->Channelkick));
+						else{
+							findingChannel.sendMsgKick2Members(*this, c, findingClient.getNickname());
+							if(findingChannel.isOperator(findingClient))
+								findingChannel.removeOperator(findingClient);
+							else if (findingChannel.isRegularuser(findingClient))
+								findingChannel.removeRegularUser(findingClient);
+						}
 					}
+
 				}
 			}
-		}
 	}
 	this->ClientsKick.clear();
 }
-
 
 void Server::makeClientKick(std::string clKick, int exist2Points){
 	std::vector<std::string> vec;
