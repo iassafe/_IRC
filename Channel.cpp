@@ -303,10 +303,10 @@ void Channel::sendMsgKick2Members(Server &s, Client &c, std::string name, std::s
 	}
 }
 
+///////&&&&&&&&&&&&&&
 size_t Channel::getSizeMembers(void){
     return (this->operators.size() + this->regularUsers.size());
 }
-
 void Channel::setStringTime(std::string str){
     this->stringtime = str;
 }
