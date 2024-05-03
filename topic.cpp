@@ -52,19 +52,18 @@ void Server::execTopicCommand(Client &c){
     if (!this->isInUseChName(this->ChannelTopic))
         sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(this->ChannelTopic, c.getNickname()));
     else{
-		std::string stringtime = "";
         Channel &findingChannel = this->findChannel(this->ChannelTopic);
 			if (this->topic != ""){
 				if (findingChannel.isOperator(c)){
-					stringtime = getCurrentTime();
 					if (findingChannel.getTopic() != this->topic){
+						findingChannel.setStringTime(getCurrentTime());
 						findingChannel.setTopic(this->topic);
 						this->sendMsg(c.getClientFD(), RPL_SETTOPIC(c.getNickname(), this->ChannelTopic, this->topic));
 					}
 				}
 				else if (findingChannel.isRegularuser(c)){
 					if (!findingChannel.isTopiclocked()){
-						stringtime = getCurrentTime();
+						findingChannel.setStringTime(getCurrentTime());
 						if (findingChannel.getTopic() != this->topic){
 							findingChannel.setTopic(this->topic);
 							this->sendMsg(c.getClientFD(), RPL_SETTOPIC(c.getNickname(), this->ChannelTopic, this->topic));
@@ -79,7 +78,7 @@ void Server::execTopicCommand(Client &c){
 					sendMsg(c.getClientFD(), ERR_NOTOPIC(this->ChannelTopic, c.getNickname()));
 				else{
 					sendMsg(c.getClientFD(), RPL_TOPICDISPLAY(c.getHostname(), c.getNickname(), findingChannel.getName(), findingChannel.getTopic()));
-					sendMsg(c.getClientFD(), RPL_TOPICWHOTIME(findingChannel.getTopic(), stringtime, c.getNickname(), findingChannel.getName()));
+					sendMsg(c.getClientFD(), RPL_TOPICWHOTIME(findingChannel.getTopic(), findingChannel.getStringTime(), c.getNickname(), findingChannel.getName()));
 				}
 			}	
     }

@@ -27,6 +27,8 @@ class Channel{
         std::vector<Client> regularUsers; //the list of non-operator users in the channel
         std::vector<Client> operators; // the list of clients who have operator status in the channel
         // std::vector<Client> invited; //list of invited client to this channel
+
+        std::string stringtime;
     
     public:
         Channel(Client &creator, std::string chname, Server &s);
@@ -41,6 +43,8 @@ class Channel{
         void setTopicLock(bool b); //lock or unlock the Topic
         void setHasLimit(bool b);
         void setLimit(unsigned int l);
+
+        void setStringTime(std::string str);
         
         //getters
         std::string getName() const;
@@ -52,6 +56,8 @@ class Channel{
         bool isTopiclocked() const; // return topicLock
         bool getHasLimit();
         bool getHasKey();
+
+        std::string getStringTime(void) const;
 
         void addOperator(Client & c); //Add a client as an operator of the channel
         void removeOperator(Client & c); //Remove a client from operators list
