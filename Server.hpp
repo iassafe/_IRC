@@ -20,6 +20,7 @@
 #include <fstream>
 #include <cctype> // toupper
 #include "responses.hpp"
+#include <ctime>
 
 class Client;
 class Channel;
