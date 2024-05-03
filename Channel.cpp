@@ -148,11 +148,13 @@ bool Channel::isMember(Client const& c){
 void Channel::sendMsg2Members(Server &s, Client &c){
     for(size_t i = 0; i < this->regularUsers.size(); ++i){
         if (toLowerCase(this->regularUsers[i].getNickname()) != toLowerCase(c.getNickname()))
-            s.sendMsg(this->regularUsers[i].getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), this->getName(), this->regularUsers[i].getClientIP()));
+            s.sendMsg(this->regularUsers[i].getClientFD(), RPL_JOIN(c.getNickname(), \
+                c.getUsername(), this->getName(), this->regularUsers[i].getClientIP()));
     }
     for(size_t i = 0; i < this->operators.size(); ++i){
         if (toLowerCase(this->operators[i].getNickname()) != toLowerCase(c.getNickname()))
-            s.sendMsg(this->operators[i].getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), this->getName(), this->operators[i].getClientIP()));
+            s.sendMsg(this->operators[i].getClientFD(), RPL_JOIN(c.getNickname(), \
+                c.getUsername(), this->getName(), this->operators[i].getClientIP()));
     }
 }
 
@@ -222,11 +224,15 @@ void Channel::channelStatusMsg(Server &s,std::string modestring, std::string new
             str += newOp;}
     }
     for(unsigned int i = 0; i < this->regularUsers.size(); ++i){
-        std::string msg = ":" + this->regularUsers[i].getNickname() + "!~" + this->regularUsers[i].getUsername() + " " + s.getCommand() + " " + this->getName() + " " + sign + modestring + str + "\n";
+        std::string msg = ":" + this->regularUsers[i].getNickname() + "!~" + \
+            this->regularUsers[i].getUsername() + " " + s.getCommand() + " " + \
+            this->getName() + " " + sign + modestring + str + "\n";
         s.sendMsg(this->regularUsers[i].getClientFD(), msg);
     }
     for(unsigned int i = 0; i < this->operators.size(); ++i){
-        std::string msg = ":" + this->operators[i].getNickname() + "!~" + this->operators[i].getUsername() + " " + s.getCommand()+ " " + this->getName() + " " + sign + modestring + str + "\n";
+        std::string msg = ":" + this->operators[i].getNickname() + "!~" + \
+            this->operators[i].getUsername() + " " + s.getCommand()+ " " + \
+            this->getName() + " " + sign + modestring + str + "\n";
         s.sendMsg(this->operators[i].getClientFD(), msg);
     }
 }
