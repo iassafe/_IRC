@@ -92,6 +92,7 @@ class Channel{
 
         //$$$$$$$$
         std::string toLowerCase(std::string str);
+        ///////&&&&&&&&&&&&&&
         void        sendMsgKick2Members(Server &s, Client &c, std::string name, std::string reason);
         size_t      getSizeMembers(void);
 

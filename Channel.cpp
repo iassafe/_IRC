@@ -281,6 +281,7 @@ std::string    Channel::toLowerCase(std::string str){
     return (str);
 }
 
+///////&&&&&&&&&&&&&&
 void Channel::sendMsgKick2Members(Server &s, Client &c, std::string name, std::string reason){
     for (size_t i = 0; i < this->regularUsers.size(); ++i){
         if(reason == "")

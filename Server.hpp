@@ -53,8 +53,9 @@ class	Server{
 		std::string ChannelTopic;
 		std::string topic;
 		std::string Channelkick;
-		std::vector<std::string> ClientsKick;
+		std::vector<std::string> ClientsKick;	
 
+		///////&&&&&&&&&&&&&&
 		std::string reason;
 
 	public:
