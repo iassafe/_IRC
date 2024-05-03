@@ -10,11 +10,11 @@ void Server::execKickCommand(Client& c){
 				else{
 					Client& findingClient = findClient(this->ClientsKick[i]);
 					Channel &findingChannel = findChannel(this->Channelkick);
-					if (!findingChannel.isOperator(c))
-						sendMsg(c.getClientFD(), ERR_CANNOTKICK(c.getNickname(), this->Channelkick));
+					if (!findingChannel.isMember(findingClient))
+						sendMsg(c.getClientFD(), ERR_USERNOTINCHANNEL(c.getNickname(), findingClient.getNickname(), this->Channelkick));
 					else{
-						if (!findingChannel.isMember(findingClient))
-							sendMsg(c.getClientFD(), ERR_USERNOTINCHANNEL(c.getNickname(), findingClient.getNickname(), this->Channelkick));
+						if (!findingChannel.isOperator(c))
+							sendMsg(c.getClientFD(), ERR_CANNOTKICK(c.getNickname(), this->Channelkick));
 						else{
 							findingChannel.sendMsgKick2Members(*this, c, findingClient.getNickname());
 							if(findingChannel.isOperator(findingClient))
