@@ -129,6 +129,7 @@ class	Server{
 		////////UPPPPPPPP
 		void handleError(Client &c);
 		void sendNickMsg2Mem(std::string msg, Client c);//M NEW
+		void removeChannel(std::string chName);
 
 
 		

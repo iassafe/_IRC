@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/01 15:48:37 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/05/03 09:53:25 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -353,3 +353,11 @@ void Server::sendNickMsg2Mem(std::string msg, Client c){//M new
 	}
 }
 
+void Server::removeChannel(std::string chName){
+	for (unsigned int i = 0; i < this->channels.size(); i++){
+        if (tolowercase(this->channels[i].getName()) == tolowercase(chName)){
+            this->channels.erase(this->channels.begin() + i);
+            break ;
+        }
+    }
+}

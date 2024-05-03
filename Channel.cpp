@@ -291,3 +291,7 @@ void Channel::sendMsgKick2Members(Server &s, Client &c, std::string name){
         c.getUsername(), c.getHostname(), this->getName(), name));
 	}
 }
+
+size_t Channel::getSizeMembers(void){
+    return (this->operators.size() + this->regularUsers.size());
+}

@@ -21,6 +21,8 @@ void Server::execKickCommand(Client& c){
 								findingChannel.removeOperator(findingClient);
 							else if (findingChannel.isRegularuser(findingClient))
 								findingChannel.removeRegularUser(findingClient);
+							if (!findingChannel.getSizeMembers())
+								removeChannel(findingChannel.getName());
 						}
 					}
 

@@ -43,6 +43,14 @@ void	Server::sendToClients(size_t msg_begin, Client &cli, bool isMessage){
 		else
 			sendMsg(cli.getClientFD(), ERR_NOSUCHNICK(vec_cl[M], this->target));
 	}
+
+
+
+
+
+
+
+	
 }
 
 void	Server::sendToChannels(size_t msg_begin, Client &cli, bool isMessage){
