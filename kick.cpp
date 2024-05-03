@@ -16,7 +16,7 @@ void Server::execKickCommand(Client& c){
 						if (!findingChannel.isOperator(c))
 							sendMsg(c.getClientFD(), ERR_CANNOTKICK(c.getNickname(), this->Channelkick));
 						else{
-							findingChannel.sendMsgKick2Members(*this, c, findingClient.getNickname());
+							findingChannel.sendMsgKick2Members(*this, c, findingClient.getNickname(), this->reason);
 							if(findingChannel.isOperator(findingClient))
 								findingChannel.removeOperator(findingClient);
 							else if (findingChannel.isRegularuser(findingClient))
@@ -29,6 +29,7 @@ void Server::execKickCommand(Client& c){
 				}
 			}
 	}
+	this->reason.clear();
 	this->ClientsKick.clear();
 }
 
@@ -63,6 +64,7 @@ void Server::makeClientKick(std::string clKick, int exist2Points){
 
 int Server::validArgsKick(void){
 	this->args = skipSpaces(this->args);
+	this->reason = "";
 	int count_args = 1;
 	for(size_t i =0; i < this->args.length(); ++i){
 		if (this->args[i] == ' '){
@@ -90,6 +92,14 @@ int Server::validArgsKick(void){
 			temp_args = temp_args.substr(0, found_sp);
 		else
 			temp_args = temp_args.substr(0, temp_args.length());
+	}
+	if (count_args > 2 && !exist2Points){
+		std::string str = this->args.substr(found_sp + 1, this->args.length());
+		str = skipSpaces(str);
+		size_t space = str.find_first_of(" \r\t");
+		str = str.substr(space, str.length());
+		str = skipSpaces(str);
+		this->reason = str;
 	}
 	makeClientKick(temp_args, exist2Points);
 	return (1);

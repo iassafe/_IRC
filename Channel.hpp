@@ -91,9 +91,9 @@ class Channel{
         void	updateAmemNickName(Client c, std::string newNick);//M new
 
         //$$$$$$$$
-        std::string    toLowerCase(std::string str);
-        void sendMsgKick2Members(Server &s, Client &c, std::string name);
-        size_t getSizeMembers(void);
+        std::string toLowerCase(std::string str);
+        void        sendMsgKick2Members(Server &s, Client &c, std::string name, std::string reason);
+        size_t      getSizeMembers(void);
 
 };
 #endif

@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/03 09:53:25 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/05/03 16:40:08 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ Server::Server(){
 	// nick = "tikchbila";
 	// user = "tiwliwla";
 	fillSayingsBox("sayings.txt");
+	this->reason = "";
 }
 
 Server::~Server(){

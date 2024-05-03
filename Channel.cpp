@@ -281,14 +281,18 @@ std::string    Channel::toLowerCase(std::string str){
     return (str);
 }
 
-void Channel::sendMsgKick2Members(Server &s, Client &c, std::string name){
+void Channel::sendMsgKick2Members(Server &s, Client &c, std::string name, std::string reason){
     for (size_t i = 0; i < this->regularUsers.size(); ++i){
+        if(reason == "")
+            reason = c.getNickname();
 		s.sendMsg(this->regularUsers[i].getClientFD(), RPL_KICK(c.getNickname(), \
-        c.getUsername(), c.getHostname(), this->getName(), name));
+        c.getUsername(), c.getHostname(), this->getName(), name, reason));
 	}
     for (size_t i = 0; i < this->operators.size(); ++i){
+        if(reason == "")
+            reason = c.getNickname();
 		s.sendMsg(this->operators[i].getClientFD(), RPL_KICK(c.getNickname(), \
-        c.getUsername(), c.getHostname(), this->getName(), name));
+        c.getUsername(), c.getHostname(), this->getName(), name, reason));
 	}
 }
 

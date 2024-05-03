@@ -55,6 +55,8 @@ class	Server{
 		std::string Channelkick;
 		std::vector<std::string> ClientsKick;
 
+		std::string reason;
+
 	public:
 		Server();
 		~Server();//close users fds before quitting
