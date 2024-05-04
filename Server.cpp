@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
+/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/04 12:02:52 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/05/04 12:45:40 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ Server::Server(){
 	password = "\0";
 	// nick = "tikchbila";
 	// user = "tiwliwla";
-	fillSayingsBox("sayings.txt");//M
+	fillSayingsBox("sayings.txt");
 	// fds(0), sayingsBox(0), clients(0), channels(0),
 	// joinChannel(0), joinPassword(0), vec_cl(0), vec_ch(0), channelPass(0),
 	// ClientsKick(0)
@@ -262,7 +262,7 @@ bool    Server::isInUseNickname(std::string nickname){
     for (unsigned int i = 0; i < clients.size(); i++){
 		std::string cltnick;
 		cltnick = tolowercase(clients[i].getNickname());
-        if (cltnick == nickname)
+        if (cltnick == nickname && clients[i].isRegistered())
             return true;
     }
     return false;
@@ -363,7 +363,7 @@ void	Server::fillSayingsBox(std::string fileName){
 }
 
 
-void Server::sendNickMsg2Mem(std::string msg, Client c){//M new
+void Server::sendNickMsg2Mem(std::string msg, Client c){
 	for (unsigned int i = 0; i < channels.size(); i++){
 		if (channels[i].isMember(c)){
 			channels[i].sendNickMsg2All(*this, msg, c);

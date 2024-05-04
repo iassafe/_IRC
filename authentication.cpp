@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   authentication.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
+/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 15:39:46 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/04 12:06:02 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/05/04 14:36:37 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,15 +34,17 @@ bool Server::isValidNickName(std::string nickname){
 }
 
 void    Server::nickCommand(std::string &args, Client &c){
-    if (!c.isPasswordSended())//MM
+    if (!c.isPasswordSended())
         return;
     std::stringstream ss(args);
     std::ws(ss);
     std::string param;
     if (ss.peek() != ':')
         ss >> param;
-    else
+    else{
         getline(ss, param);
+        param = param.substr(1);//MM
+    }
     if (c.getNickname() == param) //in case a client try to change his nn with the same nickname setted before
         return;
     if (!isValidNickName(param)){
@@ -52,7 +54,7 @@ void    Server::nickCommand(std::string &args, Client &c){
         if ((tolowercase(clients[i].getNickname()) == tolowercase(param)) && !clients[i].isRegistered())
             clients[i].setNickname("");
     }
-    if (isInUseNickname(param)){// check this only if new client //MM
+    if (isInUseNickname(param)){// check this only if new client 
         sendMsg(c.getClientFD(), ERR_NICKNAMEINUSE(c.getNickname()));
         return ;}
     if (c.isRegistered()){
@@ -99,7 +101,7 @@ void    Server::userCommand(std::string &args, Client &c){
         return;
     }
     else{
-        if (!c.isPasswordSended())//MM
+        if (!c.isPasswordSended())
             return;
         if (c.isRegistered()){
             sendMsg(c.getClientFD(), ERR_ALREADYREGISTERED(c.getNickname()));
@@ -128,8 +130,10 @@ void    Server::passCommand(std::string &args, Client &c){
         std::string param;
         if (ss.peek() != ':')
             ss >> param;
-        else
+        else{
             getline(ss, param);
+            param = param.substr(1);
+        }
         if (param != getPassword()){
             sendMsg(c.getClientFD(), ERR_PASSWDMISMATCH(c.getNickname()));
             return;

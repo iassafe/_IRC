@@ -25,7 +25,8 @@
 #define ERR_KEYALREADYSET(nick, channel) ":ircserv 467 " + nick + " " + channel + " " + ":Channel key already set\r\n"
 #define ERR_NOACCCHTOPIC(nick, channel) ":ircserv 482 " + nick + " " + channel + " :You do not have access to change the topic on this channel\r\n" ///////
 #define ERR_CANNOTKICK(nick, channel) ":ircserv 482 " + nick + " " + channel + " :You must be a channel half-operator\r\n" ///////
-#define RPL_CHANNELMODES(channelName, nick, channelmode) ":ircserv 324 " + nick + " " + channelName + " :" + channelmode + "\r\n"//MM
+#define RPL_CHANNELMODES(channelName, nick, channelmode) ":ircserv 324 " + nick + " " + channelName + " :" + channelmode + "\r\n"
+
 
 
 #define RPL_YOURHOST(nick) ":" + "ircserv" + " 002 " + nick + " :Your host is " + "ircserv" + " running version 1.0 !\r\n"

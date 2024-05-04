@@ -35,7 +35,7 @@ void Server::handleError(Client &c){
 
 void	Server::handleCommands(Client &c){
 	this->args = skipSpaces(this->args);
-	if(this->args.empty() && this->command != "BOT" && this->command != "INVITE"){//M user added
+	if(this->args.empty() && this->command != "BOT" && this->command != "INVITE"){
 		sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), this->command));
 		if (c.isRegistered())
 			handleError(c);
