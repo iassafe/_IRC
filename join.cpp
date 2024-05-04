@@ -12,15 +12,15 @@ void Server::addChannel(Client& c, int i){
 	Channel &findingChannel = findChannel(this->channelPass[i].first);
 	std::string member = findingChannel.makeStringMember();
 	if (c.isInUseInvitedCh(findingChannel.getName())){
-			if (!findingChannel.isMember(c)){
-				member += " " + c.getNickname();
-				c.removeInvitedCh(this->channelPass[i].first);
-				findingChannel.addRegularUser(c);
-				sendMsg(c.getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), findingChannel.getName(), c.getClientIP()));
-				sendMsg(c.getClientFD(), RPL_NAMREPLY(member, findingChannel.getName(), c.getNickname()));
-				sendMsg(c.getClientFD(), RPL_ENDOFNAMES(c.getHostname(), c.getNickname(), findingChannel.getName()));
-				findingChannel.sendMsg2Members(*this, c);
-			}
+		if (!findingChannel.isMember(c)){
+			member += " " + c.getNickname();
+			c.removeInvitedCh(this->channelPass[i].first);
+			findingChannel.addRegularUser(c);
+			sendMsg(c.getClientFD(), RPL_JOIN(c.getNickname(), c.getUsername(), findingChannel.getName(), c.getClientIP()));
+			sendMsg(c.getClientFD(), RPL_NAMREPLY(member, findingChannel.getName(), c.getNickname()));
+			sendMsg(c.getClientFD(), RPL_ENDOFNAMES(c.getHostname(), c.getNickname(), findingChannel.getName()));
+			findingChannel.sendMsg2Members(*this, c);
+		}
 	}
 	else{
 		if(findingChannel.getHasLimit()){

@@ -192,7 +192,7 @@ bool Channel::hasLimitCanJ(void){
 }
 
 std::string Channel::makeStringMember(void){
-	std::string member;
+	std::string member = "";
 	for(size_t i = 0; i < this->operators.size(); ++i){
 		if (i != 0)
 			member += " ";
