@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 13:33:00 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/29 15:59:16 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/05/04 12:06:48 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,24 +42,21 @@ void    Server::modeCommand(std::string &args, Client &c){
     int k, o, l;
     k = o = l = 0;
     std::string modes = "+-litok";
-    char sign = '+';
+    std::string sign = "+";
     ss >> std::ws;
     if (ss.peek() != ':'){
         while (ss >> modestring){
             ss >>std::ws;
             for (unsigned i = 0; i < modestring.size(); i++){
-                if (modes.find(modestring[i]) == std::string::npos){
+                if (modes.find(modestring[i]) == std::string::npos)
                     sendMsg(c.getClientFD(), ERR_UNKNOWNMODE(c.getNickname(), chan, modestring[i]));
-                    if (modestring[i + 1] == '\0')
-                        return ; 
-                }
-                if (modestring[i] == '+' || modestring[i] == '-')
-                    sign = modestring[i++];
-                if (!channel.isOperator(c)){
+                else if (!channel.isOperator(c)){
                     std::string m = "";
                     sendMsg(c.getClientFD(), ERR_NOTOPMODES(c.getNickname(), chan, (m += modestring[i])));
                     return ;
                 }
+                if (modestring[i] == '+' || modestring[i] == '-')
+                    sign[0] = modestring[i++];
                 if (modestring[i] == 'k'){
                     if (ss.peek() == ':'){
                         getline(ss, key);
@@ -67,7 +64,7 @@ void    Server::modeCommand(std::string &args, Client &c){
                     else
                         ss >> key;
                     if (!key.empty()){
-                        if (sign == '+'){
+                        if (sign[0] == '+'){
                             if (channel.getHasKey()){
                                 key = "";
                                 continue ; //do nothing if the Key already set
@@ -75,26 +72,19 @@ void    Server::modeCommand(std::string &args, Client &c){
                             else{
                                 channel.setKey(key);
                                 channel.setHasKey(true);
-                                std::cout << "key-->" << channel.getKey() << "--\n";
-                                if (modestring[i + 1] == '\0'){
-                                    channel.channelStatusMsg(*this, modestring, "");
-                                    return;}
+                                std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + " :") + key + "\n";
+                                sendMsg(c.getClientFD(), msg);
                             }
                         }
                         else{
                             if (channel.getHasKey() && key == channel.getKey()){
-                                if (modestring[i + 1] == '\0')//important to print the old key before deleting it
-                                    channel.channelStatusMsg(*this, modestring, "");
+                                std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + " :") + key + "\n";
+                                sendMsg(c.getClientFD(), msg);
                                 channel.setKey("");
                                 channel.setHasKey(false);
-                                std::cout << "key-->" << channel.getKey() << "--\n";
                             }
-                            else{
-                                sendMsg(c.getClientFD(), ERR_KEYALREADYSET(c.getNickname(), chan)); 
-                                std::cout << "key-->" << channel.getKey() << "--\n";
-                                }
-                            if (modestring[i + 1] == '\0')
-                                return ;        
+                            else
+                                sendMsg(c.getClientFD(), ERR_KEYALREADYSET(c.getNickname(), chan));
                         }
                         key = "";
                     }
@@ -112,70 +102,51 @@ void    Server::modeCommand(std::string &args, Client &c){
                         unsigned int nb;
                         std::stringstream ss(limit);
                         ss >> nb;
-                        if (!ss.fail() && sign == '+'){
-                                channel.setLimit(nb);
-                                channel.setHasLimit(true);
-                                std::cout << "limit--" << channel.getLimit() << "--\n";
-                                if (modestring[i + 1] == '\0'){
-                                    channel.channelStatusMsg(*this, modestring, "");
-                                    return ;
-                                }
+                        if (!ss.fail() && sign[0] == '+'){
+                            channel.setLimit(nb);
+                            channel.setHasLimit(true);
+                            std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + " :") + limit + "\n";
+                            sendMsg(c.getClientFD(), msg);
                         }
-                        else if (ss.fail() && sign == '+'){
+                        else if (ss.fail() && sign[0] == '+')
                             sendMsg(c.getClientFD(), ERR_INVALIDMODELIMITPARAM(c.getNickname(), chan, limit));
-                            if (modestring[i + 1] == '\0')
-                                return ;
-                        }
-                        else{
+                        else {
                             channel.setLimit(0);
                             channel.setHasLimit(false);
-                            std::cout << "limit--" << channel.getLimit() << "--\n";
-                            if (modestring[i + 1] == '\0'){
-                                channel.channelStatusMsg(*this, modestring, "");
+                            std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
+                            sendMsg(c.getClientFD(), msg);
+                            if (modestring[i + 1] == '\0')
                                 return;
-                            }
                         }
-                        std::cout << "key-->" << channel.getKey() << "--\n";
                         limit = "";
                     }
                     else
                         sendMsg(c.getClientFD(), ERR_INVALIDMODEPARAM(c.getNickname(), chan, 'l', "limit"));
                 }
                 else if (modestring[i] == 'i'){
-                    if (sign == '+'){
+                    if (sign[0] == '+'){
                         channel.setMode("invite-only");
-                        std::cout << "mode--" << channel.getMode() << "--\n";
-                        if (modestring[i + 1] == '\0'){
-                            channel.channelStatusMsg(*this, modestring, "");
-                            return ;
-                        }
+                        std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
+                        sendMsg(c.getClientFD(), msg);
                     }
                     else{
                         channel.setMode("");
-                        std::cout << "mode--" << channel.getMode() << "--\n";
-                        if (modestring[i + 1] == '\0'){
-                            channel.channelStatusMsg(*this, modestring, "");
-                            return ;
-                        }
+                        std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
+                        sendMsg(c.getClientFD(), msg);
                     }
                 }
                 else if (modestring[i] == 't'){
-                    if (sign == '+'){
+                    if (sign[0] == '+'){
                         channel.setTopicLock(true);
-                        std::cout << "topic--" << channel.isTopiclocked() << "--\n";
-                        if (modestring[i + 1] == '\0'){
-                            channel.channelStatusMsg(*this, modestring, "");
-                            return ;
-                        }
+                        std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
+                        sendMsg(c.getClientFD(), msg);
                     }
                     else{
                         channel.setTopicLock(false);
                         std::cout << "topic--" << channel.isTopiclocked() << "--\n";
-                        if (modestring[i + 1] == '\0'){
-                            channel.channelStatusMsg(*this, modestring, "");
-                            return ;}
+                        std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
+                        sendMsg(c.getClientFD(), msg);
                     }
-                    
                 }
                 else if (modestring[i] == 'o'){
                     if (ss.peek() == ':'){
@@ -184,38 +155,33 @@ void    Server::modeCommand(std::string &args, Client &c){
                     else
                         ss >> user;
                     if (!user.empty()){
-                        if (!isInUseNickname(user)){
+                        if (!isInUseNickname(user))
                             sendMsg(c.getClientFD(), ERR_NOSUCHNICK(c.getNickname(), user));
-                            continue ;
-                        }
-                        if (channel.isMember(findClient(user))){
-                            if (sign == '+'){
+                        else if (channel.isMember(findClient(user))){
+                            if (sign[0] == '+'){
                                 channel.addOperator(findClient(user)); //check if the nickname is in use and if its registered then add it in addoprator
-                                // std::cout << "operator--" << "added or deleted" << "--\n";
-                                if (modestring[i + 1] == '\0'){
-                                    channel.channelStatusMsg(*this, modestring, user);
-                                    return;
-                                }
+                                std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + " :" + user) + "\n";
+                                sendMsg(c.getClientFD(), msg);
+                                sendMsg(findClient(user).getClientFD(), msg);
                             }
                             else{
                                 channel.addRegularUser(findClient(user)); //check if the nickname is in use and if its registered then add it in addoprator
-                                std::cout << "operator--" << "added or deleted" << "--\n";
-                                if (modestring[i + 1] == '\0'){
-                                    channel.channelStatusMsg(*this, modestring, user);
-                                    return;
-                                }
+                                std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + " :") + user + "\n";
+                                sendMsg(c.getClientFD(), msg);
+                                sendMsg(findClient(user).getClientFD(), msg);
                             }
-                            
                         }
                         else
                             sendMsg(c.getClientFD(), ERR_USERNOTINCHANNEL(c.getNickname(), user, chan));
+                        user = "";
                     }
                     else
                         sendMsg(c.getClientFD(), ERR_INVALIDMODEPARAM(c.getNickname(), chan, 'o', "op"));
                 }
+                if (modestring[i + 1] == '\0')
+                    return;
             }
         }
-        // channel.channelStatusMsg(*this, modestring, "");
     }
     else{
         getline (ss, modestring);
@@ -223,15 +189,18 @@ void    Server::modeCommand(std::string &args, Client &c){
         for (unsigned int i = 0; i < modestring.size(); i++){
             if (modes.find(modestring[i]) == std::string::npos){
                 sendMsg(c.getClientFD(), ERR_UNKNOWNMODE(c.getNickname(), chan, modestring[i]));
+                continue;
             }
             if (modestring[i] == '+' || modestring[i] == '-')
-                sign = modestring[i++];
-            if (modestring[i] == 'k')
-                sendMsg(c.getClientFD(), ERR_INVALIDMODEPARAM(c.getNickname(), chan, 'k', "key"));
-            else if (modestring[i] == 'l')
-                sendMsg(c.getClientFD(), ERR_INVALIDMODEPARAM(c.getNickname(), chan, 'l', "limit"));
-            else if (modestring[i] == 'o')
-                sendMsg(c.getClientFD(), ERR_INVALIDMODEPARAM(c.getNickname(), chan, 'o', "op"));
+                sign[0] = modestring[i++];
+            if (modestring[i] == 'k' || modestring[i] == 'l' || modestring[i] == 'o'){
+                if (modestring[i] == 'k')
+                    sendMsg(c.getClientFD(), ERR_INVALIDMODEPARAM(c.getNickname(), chan, 'k', "key"));
+                else if (modestring[i] == 'l')
+                    sendMsg(c.getClientFD(), ERR_INVALIDMODEPARAM(c.getNickname(), chan, 'l', "limit"));
+                else if (modestring[i] == 'o')
+                    sendMsg(c.getClientFD(), ERR_INVALIDMODEPARAM(c.getNickname(), chan, 'o', "op"));
+            }
             else{
                 if (!channel.isOperator(c)){
                     std::string m = "";
@@ -239,7 +208,7 @@ void    Server::modeCommand(std::string &args, Client &c){
                     continue ;
                 }
                 if (modestring[i] == 'i'){
-                    if (sign == '+'){
+                    if (sign[0] == '+'){
                         channel.setMode("invite-only");
                         std::cout << "mode--" << channel.getMode() << "--\n";
                     }
@@ -249,7 +218,7 @@ void    Server::modeCommand(std::string &args, Client &c){
                     }
                 }
                 else if (modestring[i] == 't'){
-                    if (sign == '+'){
+                    if (sign[0] == '+'){
                         channel.setTopicLock(true);
                         std::cout << "topic--" << channel.isTopiclocked() << "--\n";
                     }

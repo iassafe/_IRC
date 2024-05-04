@@ -1,8 +1,6 @@
 
 #ifndef RESPONSES_HPP
 #define RESPONSES_HPP
-
-
 #define RPL_WELCOME(nick, user) ":ircserv 001 " + nick + " :Welcome to the ft_irc IRC network " + nick + "!~" + user + "@127.0.0.1\r\n"
 #define ERR_ALREADYREGISTERED(nick) ":ircserv 462 " + nick + " :You may not reregister\r\n"
 #define ERR_PASSWDMISMATCH(nick) ":ircserv 464 " + nick + " :Password incorrect!\r\n"
@@ -27,7 +25,7 @@
 #define ERR_KEYALREADYSET(nick, channel) ":ircserv 467 " + nick + " " + channel + " " + ":Channel key already set\r\n"
 #define ERR_NOACCCHTOPIC(nick, channel) ":ircserv 482 " + nick + " " + channel + " :You do not have access to change the topic on this channel\r\n" ///////
 #define ERR_CANNOTKICK(nick, channel) ":ircserv 482 " + nick + " " + channel + " :You must be a channel half-operator\r\n" ///////
-#define RPL_CHANNELMODES(channelName, nick, channelmode) ":ircserv 324 " + nick + " " + channelName + " +" + channelmode + "\r\n"//M
+#define RPL_CHANNELMODES(channelName, nick, channelmode) ":ircserv 324 " + nick + " " + channelName + " :" + channelmode + "\r\n"//MM
 
 
 #define RPL_YOURHOST(nick) ":" + "ircserv" + " 002 " + nick + " :Your host is " + "ircserv" + " running version 1.0 !\r\n"
@@ -44,7 +42,7 @@
 
 // #define ERR_ALREADYREGISTERED(nick) ":" + "ircserv" + " 462 " + nick + " :You may not reregister !\r\n"
 
-#define ERR_BADCHANNELNAME(nick, channelname) ":" + "ircserv" + " 476 " + nick + " " + channelname + " :Invalid channel name." + "\r\n"
+#define ERR_BADCHANNELNAME(nick, channelname) ":ircserv 476 " + nick + " " + channelname + " :Invalid channel name." + "\r\n"
 #define ERR_CHANNELISFULL(nick, channelName) ":" + nick + " 471 " + channelName + " :Cannot join channel (+l)\r\n"
 #define ERR_INVITEONLY(nick, channelName) ":" + nick + " 473 " + channelName + " :Cannot join channel (+i)\r\n"
 

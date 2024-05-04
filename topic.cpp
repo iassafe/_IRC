@@ -6,7 +6,7 @@ int Server::validArgsTopic(void){
 		return (1);
 	int count_args = 1;
 	for(size_t i =0; i < this->args.length(); ++i){
-		if (this->args[i] == ' '){
+		if (this->args[i] == ' '|| this->args[i] == '\r' || this->args[i] == '\t'){
 			for(; this->args[i] == ' ' || this->args[i] == '\r' || this->args[i] == '\t'; ++i){}
 			if(this->args[i])
 				count_args++;
@@ -40,7 +40,7 @@ int Server::validArgsTopic(void){
 	return (0);
 }
 
-std::string getCurrentTime(void)
+static std::string getCurrentTime(void)
 {
 	std::time_t currentTime = std::time(NULL);
 	std::stringstream result;

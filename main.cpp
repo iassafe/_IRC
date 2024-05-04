@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:17:48 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/02 10:04:17 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/05/04 09:32:21 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,8 @@ int	main(int ac, char **av){
 		int			por;
 		std::string	pas;
 	
-		if (ac != 3){
-			std::cerr << "Enter a port and a password" << std::endl;
-			return (1);
-		}
+		if (ac != 3)
+			throw(std::runtime_error("Enter a port and a password"));
 		//AZMARA
 		std::string	password = av[2];
 		if (password.find_first_of(" \t") != std::string::npos)

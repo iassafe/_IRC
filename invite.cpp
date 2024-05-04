@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   invite.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 23:26:29 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/29 19:43:48 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/05/04 12:06:28 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,14 @@ void	Server::inviteCommand(std::string &args, Client &c){
     std::stringstream ss(args);
     std::string guest;
     std::string chan;
-    if (args[0] == ':' && args[1] != '#'){
+    if (args[0] == ':'){
         ss.clear();
         ss << args.substr(1);
         getline(ss, guest);}
-    else if ((args[0] != ':' && args[1] != '#') && args[0] != '#') //if the user gives the channel only without nickname
+    else //if the user gives the channel only without nickname
         ss >> guest;
-    if (ss.eof() || guest.empty()){
+    std::cout << "guest>>" << guest << "\n";
+    if (guest.empty() || ss.eof()){
         sendMsg(c.getClientFD(), RPL_ENDOFINVITE(c.getNickname()));//End of Invite List
         return ;
     }
@@ -54,7 +55,7 @@ void	Server::inviteCommand(std::string &args, Client &c){
         sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(chan, c.getNickname()));
         return ;
     }
-    if (!isInUseNickname(guest) || !findClient(guest).isRegistered()){
+    if (!isInUseNickname(guest)){
         sendMsg(c.getClientFD(), ERR_NOSUCHNICK(c.getNickname(), guest));
         return ;}
     else{

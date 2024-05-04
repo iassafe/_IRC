@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   authentication.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 15:39:46 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/01 14:49:26 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/05/04 12:06:02 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-
-//M modified
 
 bool Server::isValidNickName(std::string nickname){
     nickname = tolowercase(nickname);
@@ -36,6 +34,8 @@ bool Server::isValidNickName(std::string nickname){
 }
 
 void    Server::nickCommand(std::string &args, Client &c){
+    if (!c.isPasswordSended())//MM
+        return;
     std::stringstream ss(args);
     std::ws(ss);
     std::string param;
@@ -48,15 +48,17 @@ void    Server::nickCommand(std::string &args, Client &c){
     if (!isValidNickName(param)){
         sendMsg(c.getClientFD(), ERR_ERRONEUSNICKNAME(c.getNickname()));
         return;}
-    if (isInUseNickname(param)){// check this only if new client
+    for (unsigned int i = 0;  i < clients.size(); i++){
+        if ((tolowercase(clients[i].getNickname()) == tolowercase(param)) && !clients[i].isRegistered())
+            clients[i].setNickname("");
+    }
+    if (isInUseNickname(param)){// check this only if new client //MM
         sendMsg(c.getClientFD(), ERR_NICKNAMEINUSE(c.getNickname()));
         return ;}
-    if (c.isRegistered()){//M
+    if (c.isRegistered()){
         std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + " NICK :" + param + "\n";
         sendMsg(c.getClientFD(), msg);
-        sendNickMsg2Mem(msg, c);//M
-    }
-    if (c.isRegistered()){
+        sendNickMsg2Mem(msg, c);
         for (unsigned int i = 0; i < channels.size(); i++){
 		    if (channels[i].isMember(c))
                 channels[i].updateAmemNickName(c, param);
@@ -97,6 +99,8 @@ void    Server::userCommand(std::string &args, Client &c){
         return;
     }
     else{
+        if (!c.isPasswordSended())//MM
+            return;
         if (c.isRegistered()){
             sendMsg(c.getClientFD(), ERR_ALREADYREGISTERED(c.getNickname()));
             return;}
@@ -106,7 +110,7 @@ void    Server::userCommand(std::string &args, Client &c){
         c.setRealname(rn);
         c.registerClient(*this);
         if (c.isRegistered()){
-            for (unsigned int i = 0;  i < clients.size(); i++){//M
+            for (unsigned int i = 0;  i < clients.size(); i++){
                 if ((tolowercase(clients[i].getNickname()) == tolowercase(c.getNickname())) && !clients[i].isRegistered())
                     clients[i].setNickname("");
             }
