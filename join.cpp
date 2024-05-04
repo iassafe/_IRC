@@ -55,6 +55,16 @@ void Server::addChannel(Client& c, int i){
 }
 
 void Server::execJoinCommand(Client &c){
+    // for(size_t i = 0; i < this->joinChannel.size(); ++i){
+    //     if (this->joinChannel[i] == ""){
+
+    //         this->joinChannel.erase(this->joinChannel.begin() + i);
+    //     }
+    // }
+    // for(size_t i = 0; i < this->joinPassword.size(); ++i){
+    //     if (this->joinPassword[i] == "")
+    //         this->joinPassword.erase(this->joinPassword.begin() + i);
+    // }
 	this->channelPass.resize(this->joinChannel.size());
 	for(size_t i = 0; i < this->joinChannel.size(); ++i){
 		this->channelPass[i].first = this->joinChannel[i];
@@ -120,7 +130,8 @@ void Server::joinMultiChannels(void){
 		channels = channels.substr(found_commach + 1, channels.length());
 		for(int i = 0; i < count_ch; ++i){
 			found_commach = channels.find_first_of(",");
-			this->joinChannel.push_back(channels.substr(0, found_commach));
+            if (channels.substr(0, found_commach) != "")
+			    this->joinChannel.push_back(channels.substr(0, found_commach));
 			channels = channels.substr(found_commach + 1, channels.length());
 		}
 		if (this->existPassword){
@@ -135,7 +146,8 @@ void Server::joinMultiChannels(void){
 				passWord = passWord.substr(found_commaps + 1, passWord.length());
 				for(int i = 0; i < count_ps; ++i){
 					found_commaps = passWord.find_first_of(",");
-					this->joinPassword.push_back(passWord.substr(0, found_commaps));
+                    if (passWord.substr(0, found_commaps) != "")
+					    this->joinPassword.push_back(passWord.substr(0, found_commaps));
 					passWord = passWord.substr(found_commaps + 1, passWord.length());
 				}
 			}
