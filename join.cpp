@@ -55,16 +55,6 @@ void Server::addChannel(Client& c, int i){
 }
 
 void Server::execJoinCommand(Client &c){
-    // for(size_t i = 0; i < this->joinChannel.size(); ++i){
-    //     if (this->joinChannel[i] == ""){
-
-    //         this->joinChannel.erase(this->joinChannel.begin() + i);
-    //     }
-    // }
-    // for(size_t i = 0; i < this->joinPassword.size(); ++i){
-    //     if (this->joinPassword[i] == "")
-    //         this->joinPassword.erase(this->joinPassword.begin() + i);
-    // }
 	this->channelPass.resize(this->joinChannel.size());
 	for(size_t i = 0; i < this->joinChannel.size(); ++i){
 		this->channelPass[i].first = this->joinChannel[i];
