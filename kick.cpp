@@ -99,7 +99,10 @@ int Server::validArgsKick(void){
 		size_t space = str.find_first_of(" \r\t");
 		str = str.substr(space, str.length());
 		str = skipSpaces(str);
-		this->reason = str;
+		if (str[0] == ':')
+			this->reason = &str[1];
+		else
+			this->reason = str;
 	}
 	makeClientKick(temp_args, exist2Points);
 	return (1);
