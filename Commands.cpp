@@ -90,8 +90,13 @@ void Server::checkCommands(int fd){
 int countComma(std::string str){
 	int count = 0;
 	for(size_t i=0; i < str.length(); i++){
-		if(str[i] == ',')
-			count++;
+		if(str[i] == ','){
+			while(str[i] == ','){
+				i++;
+			}
+			if (str[i] && str[i] != ' ' && str[i] != '\r' && str[i] != '\t')
+				count++;
+		}
 	}
 	return (count);
 }
