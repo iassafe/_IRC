@@ -95,33 +95,29 @@ std::string skipCommas(std::string s){
 			while (s[i] && s[i] == ','){
 				i++;
 			}
-			i--;
+			if (s[i] && s[i] != ' ' && s[i] != '\r' && s[i] != '\t')
+				i--;
 		}
 		str += s[i];
 	}
 	return (str);
 }
 
-int Server::joinSingleChannel(void){
-	std::string temp_args = this->args;
-	temp_args = skipCommas(temp_args);
-	size_t found = temp_args.find_first_of(" \r\t");
-	this->joinChannel.push_back(temp_args.substr(0, found));
-	if (this->existPassword){  
-		while(temp_args[found] == ' ' || temp_args[found] == '\r' || temp_args[found] == '\t'){
-			found++;
-		};
-		if (temp_args[found] == ':')
-			found++;
-		temp_args = temp_args.substr(found, temp_args.length());
-		size_t found_sp = temp_args.find_first_of(" ,\r\t");
-		std::cout << "["<<temp_args << "]" << std::endl;
-		if (found_sp != std::string::npos)
-			this->joinPassword.push_back(temp_args.substr(found, found_sp));
-		else
-			this->joinPassword.push_back(temp_args.substr(found, temp_args.length()));
+void Server::joinSingleChannel(void){
+	size_t found = this->args.find_first_of(" \r\t\0");
+	this->joinChannel.push_back(this->args.substr(0, found));
+	if (this->existPassword){
+		std::string pass = this->args.substr(found, this->args.length());
+		pass = skipSpaces(pass);
+		if (pass[0] == ':')
+			this->joinPassword.push_back(pass.substr(1, pass.length()));
+		else{
+			pass = skipCommas(pass);
+			size_t found_sp = pass.find_first_of(" ,\r\t\0");
+			if (found_sp != std::string::npos)
+				this->joinPassword.push_back(pass.substr(0, found_sp));
+		}
 	}
-	return(1);
 }
 
 
@@ -176,16 +172,7 @@ int Server::argsJoin(void){
 			found++;
 		}
 		if (this->args[found])
-		{
-			// std::string passWord = &this->args[found];
-			// size_t foundSpace = passWord.find_first_of(" ");
-			// if (passWord[foundSpace] == ' ' || passWord[foundSpace] == '\r' || passWord[foundSpace] == '\t'){
-			// 	while (this->args[foundSpace] == ' ' || this->args[foundSpace] == '\r' || this->args[foundSpace] == '\t'){
-			// 		foundSpace++;
-			// 	}
-			// }
 			return (1);
-		}
 		else
 			return (0);
 	}

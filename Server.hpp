@@ -110,7 +110,7 @@ class	Server{
 		void	execTopicCommand(Client &c);
 		void	kickCommand(Client &c);
 		void	execKickCommand(Client &c);
-		int 	joinSingleChannel(void);
+		void 	joinSingleChannel(void);
 		void	joinMultiChannels(void);
 
 		void 	whithoutPassword(void);
