@@ -144,5 +144,6 @@ class	Server{
 ///////
 std::string	skipSpaces(std::string str);
 int countComma(std::string str);
+std::string skipCommas(std::string s);
 
 #endif

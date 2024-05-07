@@ -36,6 +36,7 @@ void Server::execKickCommand(Client& c){
 void Server::makeClientKick(std::string clKick, int exist2Points){
 	std::vector<std::string> vec;
 	clKick = skipSpaces(clKick);
+	clKick = skipCommas(clKick);
 	size_t countClient = 0;
 	if (!exist2Points)
 		countClient = countComma(clKick);

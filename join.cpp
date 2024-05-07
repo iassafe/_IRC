@@ -84,7 +84,7 @@ void Server::execJoinCommand(Client &c){
 	this->joinPassword.clear();
 }
 
-static std::string skipCommas(std::string s){
+std::string skipCommas(std::string s){
 	std::string str = "";
 	size_t i = 0;
 	while (s[i] && s[i] == ','){
