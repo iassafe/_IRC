@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Server.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/01 18:16:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/04 12:45:40 by khanhayf         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 
 #include "Server.hpp"
 
@@ -41,9 +29,9 @@ void	Server::sigHandler(int signum){
 Server::Server(){
 	serverFD = -1; 
 	password = "\0";
+	fillSayingsBox("sayings.txt");
 	// nick = "tikchbila";
 	// user = "tiwliwla";
-	fillSayingsBox("sayings.txt");
 	// fds(0), sayingsBox(0), clients(0), channels(0),
 	// joinChannel(0), joinPassword(0), vec_cl(0), vec_ch(0), channelPass(0),
 	// ClientsKick(0)
@@ -188,45 +176,63 @@ void	Server::acceptClient(){
 
 
 
-void	Server::recieve_data(int fd){// (this is the last version of recieve_data)
-	char	buffer[1024];
+void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
+	char		buffer[1024];
+	std::string	str;
+	size_t		i;
 
 	memset(buffer, 0, sizeof(buffer));
 	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0);
-	if (total <= 0){
-		std::cout << "client gone" << std::endl;
-		clearClient(fd);
-		close(fd);
+	std::string strBuffer = buffer;
+	std::cout << strBuffer.size() << "-----------------\n";
+	if (strBuffer.size() > 512){
+		for (i = 0; i < clients.size(); i++){
+			if (clients[i].getClientFD() == fd)//IF ITS NOT FOUND
+				break ;
+		}
+		if (!isRegistered(clients[i].getNickname())){
+			str = "*";
+		}
+		else
+			str = clients[i].getNickname();
+		sendMsg(fd, ERR_INPUTTOOLONG(str));
 	}
 	else{
-		std::string	buf = buffer;
-		 size_t fond;
-		std::string	new_buf = skipSpaces(buf);
-		for(size_t i = 0; i <= new_buf.size(); i++){
-			fond = new_buf.find_first_of("\n");
-			if (fond == std::string::npos)
-				return;
-			std::string	commond = new_buf.substr(0, fond);
-			size_t	sp = commond.find_first_of("\t\r ");
-			if (sp != std::string::npos){
-				size_t	ind = sp;
-				while (commond[ind] == '\t' || commond[ind] == '\r' || commond[ind] == ' ')
-					ind++;
-				if (commond[ind] == '\n')
-					this->args = "";
-				else
-					this->args = commond.substr(ind, fond);
-				this->command = commond.substr(0, sp);
-			}
-			else{
-				this->command = commond.substr(0, fond); 
-				this->args = '\0';
-			}
-			new_buf = new_buf.substr(fond+1, new_buf.size());
-			checkCommands(fd);
-			command.clear();
-			args.clear();
+		if (total <= 0){
+			std::cout << "client disconnected" << std::endl;
+			clearClient(fd);
+			close(fd);
+		}
+		else{
+			std::string	buf = buffer;
+			size_t fond;
+			std::string	new_buf = skipSpaces(buf);
+			for(size_t i = 0; i <= new_buf.size(); i++){
+				fond = new_buf.find_first_of("\n");
+				if (fond == std::string::npos)
+					return;
+				std::string	commond = new_buf.substr(0, fond);
+				size_t	sp = commond.find_first_of("\t\r ");
+				if (sp != std::string::npos){
+					size_t	ind = sp;
+					while (commond[ind] == '\t' || commond[ind] == '\r' || commond[ind] == ' ')
+						ind++;
+					if (commond[ind] == '\n')
+						this->args = "";
+					else
+						this->args = commond.substr(ind, fond);
+					this->command = commond.substr(0, sp);
+				}
+				else{
+					this->command = commond.substr(0, fond); 
+					this->args = '\0';
+				}
+				new_buf = new_buf.substr(fond+1, new_buf.size());
+				checkCommands(fd);//M
+				command.clear();
+				args.clear();
 
+			}
 		}
 	}
 }

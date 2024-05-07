@@ -58,9 +58,8 @@
 
 #define RPL_CREATIONTIME(hostname, channelName, nick, time) ":" + "ircserv" + " 329 " + nick + " " + channelName + " " + time + "\r\n"
 
+#define ERR_INPUTTOOLONG(nick) ": ircserv 417 " + nick + " :Input line too long\r\n"//MODIFIED AZMARA
 
-
-#define ERR_INPUTTOOLONG(nick) ":" + "ircserv" + " 417 " + nick + " :Input line was too long !\r\n"
 
 #define RPL_VIEWTOPIC(hostname, nick, channel, topic) ":ircserv 332 " + nick + " " + channel + " :" + topic + "\r\n"
 #define RPL_VIEWTIME(hostname, nick, channel, time) ":ircserv 333 " + nick + " " + channel + " " + nick + " " + time + "\r\n"
