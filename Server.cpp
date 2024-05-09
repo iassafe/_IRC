@@ -184,21 +184,16 @@ void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
 	memset(buffer, 0, sizeof(buffer));
 	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0);
 	std::string strBuffer = buffer;
-	// std::cout << strBuffer.size() << "-----------------\n";
 	for (i = 0; i < clients.size(); i++){
 		if (clients[i].getClientFD() == fd)//IF ITS NOT FOUND
 			break ;
 	}
-	// Client& cl = getClient(fd);
-	if (strBuffer.find_first_of("\n") == std::string::npos){
+	if (strBuffer.find_first_of("\n") == std::string::npos)
 		clients[i].setBuffer(buffer);
-		std::cout << "bufferAZMARA---->[" << strBuffer << "]\n";
-	}
 	else{
 			if (clients[i].getBuffer() != ""){
 				clients[i].setBuffer(strBuffer);
 				strBuffer = clients[i].getBuffer();
-				std::cout << "strBuffer-->["<< strBuffer << "]\n";
 			}
 			if (strBuffer.size() > 512){
 				if (!isRegistered(clients[i].getNickname()))
