@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:17:06 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/02 10:03:53 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/05/09 15:29:25 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,14 @@ void	Client::setIP(std::string IPaddr){
 	this->clientIP = IPaddr;
 }
 void	Client::setBuffer(std::string rec){
-	this->buffer = rec;
+	this->buffer += rec;
 }
 void	Client::setClientFD(int fd){
 	this->clientFD = fd;
+}
+
+void Client::clearBuffer(){
+    this->buffer.clear();
 }
 
 void Client::setNickname(std::string nn){
@@ -55,6 +59,10 @@ void Client::setPasswordSended(bool b){
 }
 
 //getters
+
+std::string Client::getBuffer() const{
+    return (this->buffer);
+}
 int Client::getClientFD(){
 	return (clientFD);
 }

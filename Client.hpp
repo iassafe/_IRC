@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:57 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/04/29 19:43:44 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/05/09 15:29:49 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-
+ 
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 #include <iostream>
@@ -61,6 +61,7 @@ class	Client{
         std::string getHostname() const;
         std::string getServername() const;
         std::string getRealname() const;
+        std::string getBuffer() const;
         bool		isRegistered() const; //return registred 
         bool		isPasswordSended(); //return passwordsended 
 
@@ -76,6 +77,8 @@ class	Client{
         std::string     tolowercase(std::string str);
         // std::string&    findingInvitedCh(std::string ChannelName);
         void            removeInvitedCh(std::string ChannelName);
+
+        void clearBuffer();
 
 };
 

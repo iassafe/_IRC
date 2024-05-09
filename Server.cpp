@@ -184,56 +184,69 @@ void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
 	memset(buffer, 0, sizeof(buffer));
 	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0);
 	std::string strBuffer = buffer;
-	std::cout << strBuffer.size() << "-----------------\n";
-	if (strBuffer.size() > 512){
-		for (i = 0; i < clients.size(); i++){
-			if (clients[i].getClientFD() == fd)//IF ITS NOT FOUND
-				break ;
-		}
-		if (!isRegistered(clients[i].getNickname())){
-			str = "*";
-		}
-		else
-			str = clients[i].getNickname();
-		sendMsg(fd, ERR_INPUTTOOLONG(str));
+	// std::cout << strBuffer.size() << "-----------------\n";
+	for (i = 0; i < clients.size(); i++){
+		if (clients[i].getClientFD() == fd)//IF ITS NOT FOUND
+			break ;
+	}
+	// Client& cl = getClient(fd);
+	if (strBuffer.find_first_of("\n") == std::string::npos){
+		clients[i].setBuffer(buffer);
+		std::cout << "bufferAZMARA---->[" << strBuffer << "]\n";
 	}
 	else{
-		if (total <= 0){
-			std::cout << "client disconnected" << std::endl;
-			clearClient(fd);
-			close(fd);
-		}
-		else{
-			std::string	buf = buffer;
-			size_t fond;
-			std::string	new_buf = skipSpaces(buf);
-			for(size_t i = 0; i <= new_buf.size(); i++){
-				fond = new_buf.find_first_of("\n");
-				if (fond == std::string::npos)
-					return;
-				std::string	commond = new_buf.substr(0, fond);
-				size_t	sp = commond.find_first_of("\t\r ");
-				if (sp != std::string::npos){
-					size_t	ind = sp;
-					while (commond[ind] == '\t' || commond[ind] == '\r' || commond[ind] == ' ')
-						ind++;
-					if (commond[ind] == '\n')
-						this->args = "";
-					else
-						this->args = commond.substr(ind, fond);
-					this->command = commond.substr(0, sp);
+			if (clients[i].getBuffer() != ""){
+				clients[i].setBuffer(strBuffer);
+				strBuffer = clients[i].getBuffer();
+				std::cout << "strBuffer-->["<< strBuffer << "]\n";
+			}
+			if (strBuffer.size() > 512){
+				if (!isRegistered(clients[i].getNickname()))
+					str = "*";
+				else
+					str = clients[i].getNickname();
+				sendMsg(fd, ERR_INPUTTOOLONG(str));
+			}
+			else{
+				if (total <= 0){
+					std::cout << "client disconnected" << std::endl;
+					clearClient(fd);
+					close(fd);
 				}
 				else{
-					this->command = commond.substr(0, fond); 
-					this->args = '\0';
-				}
-				new_buf = new_buf.substr(fond+1, new_buf.size());
-				checkCommands(fd);//M
-				command.clear();
-				args.clear();
+					std::string	buf = strBuffer;
+					size_t fond;
+					std::string	new_buf = skipSpaces(buf);
+					for(size_t i = 0; i <= new_buf.size(); i++){
+						fond = new_buf.find_first_of("\n");
+						if (fond == std::string::npos)
+							return;
+						std::string	commond = new_buf.substr(0, fond);
+						size_t	sp = commond.find_first_of("\t\r ");
+						if (sp != std::string::npos){
+							size_t	ind = sp;
+							while (commond[ind] == '\t' || commond[ind] == '\r' || commond[ind] == ' ')
+								ind++;
+							if (commond[ind] == '\n')
+								this->args = "";
+							else
+								this->args = commond.substr(ind, fond);
+							this->command = commond.substr(0, sp);
+						}
+						else{
+							this->command = commond.substr(0, fond); 
+							this->args = '\0';
+						}
+						new_buf = new_buf.substr(fond+1, new_buf.size());
+						checkCommands(fd);//M
+						command.clear();
+						args.clear();
 
+					}
+				}
 			}
-		}
+			strBuffer.clear();
+			this->clients[i].clearBuffer();
 	}
 }
 
