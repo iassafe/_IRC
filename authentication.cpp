@@ -6,7 +6,7 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 15:39:46 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/04 14:36:37 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/05/09 16:21:12 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void    Server::nickCommand(std::string &args, Client &c){
         ss >> param;
     else{
         getline(ss, param);
-        param = param.substr(1);//MM
+        param = param.substr(1);
     }
     if (c.getNickname() == param) //in case a client try to change his nn with the same nickname setted before
         return;

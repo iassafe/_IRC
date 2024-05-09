@@ -159,27 +159,31 @@ void Channel::sendMsg2Members(Server &s, Client &c){
 }
 
 //AZMARA
-void	Channel::sendmsg2chanRegulars(Server S, std::string message){
+void	Channel::sendmsg2chanRegulars(Server s, std::string message){
 	for (size_t i = 0; i < this->regularUsers.size(); ++i){
-		S.sendMsg(this->regularUsers[i].getClientFD(), message);
-		S.sendMsg(this->regularUsers[i].getClientFD(), "\n");
+		s.sendMsg(this->regularUsers[i].getClientFD(), message);
+		s.sendMsg(this->regularUsers[i].getClientFD(), "\n");
 	}
 }
-void	Channel::sendmsg2chanOperators(Server S, std::string message){
+void	Channel::sendmsg2chanOperators(Server s, std::string message){
 	for (size_t i = 0; i < this->operators.size(); ++i){
-		S.sendMsg(this->operators[i].getClientFD(), message);
-		S.sendMsg(this->operators[i].getClientFD(), "\n");
+		s.sendMsg(this->operators[i].getClientFD(), message);
+		s.sendMsg(this->operators[i].getClientFD(), "\n");
 	}
 }
 
-void Channel::sendNickMsg2All(Server S, std::string message, Client c){
+void Channel::sendNickMsg2All(Server &s, std::string message, Client c){//MM
 	for (size_t i = 0; i < this->regularUsers.size(); ++i){
-        if (toLowerCase(this->regularUsers[i].getNickname()) != toLowerCase(c.getNickname()))
-		    S.sendMsg(this->regularUsers[i].getClientFD(), message);
+        if (toLowerCase(this->regularUsers[i].getNickname()) != toLowerCase(c.getNickname()) && !s.msgAlreadyRecieved(this->regularUsers[i].getNickname())){
+		    s.sendMsg(this->regularUsers[i].getClientFD(), message);
+            s.nickMsgRecievers.push_back(this->regularUsers[i].getNickname());
+        }
 	}
     for (size_t i = 0; i < this->operators.size(); ++i){
-        if (toLowerCase(this->operators[i].getNickname()) != toLowerCase(c.getNickname()))
-		    S.sendMsg(this->operators[i].getClientFD(), message);
+        if (toLowerCase(this->operators[i].getNickname()) != toLowerCase(c.getNickname()) && !s.msgAlreadyRecieved(this->operators[i].getNickname())){
+		    s.sendMsg(this->operators[i].getClientFD(), message);
+            s.nickMsgRecievers.push_back(this->regularUsers[i].getNickname());
+        }
 	}
 }
 

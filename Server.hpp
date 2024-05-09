@@ -58,7 +58,9 @@ class	Server{
 		///////&&&&&&&&&&&&&&
 		std::string reason;
 
+
 	public:
+		std::vector<std::string> nickMsgRecievers;//MM
 		Server();
 		~Server();//close users fds before quitting
 		//--Setters--//
@@ -135,8 +137,7 @@ class	Server{
 		void sendNickMsg2Mem(std::string msg, Client c);
 		void removeChannel(std::string chName);
 
-
-		
+		bool	msgAlreadyRecieved(std::string nick);//M neW
 };
 
 
