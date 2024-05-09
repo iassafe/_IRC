@@ -87,13 +87,11 @@ void Server::execJoinCommand(Client &c){
 std::string skipCommas(std::string s){
 	std::string str = "";
 	size_t i = 0;
-	while (s[i] && s[i] == ','){
-		i++;
+	for (;s[i] && s[i] == ','; ++i){
 	}
 	for (; i < s.size() ; ++i){
 		if (s[i] == ','){
-			while (s[i] && s[i] == ','){
-				i++;
+			for (;s[i] && s[i] == ','; ++i){
 			}
 			if (s[i] && s[i] != ' ' && s[i] != '\r' && s[i] != '\t')
 				i--;
@@ -124,42 +122,40 @@ void Server::joinSingleChannel(void){
 void Server::joinMultiChannels(void){
 	std::string temp_args = this->args;
 	size_t found = this->args.find_first_of(" \r\t\0");
-		std::string channels = temp_args.substr(0, found);
-		channels = skipCommas(channels);
-		int count_ch = countComma(channels);
-		size_t found_commach = channels.find_first_of(",");
+	std::string channels = temp_args.substr(0, found);
+	channels = skipCommas(channels);
+	int count_ch = countComma(channels);
+	size_t found_commach = channels.find_first_of(",");
+	this->joinChannel.push_back(channels.substr(0, found_commach));
+	channels = channels.substr(found_commach + 1, channels.length());
+	for(int i = 0; i < count_ch; ++i){
+		found_commach = channels.find_first_of(",");
 		this->joinChannel.push_back(channels.substr(0, found_commach));
 		channels = channels.substr(found_commach + 1, channels.length());
-		for(int i = 0; i < count_ch; ++i){
-			found_commach = channels.find_first_of(",");
-            if (channels.substr(0, found_commach) != "")
-			    this->joinChannel.push_back(channels.substr(0, found_commach));
-			channels = channels.substr(found_commach + 1, channels.length());
-		}
-		if (this->existPassword){
-			std::string passWord = temp_args.substr(found + 1, temp_args.length());
-			int count_ps = countComma(passWord);
-			passWord = skipSpaces(passWord);
-			if (passWord[0] == ':')
-				this->joinPassword.push_back(passWord.substr(1, passWord.length()));
-			else{
-				size_t fSpace = passWord.find_first_of(" \r\t");
-				if(fSpace == std::string::npos)
-					passWord = passWord.substr(0, passWord.length());
-				else
-					passWord = passWord.substr(0, fSpace);
-				passWord = skipCommas(passWord);
-				size_t found_commaps = passWord.find_first_of(",");
+	}
+	if (this->existPassword){
+		std::string passWord = temp_args.substr(found + 1, temp_args.length());
+		int count_ps = countComma(passWord);
+		passWord = skipSpaces(passWord);
+		if (passWord[0] == ':')
+			this->joinPassword.push_back(passWord.substr(1, passWord.length()));
+		else{
+			size_t fSpace = passWord.find_first_of(" \r\t");
+			if(fSpace == std::string::npos)
+				passWord = passWord.substr(0, passWord.length());
+			else
+				passWord = passWord.substr(0, fSpace);
+			passWord = skipCommas(passWord);
+			size_t found_commaps = passWord.find_first_of(",");
+			this->joinPassword.push_back(passWord.substr(0, found_commaps));
+			passWord = passWord.substr(found_commaps + 1, passWord.length());
+			for(int i = 0; i < count_ps; ++i){
+				found_commaps = passWord.find_first_of(",");
 				this->joinPassword.push_back(passWord.substr(0, found_commaps));
 				passWord = passWord.substr(found_commaps + 1, passWord.length());
-				for(int i = 0; i < count_ps; ++i){
-					found_commaps = passWord.find_first_of(",");
-                    if (passWord.substr(0, found_commaps) != "")
-					    this->joinPassword.push_back(passWord.substr(0, found_commaps));
-					passWord = passWord.substr(found_commaps + 1, passWord.length());
-				}
 			}
 		}
+	}
 }
 
 int Server::argsJoin(void){
@@ -168,8 +164,7 @@ int Server::argsJoin(void){
 	if (found == std::string::npos) 
 		return (0);
 	else{
-		while (this->args[found] == ' ' || this->args[found] == '\r' || this->args[found] == '\t'){
-			found++;
+		for (;this->args[found] == ' ' || this->args[found] == '\r' || this->args[found] == '\t'; ++found){
 		}
 		if (this->args[found])
 			return (1);

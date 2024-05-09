@@ -57,8 +57,7 @@ void Server::makeClientKick(std::string clKick, int exist2Points){
 		}
 	}
 	for(size_t i = 0; i < vec.size(); ++i){
-		if (vec[i] != "")
-			this->ClientsKick.push_back(vec[i]);
+		this->ClientsKick.push_back(vec[i]);
 	}
 	vec.clear();
 }
