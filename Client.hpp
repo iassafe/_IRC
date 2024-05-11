@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:57 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/09 15:29:49 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/05/11 16:46:53 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ class	Client{
         ~Client();
 
         //setters
-        void	setIP(std::string IPaddr);
 		void	setBuffer(std::string rec);
 		void	setClientFD(int fd);
         void    setNickname(std::string nn);
@@ -66,12 +65,13 @@ class	Client{
         bool		isPasswordSended(); //return passwordsended 
 
         ////////ik
+        void        setClientIP(std::string ip);
         std::string getClientIP() const;
 		
 		//other
         void        clearAuthentication();
 		void        registerClient(Server &s);
-        void    invite2channel(std::string chName);// add a new channel to the invited2channels list
+        void        invite2channel(std::string chName);// add a new channel to the invited2channels list
 
         bool            isInUseInvitedCh(std::string ChannelName);
         std::string     tolowercase(std::string str);

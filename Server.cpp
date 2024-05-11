@@ -111,6 +111,7 @@ void	Server::closeFD(){
 	this->sayingsBox.clear();
 }
 
+
 void		Server::create_socket(){
 	struct sockaddr_in serveraddress;
 	struct pollfd		pollf;
@@ -168,7 +169,7 @@ void	Server::acceptClient(){
 	newpool.events = POLLIN;
 
 	client.setClientFD(connectionID);
-	client.setIP(inet_ntoa(clientaddress.sin_addr));
+	client.setClientIP(inet_ntoa(clientaddress.sin_addr));
 	clients.push_back(client);
 	fds.push_back(newpool);
 	std::cout << "accepted!" << std::endl;

@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:17:06 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/09 15:29:25 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/05/11 17:13:18 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ Client::~Client(){
 }
 
 //setters
-void	Client::setIP(std::string IPaddr){
+void	Client::setClientIP(std::string IPaddr){
 	this->clientIP = IPaddr;
 }
 void	Client::setBuffer(std::string rec){
@@ -103,8 +103,6 @@ void Client::registerClient(Server &s){
     if (isPasswordSended() && !nickname.empty() && !username.empty()
     && !hostname.empty() && !servername.empty() && !realname.empty()){
         registered = true;
-        s.sendMsg(getClientFD(), RPL_WELCOME(getNickname(), getUsername()));
-        s.sendMsg(getClientFD(), ":ircserv 375 " + getNickname() + " ::ircserv message of the day\r\n");
         s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :  Hello, World!\r\n");
         s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :\r\n");
         s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :  Welcome to the\r\n");
@@ -174,3 +172,4 @@ void    Client::invite2channel(std::string chName){
     if (!isInUseInvitedCh(chName))
         invited2channels.push_back(chName);
 }
+

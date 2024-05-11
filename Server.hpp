@@ -58,6 +58,9 @@ class	Server{
 		///////&&&&&&&&&&&&&&
 		std::string reason;
 
+		///////////up
+		std::string ipAddress;
+
 
 	public:
 		std::vector<std::string> nickMsgRecievers;//MM
