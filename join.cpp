@@ -111,9 +111,8 @@ void Server::joinSingleChannel(void){
 			this->joinPassword.push_back(pass.substr(1, pass.length()));
 		else{
 			pass = skipCommas(pass);
-			size_t found_sp = pass.find_first_of(" ,\r\t\0");
-			if (found_sp != std::string::npos)
-				this->joinPassword.push_back(pass.substr(0, found_sp));
+			size_t found_sp = pass.find_first_of(", \r\t\0");
+			this->joinPassword.push_back(pass.substr(0, found_sp));
 		}
 	}
 }

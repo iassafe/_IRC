@@ -5,7 +5,7 @@ import threading
 server_ip = "e3r7p1.1337.ma"
 # server_ip = "localhost"
 server_port = 6667
-server_password = "k"
+server_password = "l"
 # server_password = "zarda"
 
 # Liste de pseudos disponibles
