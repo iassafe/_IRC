@@ -191,8 +191,8 @@ void Channel::sendNickMsg2All(Server &s, std::string message, Client c){//MM
 ////////UPPPPPPPP
 bool Channel::hasLimitCanJ(void){
     if((this->operators.size() + this->regularUsers.size()) >= this->limit)
-        return (true);
-    return (false);
+        return (false);
+    return (true);
 }
 
 std::string Channel::makeStringMember(void){
