@@ -6,7 +6,7 @@
 /*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 13:33:00 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/04 12:06:48 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/05/14 12:57:42 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ void    Server::modeCommand(std::string &args, Client &c){
     Channel &channel = findChannel(chan);
     if (ss.eof()){ //there is no mode // mode #ch
         sendMsg(c.getClientFD(), RPL_CHANNELMODES(channel.getName(), c.getNickname(), channel.channelModes()));
-        // mode #ww klit 123 9
         return ;
     }
     std::string modestring, key, limit, user, list = "";
@@ -98,30 +97,30 @@ void    Server::modeCommand(std::string &args, Client &c){
                     }
                     else
                         ss >> limit;
-                    if (!limit.empty()){
+                    if (!limit.empty() && sign[0] == '+'){
                         unsigned int nb;
                         std::stringstream ss(limit);
                         ss >> nb;
-                        if (!ss.fail() && sign[0] == '+'){
+                        if (!ss.fail()){
                             channel.setLimit(nb);
                             channel.setHasLimit(true);
                             std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + " :") + limit + "\n";
                             sendMsg(c.getClientFD(), msg);
                         }
-                        else if (ss.fail() && sign[0] == '+')
+                        else
                             sendMsg(c.getClientFD(), ERR_INVALIDMODELIMITPARAM(c.getNickname(), chan, limit));
-                        else {
-                            channel.setLimit(0);
-                            channel.setHasLimit(false);
-                            std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
-                            sendMsg(c.getClientFD(), msg);
-                            if (modestring[i + 1] == '\0')
-                                return;
-                        }
-                        limit = "";
+                    }
+                    else if (sign[0] == '-'){
+                        channel.setLimit(0);
+                        channel.setHasLimit(false);
+                        std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
+                        sendMsg(c.getClientFD(), msg);
+                        if (modestring[i + 1] == '\0')
+                            return;
                     }
                     else
                         sendMsg(c.getClientFD(), ERR_INVALIDMODEPARAM(c.getNickname(), chan, 'l', "limit"));
+                    limit = "";
                 }
                 else if (modestring[i] == 'i'){
                     if (sign[0] == '+'){
