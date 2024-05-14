@@ -34,6 +34,7 @@
 #define RPL_MYINFO(nick) ":" + "ircserv" + " 004 " + nick + " :Host: " + "ircserv" + ", Version: 1.0, User mode: none, Channel modes: o, t, k, i !\r\n"
 
 //AZMARA
+#define MESSAGE(sender, reciever, message, user, IP) ":" + sender + "!~" + user + "@" + IP + "PRIVMSG " + reciever + " :" + message + "\r\n"
 #define ERR_NO_RECIPIENT(nick) "ircserv 411 " + nick + " " + ":No recipient given (PRIVMSG)\r\n"
 #define ERR_NO_TEXT(nick) "ircserv 412 " + nick + " " + ":No text to send\r\n"
 #define ERR_CANNOTSENDTOCHANNEL(channel, nick) ":ircserv 404 " + nick + " " + channel + " :Cannot send to channel\r\n"
