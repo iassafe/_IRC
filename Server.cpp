@@ -151,12 +151,16 @@ void	Server::acceptClient(){
 	Client				client;
 	struct sockaddr_in	clientaddress;
 	struct pollfd		newpool;
-	socklen_t			clientaddrlen = 0;
+	socklen_t			clientaddrlen = sizeof(clientaddress);
 
 	memset(&clientaddress, 0, sizeof(clientaddress));
 	this->connectionID = accept(serverFD, (struct sockaddr *)&clientaddress, &clientaddrlen);//new socket to 	assure safe communication with multiple clients 
 	if (connectionID == -1){
 		std::cerr << "Failed to connect!" << std::endl;
+		return ;
+	}
+	if (clientaddrlen != sizeof(clientaddress)) {
+		std::cerr << "Failed to get client address!" << std::endl;
 		return ;
 	}
 	if (send(connectionID, "enter: password, nickname, and username\n", 41, 0) == -1)
