@@ -6,7 +6,6 @@ int	ft_count(std::string str, size_t start){
 			if (str[i] == ','){
 				for (t = i; str[t] == ','; t++)
 				i = t;
-				std::cout << "where the i is-" << str[t] << "-after skipping consecutive commas\n";
 				count++;
 			}
 		}
@@ -36,14 +35,10 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 				if (ind - start == 0)
 					break ;
 				this->vec_ch.push_back(args.substr(start, ind - start));
-				std::cout << "vc_ch" << vec_ch[i] << "$$$$$$$$" << std::endl;
 			}
 			else{
-				if (ind - start == 0){
-					puts("uuuu");
+				if (ind - start == 0)
 					break ;
-				}
-				std::cout << "vc_cl" << args.substr(start, ind - start) << "#########@" << std::endl;
 				this->vec_cl.push_back(args.substr(start, ind - start));
 
 			}
@@ -90,7 +85,7 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 		}
 		else
 			sendMsg(cli.getClientFD(), ERR_NOSUCHNICK(cli.getNickname(),vec_cl[M]));
-	}
+		}
 		for (size_t M = 0; M < vec_ch.size(); ++M){
 			if ((isInUseChName(vec_ch[M]) == true)){
 				if (isMessage == false)
@@ -105,12 +100,11 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 
 			}
 			else
-				sendMsg(cli.getClientFD(), ERR_NOSUCHCHANNEL(cli.getNickname(), vec_ch[M]));
+				sendMsg(cli.getClientFD(), ERR_NOSUCHCHANNEL(vec_ch[M], cli.getNickname()));
+		}
+			vec_ch.clear();
+			vec_cl.clear();
 	}
-		vec_ch.clear();
-		vec_cl.clear();
-	}
-
 	else{
 		for(; (args[comma] == ' ' || args[comma] == '\r' || args[comma] == '\t'); comma++)
 		if (args[comma] == ':'){
@@ -130,11 +124,10 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 				}
 				else
 					sendMsg(cli.getClientFD(), ERR_CANNOTSENDTOCHANNEL(this->target, cli.getNickname()));
-				
 				return (1);
 			}
 			else
-				sendMsg(cli.getClientFD(), ERR_NOSUCHCHANNEL(cli.getNickname(), this->target));
+				sendMsg(cli.getClientFD(), ERR_NOSUCHCHANNEL(this->target, cli.getNickname()));
 		}
 		else if (this->target[q] != '#'){
 			if (isInUseNickname(this->target) == true){
