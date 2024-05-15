@@ -32,4 +32,4 @@ def connect_irc(nick):
 
 for nick in available_nicks:
     thread = threading.Thread(target=connect_irc, args=(nick,))
-    thread.start() 
+    thread.start()  

@@ -161,14 +161,14 @@ void Channel::sendMsg2Members(Server &s, Client &c){
 //AZMARA
 void	Channel::sendmsg2chanRegulars(Server S, Client cli, std::string message, Channel ch){
 	for (size_t i = 0; i < this->regularUsers.size(); ++i){
-		S.sendMsg(regularUsers[i].getClientFD(), MESSAGE(cli.getNickname(), ch.getName(), message, cli.getUsername(), cli.getClientIP()));
-		S.sendMsg(regularUsers[i].getClientFD(), "\n");
+        if (cli.getNickname() != this->regularUsers[i].getNickname())
+		    S.sendMsg(regularUsers[i].getClientFD(), MESSAGE(cli.getNickname(), ch.getName(), message, cli.getUsername(), cli.getClientIP()));
 	}
 }
 void	Channel::sendmsg2chanOperators(Server S, Client cli, std::string message, Channel ch){
 	for (size_t i = 0; i < this->operators.size(); ++i){
-		S.sendMsg(operators[i].getClientFD(), MESSAGE(cli.getNickname(), ch.getName(), message, cli.getUsername(), cli.getClientIP()));
-		S.sendMsg(operators[i].getClientFD(), "\n");
+        if (cli.getNickname() != this->operators[i].getNickname())
+		    S.sendMsg(operators[i].getClientFD(), MESSAGE(cli.getNickname(), ch.getName(), message, cli.getUsername(), cli.getClientIP()));
 	}
 }
 
