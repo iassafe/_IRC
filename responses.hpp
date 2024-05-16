@@ -71,7 +71,7 @@
 #define RPL_UMODEIS(hostname, channelname) ":" + "ircserv" + " MODE " + channelname + " +nt\r\n"
 
 #define RPL_YOUREOPER(hostname, nick) ":" + "ircserv" + " 381 " + nick + ":You are now an IRC operator\r\n"
-#define RPL_KICK(kicker, username, channel, targetuser, reason) ":" + kicker + "!~" + username + "@localhost KICK " + channel + " " + targetuser + " :" + reason + "\r\n"
+#define RPL_KICK(kicker, username, channel, targetuser, reason, ip) ":" + kicker + "!~" + username + "@" + ip + " KICK " + channel + " " + targetuser + " :" + reason + "\r\n"
 #define PRIVMSG_FORMAT(senderNick, senderUsername, senderHostname, receiver, message) ":" + senderNick + "!~" + senderUsername + "@" + senderHostname + " PRIVMSG " + receiver + " :" + message + "\r\n"
 
 

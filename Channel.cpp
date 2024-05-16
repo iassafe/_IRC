@@ -299,13 +299,13 @@ void Channel::sendMsgKick2Members(Server &s, Client &c, std::string name, std::s
         if(reason == "")
             reason = c.getNickname();
 		s.sendMsg(this->regularUsers[i].getClientFD(), RPL_KICK(c.getNickname(), \
-        c.getUsername(), this->getName(), name, reason));
+        c.getUsername(), this->getName(), name, reason, this->regularUsers[i].getClientIP()));
 	}
     for (size_t i = 0; i < this->operators.size(); ++i){
         if(reason == "")
             reason = c.getNickname();
 		s.sendMsg(this->operators[i].getClientFD(), RPL_KICK(c.getNickname(), \
-        c.getUsername(), this->getName(), name, reason));
+        c.getUsername(), this->getName(), name, reason, this->operators[i].getClientIP()));
 	}
 }
 
