@@ -67,6 +67,10 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 		}
 	}
 	size_t comma = index;
+	size_t end = this->args.length() - 1;
+	for(; this->args[end] == ' ' ; --end){
+	}
+	this->args = this->args.substr(0, end);
 	size_t msg_begin = (args.find_last_of(" \t\r"));
 	//GET THE MESSAGE AFTER ":" IN CASE OF MANY RECEPIENTS
 	if (args[index] == ','){
@@ -113,8 +117,9 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 
 		}
 		this->target = args.substr(q, index - q);
-		if (isMessage == false)
-			this->message = (args.substr(msg_begin + 1, args.size()));//TODO: NEED TO GET ONLY FIRST PART//max 150 characters?
+		if (isMessage == false){
+			this->message = (args.substr(msg_begin + 1, args.length()));//TODO: NEED TO GET ONLY FIRST PART//max 150 characters?
+		}
 		if (this->target[0] == '#'){
 			if (isInUseChName(this->target) == true){
 				Channel	&chan = findChannel(this->target);

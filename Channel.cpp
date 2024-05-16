@@ -143,7 +143,6 @@ bool Channel::isMember(Client const& c){
 
 
 
-
 //////ik
 void Channel::sendMsg2Members(Server &s, Client &c){
     for(size_t i = 0; i < this->regularUsers.size(); ++i){
@@ -159,13 +158,14 @@ void Channel::sendMsg2Members(Server &s, Client &c){
 }
 
 //AZMARA
-void	Channel::sendmsg2chanRegulars(Server s, Client cli, std::string message, Channel ch){
+void	Channel::sendmsg2chanRegulars(Server s, Client cli, std::string& message, Channel ch){
 	for (size_t i = 0; i < this->regularUsers.size(); ++i){
         if (cli.getNickname() != this->regularUsers[i].getNickname())
 		    s.sendMsg(regularUsers[i].getClientFD(), MESSAGE(cli.getNickname(), ch.getName(), message, cli.getUsername(), cli.getClientIP()));
 	}
 }
-void	Channel::sendmsg2chanOperators(Server s, Client cli, std::string message, Channel ch){
+
+void	Channel::sendmsg2chanOperators(Server s, Client cli, std::string& message, Channel ch){
 	for (size_t i = 0; i < this->operators.size(); ++i){
         if (cli.getNickname() != this->operators[i].getNickname())
 		    s.sendMsg(operators[i].getClientFD(), MESSAGE(cli.getNickname(), ch.getName(), message, cli.getUsername(), cli.getClientIP()));
