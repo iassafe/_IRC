@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   authentication.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
+/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 15:39:46 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/12 13:02:45 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/05/15 17:49:25 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,14 +57,17 @@ void    Server::nickCommand(std::string &args, Client &c){
     if (isInUseNickname(param)){// check this only if new client 
         sendMsg(c.getClientFD(), ERR_NICKNAMEINUSE(c.getNickname()));
         return ;}
-    if (c.isRegistered()){
+    if (c.isRegistered()){//M modified  block
         std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + " NICK :" + param + "\n";
         sendMsg(c.getClientFD(), msg);
-        sendNickMsg2Mem(msg, c);
+        nickMsgRecievers.push_back(c.getNickname());
         for (unsigned int i = 0; i < channels.size(); i++){
-		    if (channels[i].isMember(c))
+		    if (channels[i].isMember(c)){
+                channels[i].sendNickMsg2All(*this, msg);
                 channels[i].updateAmemNickName(c, param);
+            }
         }
+        nickMsgRecievers.clear();
     }
     c.setNickname(param);
     if (!c.isRegistered())

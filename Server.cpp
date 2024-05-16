@@ -379,13 +379,13 @@ void	Server::fillSayingsBox(std::string fileName){
 }
 
 
-void Server::sendNickMsg2Mem(std::string msg, Client c){
-	for (unsigned int i = 0; i < channels.size(); i++){
-		if (channels[i].isMember(c)){
-			channels[i].sendNickMsg2All(*this, msg, c);
-		}
-	}
-}
+// void Server::sendNickMsg2Mem(std::string msg, Client c){
+// 	for (unsigned int i = 0; i < channels.size(); i++){
+// 		if (channels[i].isMember(c)){
+// 			channels[i].sendNickMsg2All(*this, msg, c);
+// 		}
+// 	}
+// }
 
 void Server::removeChannel(std::string chName){
 	for (unsigned int i = 0; i < this->channels.size(); i++){
@@ -396,7 +396,7 @@ void Server::removeChannel(std::string chName){
     }
 }
 
-bool	Server::msgAlreadyRecieved(std::string nick){//MM new
+bool	Server::msgAlreadyRecieved(std::string nick){
 	for (unsigned int i = 0; i < nickMsgRecievers.size(); i++){
 		if (nickMsgRecievers[i] == nick)
 			return true;
