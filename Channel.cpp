@@ -172,6 +172,7 @@ void	Channel::sendmsg2chanOperators(Server s, Client cli, std::string& message, 
 	}
 }
 
+
 void Channel::sendNickMsg2All(Server &s, std::string message){//M modified
 	for (size_t i = 0; i < this->regularUsers.size(); ++i){
         if (!s.msgAlreadyRecieved(this->regularUsers[i].getNickname())){
