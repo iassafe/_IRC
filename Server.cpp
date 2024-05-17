@@ -193,6 +193,8 @@ void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
 		clearClient(fd);
 		close(fd);
 	}
+	else
+		buffer[total] = '\0';
 	std::string strBuffer = buffer;
 	for (i = 0; i < clients.size(); i++){
 		if (clients[i].getClientFD() == fd)//IF ITS NOT FOUND

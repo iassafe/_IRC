@@ -188,6 +188,12 @@ void Channel::sendNickMsg2All(Server &s, std::string message){//M modified
 	}
 }
 
+void Channel::sendModeMsg2All(Server &s, std::string message){//KH
+	for (size_t i = 0; i < this->regularUsers.size(); ++i)
+		s.sendMsg(this->regularUsers[i].getClientFD(), message);
+    for (size_t i = 0; i < this->operators.size(); ++i)
+		    s.sendMsg(this->operators[i].getClientFD(), message);
+}
 
 ////////UPPPPPPPP
 bool Channel::hasLimitCanJ(void){

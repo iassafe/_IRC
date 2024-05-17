@@ -96,5 +96,6 @@ class Channel{
         void        sendMsgKick2Members(Server &s, Client &c, std::string name, std::string reason);
         size_t      getSizeMembers(void);
 
+        void sendModeMsg2All(Server &s, std::string message); //KH
 };
 #endif
