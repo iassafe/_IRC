@@ -1,7 +1,7 @@
 
 #ifndef RESPONSES_HPP
 #define RESPONSES_HPP
-#define RPL_WELCOME(nick, user) ":ircserv 001 " + nick + " :Welcome to the ft_irc IRC network " + nick + "!~" + user + "@127.0.0.1\r\n"
+//M welcome rpl deleted
 #define ERR_ALREADYREGISTERED(nick) ":ircserv 462 " + nick + " :You may not reregister\r\n"
 #define ERR_PASSWDMISMATCH(nick) ":ircserv 464 " + nick + " :Password incorrect!\r\n"
 #define ERR_NEEDMOREPARAMS(nick, cmd) ":ircserv 461 " + nick + " " + cmd + " :Not enough parameters!\r\n"

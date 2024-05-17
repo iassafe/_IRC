@@ -12,6 +12,7 @@ int	ft_count(std::string str, size_t start){
 		return (count);
 }
 
+
 int	Server::validArgsPriv(std::string &args, Client &cli){
 	size_t	count = 0;
 	size_t	ind = 0;
@@ -67,8 +68,7 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 	}
 	size_t comma = index;
 	size_t end = this->args.length() - 1;
-	for(; this->args[end] == ' ' ; --end){
-	}
+	for(; (this->args[end] == ' ' || this->args[end] == '\r' || this->args[end] == '\t') ; --end){}
 	this->args = this->args.substr(0, end + 1);
 	size_t msg_begin = (args.find_last_of(" \t\r"));
 	//GET THE MESSAGE AFTER ":" IN CASE OF MANY RECEPIENTS
@@ -141,6 +141,8 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 			else
 				return (3);
 		}
+
+		
 	}
 	return (1);
 }

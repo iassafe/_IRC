@@ -6,7 +6,7 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 15:39:46 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/15 17:49:25 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/05/17 17:59:54 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void    Server::nickCommand(std::string &args, Client &c){
         sendMsg(c.getClientFD(), ERR_NICKNAMEINUSE(c.getNickname()));
         return ;}
     if (c.isRegistered()){//M modified  block
-        std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + " NICK :" + param + "\n";
+        std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + c.getClientIP() + " NICK :" + param + "\n";//M added
         sendMsg(c.getClientFD(), msg);
         nickMsgRecievers.push_back(c.getNickname());
         for (unsigned int i = 0; i < channels.size(); i++){
