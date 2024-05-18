@@ -87,10 +87,10 @@ void    Server::clearClient(int fd){
     }
     for (size_t i = 0; i < clients.size(); ++i){//remove client from Clients vector
         if(clients[i].getClientFD() == fd){
-            for (unsigned int i = 0; i < channels.size(); i++){
-                if (channels[i].isMember(clients[i])){
-                    channels[i].removeOperator(clients[i]);
-                    channels[i].removeRegularUser(clients[i]);
+            for (unsigned int j = 0; j < channels.size(); j++){
+                if (channels[j].isMember(clients[i])){
+                    channels[j].removeOperator(clients[i]);
+                    channels[j].removeRegularUser(clients[i]);
                 }
             }
             clients.erase(clients.begin() + i);
@@ -101,10 +101,10 @@ void    Server::clearClient(int fd){
 }
 void	Server::closeFD(){
 	for (size_t i = 0; i < clients.size(); ++i){//close clients fd
-		std::cout << "client disconnected" << std::endl;
+		std::cout << "client disconnected 1" << std::endl;
 		close(clients[i].getClientFD());}
 	if (serverFD == -1){//close server socket
-		std::cout << "server disconnected" << std::endl;
+		std::cout << "server disconnected 2" << std::endl;
 		close(serverFD);}
 	this->channels.clear();
 	this->clients.clear();
@@ -189,9 +189,10 @@ void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
 	memset(buffer, 0, sizeof(buffer));
 	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0);
 	if (total <= 0){
-		std::cout << "client disconnected" << std::endl;
+		std::cout << "client disconnected 3" << std::endl;
 		clearClient(fd);
 		close(fd);
+		return ;
 	}
 	else
 		buffer[total] = '\0';
