@@ -88,7 +88,7 @@ void    Server::clearClient(int fd){
     }
     for (size_t i = 0; i < clients.size(); ++i){//remove client from Clients vector
         if(clients[i].getClientFD() == fd){
-            for (unsigned int j = 0; j < channels.size(); j++){
+            for (unsigned int j = 0; j < channels.size(); ++j){
                 if (channels[j].isMember(clients[i])){
                     channels[j].removeOperator(clients[i]);
                     channels[j].removeRegularUser(clients[i]);
@@ -191,38 +191,10 @@ void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
 	memset(buffer, 0, sizeof(buffer));
 	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0); //KHH return -1 on failure
 	if (total <= 0){
-		std::cout << "recieving data from fd=" << fd << "\n";
-		if (errno == EAGAIN || errno == EWOULDBLOCK)
-        	std::cout << "11111\n";
-    	else if (errno == EINTR) 
-        	std::cout << "22222\n";
-    	else if (errno == EBADF) //The argument fd is an invalid descriptor.
-        	std::cout << "33333\n";
-    	else if (errno == ECONNRESET) 
-        	std::cout << "44444\n";
-    	else if (errno == EFAULT) 
-        	std::cout << "55555\n";
-    	else if (errno == EINVAL) 
-        	std::cout << "66666\n";
-    	else if (errno == ENOBUFS) 
-        	std::cout << "77777\n";
-    	else if (errno == ENOTCONN) 
-        	std::cout << "88888\n";
-    	else if (errno == ENOTSOCK) 
-        	std::cout << "99999\n";
-    	else if (errno == EOPNOTSUPP) 
-        	std::cout << "*****\n";
-    	else if (errno == ETIMEDOUT) 
-        	std::cout << "-----\n";
-    	else if (errno == EMSGSIZE) 
-        	std::cout << "+++++\n";
-    	else if (errno == ENOMEM) 
-        	std::cout << "/////\n";
-		else
-        	std::cout << "33333\n";
 		std::cout << "client disconnected" << std::endl;
 		clearClient(fd);
 		close(fd);
+		return ;
 	}
 	else
 		buffer[total] = '\0';
