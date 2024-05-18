@@ -7,8 +7,9 @@ Channel::Channel(Client &creator, std::string chname, Server &s)
     s.addChannel(*this);
 }
 
-Channel::~Channel(){
-    // server->clearChannel(*this);
+Channel::~Channel(){//KHH
+    this->regularUsers.clear();
+    this->operators.clear();
 }
 
 //setters

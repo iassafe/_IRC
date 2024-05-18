@@ -93,8 +93,8 @@ class	Server{
 		Client		&findClient(std::string nn);
 		Channel		&findChannel(std::string chname);
 
-		void		clearClientslist();
-		void		clearChannelslist();
+		// void		clearClientslist();//KHH no need
+		// void		clearChannelslist();//KHH
 
 		void	fillSayingsBox(std::string fileName);
         void    nickCommand(std::string &args, Client &c);

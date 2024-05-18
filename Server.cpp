@@ -52,9 +52,10 @@ Server::Server(){
 	// this->Channelkick = "";
 }
 
-Server::~Server(){
-	clearClientslist();//do not forget to close clients fd 
-	clearChannelslist();
+Server::~Server(){//KHH
+	this->clients.clear();
+	this->channels.clear();
+	this->sayingsBox.clear();
 }
 
 void	Server::setPort(int n){
@@ -101,16 +102,13 @@ void    Server::clearClient(int fd){
 }
 void	Server::closeFD(){
 	for (size_t i = 0; i < clients.size(); ++i){//close clients fd
-		std::cout << "client disconnected 1" << std::endl;
+		std::cout << "client disconnected" << std::endl;
 		close(clients[i].getClientFD());}
 	if (serverFD == -1){//close server socket
-		std::cout << "server disconnected 2" << std::endl;
+		std::cout << "server disconnected" << std::endl;
 		close(serverFD);}
-	this->channels.clear();
-	this->clients.clear();
-	this->sayingsBox.clear();
+	//KHH
 }
-
 
 void		Server::create_socket(){
 	struct sockaddr_in serveraddress;
@@ -121,8 +119,12 @@ void		Server::create_socket(){
 	serveraddress.sin_addr.s_addr = INADDR_ANY;//any local machine address
 
 	serverFD = socket(AF_INET, SOCK_STREAM, 0);
+	//KHH //AF_INET (Address family internet IPv4) define the socket family (there is AF_UNIX, PF_INET, AF_INET)
+	//SOCK_STREM define the type socket; the socket can use tcp or udp tecknologie in transport layer, SOCK_STREAM stand for TCP Protocol
+	// the third argument represent the network protocol used; rules and standards that difine the connumication between 2 or more devices over the network, 0 stands for Internet protocol IP 
+	//socket() return the socket file descriptor on success
 	if (serverFD == -1)
-		throw (std::runtime_error("Server failed to get created!"));
+		throw (std::runtime_error("Server failed to get created!")); //socket failed to get created
 	// std::cout << "Socket created successfully" << std::endl;
 	int	val = 1;
 	if (setsockopt(serverFD, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val)) == -1)//SET OPTIONS OF SOCKET: SOL_SOCKET:the option is defined at socket level/ SO_REUSADDR : the option that allows to reuse local addresses which can be useful in scenarios where you want to quickly restart a server on the same address and port after it has been stopped.
@@ -131,7 +133,7 @@ void		Server::create_socket(){
 	if (fcntl(serverFD, F_SETFL, O_NONBLOCK) == -1)//PERFORM OPERATIONS ON FD : F_SETFL: THE OPERATION IS TO SET FILE STATUS FLAGS/ O_NONBLOCK : SOCKET NONBLOCKING
 		throw ("Failed to set nonblocking flag!");
 	std::cout << "fcntl successfully" << std::endl;
-	if (bind(serverFD, (const sockaddr *)&serveraddress, sizeof(serveraddress)) == -1)//bind the server to a port and IP
+	if (bind(serverFD, (const sockaddr *)&serveraddress, sizeof(serveraddress)) == -1)//bind the server to a port and IP //KHH return 0 on success
 		throw(std::runtime_error("Binding to IP and port failed!"));
 	// std::cout << "Socket binded" << std::endl;
 	if (listen(serverFD, SOMAXCONN) == -1)//socket is passive and listening to coming connections
@@ -187,12 +189,40 @@ void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
 	size_t		i;
 
 	memset(buffer, 0, sizeof(buffer));
-	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0);
+	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0); //KHH return -1 on failure
 	if (total <= 0){
-		std::cout << "client disconnected 3" << std::endl;
+		std::cout << "recieving data from fd=" << fd << "\n";
+		if (errno == EAGAIN || errno == EWOULDBLOCK)
+        	std::cout << "11111\n";
+    	else if (errno == EINTR) 
+        	std::cout << "22222\n";
+    	else if (errno == EBADF) //The argument fd is an invalid descriptor.
+        	std::cout << "33333\n";
+    	else if (errno == ECONNRESET) 
+        	std::cout << "44444\n";
+    	else if (errno == EFAULT) 
+        	std::cout << "55555\n";
+    	else if (errno == EINVAL) 
+        	std::cout << "66666\n";
+    	else if (errno == ENOBUFS) 
+        	std::cout << "77777\n";
+    	else if (errno == ENOTCONN) 
+        	std::cout << "88888\n";
+    	else if (errno == ENOTSOCK) 
+        	std::cout << "99999\n";
+    	else if (errno == EOPNOTSUPP) 
+        	std::cout << "*****\n";
+    	else if (errno == ETIMEDOUT) 
+        	std::cout << "-----\n";
+    	else if (errno == EMSGSIZE) 
+        	std::cout << "+++++\n";
+    	else if (errno == ENOMEM) 
+        	std::cout << "/////\n";
+		else
+        	std::cout << "33333\n";
+		std::cout << "client disconnected" << std::endl;
 		clearClient(fd);
 		close(fd);
-		return ;
 	}
 	else
 		buffer[total] = '\0';
@@ -204,49 +234,49 @@ void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
 	if (strBuffer.find_first_of("\n") == std::string::npos)
 		clients[i].setBuffer(buffer);
 	else{
-			if (clients[i].getBuffer() != ""){
-				clients[i].setBuffer(strBuffer);
-				strBuffer = clients[i].getBuffer();
-			}
-			if (strBuffer.size() > 512){
-				if (!isRegistered(clients[i].getNickname()))
-					str = "*";
-				else
-					str = clients[i].getNickname();
-				sendMsg(fd, ERR_INPUTTOOLONG(str));
-			}
-			else{
-				std::string	buf = strBuffer;
-				size_t fond;
-				std::string	new_buf = skipSpaces(buf);
-				for(size_t i = 0; i <= new_buf.size(); i++){
-					fond = new_buf.find_first_of("\n");
-					if (fond == std::string::npos)
-						return;
-					std::string	commond = new_buf.substr(0, fond);
-					size_t	sp = commond.find_first_of("\t\r ");
-					if (sp != std::string::npos){
-						size_t	ind = sp;
-						while (commond[ind] == '\t' || commond[ind] == '\r' || commond[ind] == ' ')
-							ind++;
-						if (commond[ind] == '\n')
-							this->args = "";
-						else
-							this->args = commond.substr(ind, fond);
-						this->command = commond.substr(0, sp);
-					}
-					else{
-						this->command = commond.substr(0, fond); 
-						this->args = '\0';
-					}
-					new_buf = new_buf.substr(fond+1, new_buf.size());
-					checkCommands(fd);//M
-					command.clear();
-					args.clear();
+		if (clients[i].getBuffer() != ""){
+			clients[i].setBuffer(strBuffer);
+			strBuffer = clients[i].getBuffer();
+		}
+		if (strBuffer.size() > 512){
+			if (!isRegistered(clients[i].getNickname()))
+				str = "*";
+			else
+				str = clients[i].getNickname();
+			sendMsg(fd, ERR_INPUTTOOLONG(str));
+		}
+		else{
+			std::string	buf = strBuffer;
+			size_t fond;
+			std::string	new_buf = skipSpaces(buf);
+			for(size_t i = 0; i <= new_buf.size(); i++){
+				fond = new_buf.find_first_of("\n");
+				if (fond == std::string::npos)
+					return;
+				std::string	commond = new_buf.substr(0, fond);
+				size_t	sp = commond.find_first_of("\t\r ");
+				if (sp != std::string::npos){
+					size_t	ind = sp;
+					while (commond[ind] == '\t' || commond[ind] == '\r' || commond[ind] == ' ')
+						ind++;
+					if (commond[ind] == '\n')
+						this->args = "";
+					else
+						this->args = commond.substr(ind, fond);
+					this->command = commond.substr(0, sp);
 				}
+				else{
+					this->command = commond.substr(0, fond); 
+					this->args = '\0';
+				}
+				new_buf = new_buf.substr(fond+1, new_buf.size());
+				checkCommands(fd);//M
+				command.clear();
+				args.clear();
 			}
-			strBuffer.clear();
-			this->clients[i].clearBuffer();
+		}
+		strBuffer.clear();
+		this->clients[i].clearBuffer();
 	}
 }
 
@@ -356,12 +386,12 @@ Channel		&Server::findChannel(std::string chname){
 // 	}
 // }
 
-void	Server::clearClientslist(){
-	clients.clear();
-}
-void	Server::clearChannelslist(){
-	channels.clear();
-}
+// void	Server::clearClientslist(){//KHH
+// 	clients.clear();
+// }
+// void	Server::clearChannelslist(){//KHH
+// 	channels.clear();
+// }
 /* // Convert std::string to const char*
     if (!base.is_open())
         throw std::runtime_error("Can not open the sayings data base\n");

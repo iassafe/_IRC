@@ -18,7 +18,7 @@
 //     struct pollfd fds[MAX_CLIENTS + 1]; // Include server socket
 
 //     // Create server socket
-//     serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+//     serverSocket = AF_INET, SOCK_STREAM, 0);
 //     if (serverSocket == -1) {
 //         std::cerr << "Error creating server socket" << std::endl;
 //         return 1;

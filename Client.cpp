@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
+/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:17:06 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/11 17:13:18 by iassafe          ###   ########.fr       */
+/*   Updated: 2024/05/18 18:24:37 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ Client::Client(){
     clientFD = -1;
 }
 Client::~Client(){
+    this->invited2channels.clear();//KHH
 }
 
 //setters
@@ -103,7 +104,10 @@ void Client::registerClient(Server &s){
     if (isPasswordSended() && !nickname.empty() && !username.empty()
     && !hostname.empty() && !servername.empty() && !realname.empty()){
         registered = true;
-        s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :  Hello, World!\r\n");
+        s.sendMsg(getClientFD(), RPL_WELCOME(getNickname(), getUsername(), getClientIP()));//KHH
+        s.sendMsg(getClientFD(), ":ircserv 002 " + getNickname() + " :Your host is ircserv\r\n");
+        s.sendMsg(getClientFD(), ":ircserv 003 " + getNickname() + " :This server was created Avr 2024\r\n");
+        s.sendMsg(getClientFD(), ":ircserv 004 " + getNickname() + " ircserv \r\n");
         s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :\r\n");
         s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :  Welcome to the\r\n");
         s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :        __  .______        ______     _______. _______ .______     ____    ____ \r\n");
@@ -172,4 +176,5 @@ void    Client::invite2channel(std::string chName){
     if (!isInUseInvitedCh(chName))
         invited2channels.push_back(chName);
 }
+
 

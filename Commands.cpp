@@ -68,7 +68,8 @@ void	Server::handleCommands(Client &c){
 			kickCommand(c);
 		else if (this->command == "PRIVMSG")
 			privmsgCommand(args, c);
-	} 
+	}
+	c.setBuffer("");//KHH
 }
 
 void Server::checkCommands(int fd){
