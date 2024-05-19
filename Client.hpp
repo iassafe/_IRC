@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:16:57 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/19 14:03:43 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/05/19 19:11:13 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,21 +25,22 @@ class Server;
 
 class	Client{
 	private:
-        int			clientFD;
-		std::string	clientIP;
-		std::string	buffer;
-
-        std::string nickname;
-        std::string username;
-        std::string hostname;
-        std::string servername;
-        std::string realname;
-        bool registered;
-        bool PasswordSended;
+        int			             clientFD;
+		std::string	             clientIP;
+		std::string	             buffer;
+        std::string              nickname;
+        std::string              username;
+        std::string              hostname;
+        std::string              servername;
+        std::string              realname;
+        bool                     registered;
+        bool                     PasswordSended;
         std::vector<std::string> invited2channels;
 
 	public:
         Client();
+        Client(Client const& obj);
+        Client& operator=(Client const& obj);
         ~Client();
 
 		void	setBuffer(std::string rec);

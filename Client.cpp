@@ -3,20 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:17:06 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/19 16:52:29 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/05/19 19:14:49 by iassafe          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-
 Client::Client(){
     PasswordSended = registered = false;
     clientFD = -1;
 }
+
+Client::Client(Client const& obj){
+    *this = obj;
+}
+
+Client& Client::operator=(Client const& obj){
+    if (this != &obj){
+        clientFD = obj.clientFD;
+        clientIP = obj.clientIP;
+        buffer = obj.buffer;
+        nickname = obj.nickname;
+        username = obj.username;
+        hostname = obj.hostname;
+        servername = obj.servername;
+        realname = obj.realname;
+        registered = obj.registered;
+        PasswordSended = obj.PasswordSended;
+        invited2channels = obj.invited2channels;
+    }
+    return (*this);
+}
+
 Client::~Client(){
     this->invited2channels.clear();
 }

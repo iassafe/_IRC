@@ -1,5 +1,52 @@
-
 #include "Server.hpp"
+
+Server::Server(){
+	this->serverFD = -1;
+	this->password = "\0";
+	fillSayingsBox("sayings.txt");
+}
+
+Server::Server(Server const& obj){
+	*this = obj;
+}
+
+Server& Server::operator=(Server const& obj){
+	if (this != &obj){
+		this->serverFD = obj.serverFD;
+		this->port = obj.port;
+		this->signal = obj.signal;
+		this->password = obj.password;
+		this->connectionID = obj.connectionID; 
+		this->command = obj.command;
+		this->args = obj.args;
+		this->target = obj.target;
+		this->message = obj.message;
+		this->existPassword = obj.existPassword;
+		this->ChannelTopic = obj.ChannelTopic; 
+		this->topic = obj.topic;
+		this->reason = obj.reason;
+		this->ipAddress = obj.ipAddress;
+		this->Channelkick = obj.Channelkick;
+		this->joinChannel = obj.joinChannel;
+		this->joinPassword = obj.joinPassword; 
+		this->channelPass = obj.channelPass;
+		this->ClientsKick = obj.ClientsKick;	
+		this->vec_cl = obj.vec_cl;
+		this->vec_ch = obj.vec_ch;
+		this->fds = obj.fds;
+		this->clients = obj.clients;
+		this->channels = obj.channels;
+		// this->sayingsBox = obj.sayingsBox;
+	}
+	return(*this);
+}
+
+Server::~Server(){
+	this->clients.clear();
+	this->channels.clear();
+	this->sayingsBox.clear();
+	this->fds.clear();
+}
 
 bool	Server::signal = false;
 
@@ -20,22 +67,9 @@ bool    Server::isInUseChName(std::string chName){
     return false;
 }
 
-
 void	Server::sigHandler(int signum){
 	(void)signum;
 	signal = true;
-}
-Server::Server(){
-	this->serverFD = -1;
-	this->password = "\0";
-	fillSayingsBox("sayings.txt");
-}
-
-Server::~Server(){
-	this->clients.clear();
-	this->channels.clear();
-	this->sayingsBox.clear();
-	this->fds.clear();
 }
 
 void	Server::setPort(int n){

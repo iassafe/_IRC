@@ -12,22 +12,22 @@ class Server;
 
 class Channel{
     private:
-        std::string name; 
-        std::string topic;
-        std::string mode;
-        std::string key;
-    
-        unsigned int limit;
-    
-        bool topicLock;
-        bool hasLimit;
-        bool hasKey;
+        std::string         name; 
+        std::string         topic;
+        std::string         mode;
+        std::string         key;
+        unsigned int        limit;
+        bool                topicLock;
+        bool                hasLimit;
+        bool                hasKey;
         std::vector<Client> regularUsers;
         std::vector<Client> operators;
-        std::string stringtime;
+        std::string         stringtime;
     
     public:
         Channel(Client &creator, std::string chname, Server &s);
+        Channel(Channel const& obj);
+        Channel& operator=(Channel const& obj);
         ~Channel();
         
         void setMode(std::string newMode);

@@ -7,11 +7,31 @@ Channel::Channel(Client &creator, std::string chname, Server &s)
     s.addChannel(*this);
 }
 
+Channel::Channel(Channel const& obj){
+    *this = obj;
+}
+
+Channel& Channel::operator=(Channel const& obj){
+    if (this != &obj){
+        name=obj.name;
+        topic=obj.topic;
+        mode=obj.mode;
+        key=obj.key;
+        limit=obj.limit;
+        topicLock=obj.topicLock;
+        hasLimit=obj.hasLimit;
+        hasKey=obj.hasKey;
+        regularUsers=obj.regularUsers;
+        operators=obj.operators;
+        stringtime=obj.stringtime;
+    }
+    return (*this);
+}
+
 Channel::~Channel(){
     this->regularUsers.clear();
     this->operators.clear();
 }
-
 
 void Channel::setMode(std::string newMode){
     this->mode = newMode;

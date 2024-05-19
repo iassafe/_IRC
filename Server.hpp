@@ -56,6 +56,8 @@ class	Server{
 	public:
 		std::vector<std::string> nickMsgRecievers;
 		Server();
+		Server(Server const& obj);
+		Server& operator=(Server const& obj);
 		~Server();
 
 		int			getPort();
