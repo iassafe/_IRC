@@ -1,4 +1,5 @@
 #include "Server.hpp"
+
 int	ft_count(std::string str, size_t start){
 	size_t	count = 0;
 	size_t t;
@@ -40,7 +41,6 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 				if (ind - start == 0)
 					break ;
 				this->vec_cl.push_back(args.substr(start, ind - start));
-
 			}
 			if (args[ind] == ' ')
 				break ;
@@ -49,8 +49,6 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 				for (; args[start] == ','; ++start){};
 			
 			ind = args.find_first_of(", ", start);
-			// if (args[ind] == ' ')
-			// 	break ;
 			if (ind == std::string::npos){
 				ind = args.find_first_of(" \t\r");
 				size_t k = ind;
@@ -71,7 +69,6 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 	for(; (this->args[end] == ' ' || this->args[end] == '\r' || this->args[end] == '\t') ; --end){}
 	this->args = this->args.substr(0, end + 1);
 	size_t msg_begin = (args.find_last_of(" \t\r"));
-	//GET THE MESSAGE AFTER ":" IN CASE OF MANY RECEPIENTS
 	if (args[index] == ','){
 		comma = ind;
 		for(; (args[comma] == ' ' || args[comma] == '\r' || args[comma] == '\t'); comma++){
@@ -83,7 +80,7 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 		for (size_t	M = 0; M < vec_cl.size(); ++M){
 			if ((isInUseNickname(vec_cl[M]) == true)){
 				if (isMessage == false)
-					this->message = (args.substr(msg_begin + 1, args.size()));//GETTING LAST PART
+					this->message = (args.substr(msg_begin + 1, args.size()));
 			sendMsg(findClient(vec_cl[M]).getClientFD(), MESSAGE(cli.getNickname(), vec_cl[M], this->message, cli.getUsername(), cli.getClientIP()));
 		}
 		else
@@ -92,7 +89,7 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 		for (size_t M = 0; M < vec_ch.size(); ++M){
 			if ((isInUseChName(vec_ch[M]) == true)){
 				if (isMessage == false)
-					this->message = (args.substr(msg_begin + 1, args.size()));//GETTING LAST PART
+					this->message = (args.substr(msg_begin + 1, args.size()));
 				Channel	&chan = findChannel(vec_ch[M]);
 				if (chan.isMember(cli)){
 					chan.sendmsg2chanOperators(*this,cli, this->message, chan);
@@ -100,7 +97,6 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 				}
 				else
 					sendMsg(cli.getClientFD(), ERR_CANNOTSENDTOCHANNEL(vec_ch[M], cli.getNickname()));
-
 			}
 			else
 				sendMsg(cli.getClientFD(), ERR_NOSUCHCHANNEL(vec_ch[M], cli.getNickname()));
@@ -118,7 +114,7 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 		}
 		this->target = args.substr(q, index - q);
 		if (isMessage == false){
-			this->message = (args.substr(msg_begin + 1, args.length()));//TODO: NEED TO GET ONLY FIRST PART//max 150 characters?
+			this->message = (args.substr(msg_begin + 1, args.length()));
 		}
 		if (this->target[0] == '#'){
 			if (isInUseChName(this->target) == true){
@@ -142,8 +138,6 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 			else
 				return (3);
 		}
-
-		
 	}
 	return (1);
 }
@@ -158,9 +152,4 @@ void	Server::privmsgCommand(std::string &args, Client &cli){
 	else if(validArgsPriv(args, cli) == 3){
 		sendMsg(cli.getClientFD(), ERR_NOSUCHNICK(cli.getNickname(), this->target));
 	}
-	
-	
-	// else if(validArgsPriv(args) == 8){
-	// 	sendMsg(cli.getClientFD(), "\n");
-	// }
 }

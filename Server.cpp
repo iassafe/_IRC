@@ -23,33 +23,12 @@ bool    Server::isInUseChName(std::string chName){
 
 void	Server::sigHandler(int signum){
 	(void)signum;
-	std::cout << "signal found!" << std::endl;
-	signal = true;//to stop the server
+	signal = true;
 }
 Server::Server(){
-	serverFD = -1; 
-	password = "\0";
+	this->serverFD = -1;
+	this->password = "\0";
 	fillSayingsBox("sayings.txt");
-	// nick = "tikchbila";
-	// user = "tiwliwla";
-	// fds(0), sayingsBox(0), clients(0), channels(0),
-	// joinChannel(0), joinPassword(0), vec_cl(0), vec_ch(0), channelPass(0),
-	// ClientsKick(0)
-	// this->serverFD = -1; 
-	// this->password = "";
-	// fillSayingsBox("sayings.txt");
-	// this->reason = "";
-	// this->port = 0;
-	// this->signal = false;
-	// this->connectionID = 0;
-	// this->command = "";
-	// this->args = "";
-	// this->target = "";
-	// this->message = "";
-	// this->ChannelTopic = "";
-	// this->existPassword = 0;
-	// this->topic = "";
-	// this->Channelkick = "";
 }
 
 Server::~Server(){
@@ -106,10 +85,8 @@ void	Server::closeFD(){
 		std::cout << "client disconnected" << std::endl;
 		close(clients[i].getClientFD());
 		}
-	//if (serverFD == -1){//close server socket//KHH
-		std::cout << "server disconnected" << std::endl;
-		close(serverFD);//}
-	//KHH
+	std::cout << "server disconnected" << std::endl;
+	close(serverFD);
 }
 
 void		Server::create_socket(){
@@ -118,28 +95,25 @@ void		Server::create_socket(){
 	memset(&serveraddress, 0, sizeof(serveraddress));
 	serveraddress.sin_family = AF_INET;
 	serveraddress.sin_port = htons(this->port);
-	serveraddress.sin_addr.s_addr = INADDR_ANY;//any local machine address
+	serveraddress.sin_addr.s_addr = INADDR_ANY;
 
 	serverFD = socket(AF_INET, SOCK_STREAM, 0);
 	if (serverFD == -1)
-		throw (std::runtime_error("Server failed to get created!")); //socket failed to get created
-	// std::cout << "Socket created successfully" << std::endl;
+		throw (std::runtime_error("Server failed to get created!"));
 	int	val = 1;
-	if (setsockopt(serverFD, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val)) == -1)//SET OPTIONS OF SOCKET: SOL_SOCKET:the option is defined at socket level/ SO_REUSADDR : the option that allows to reuse local addresses which can be useful in scenarios where you want to quickly restart a server on the same address and port after it has been stopped.
+	if (setsockopt(serverFD, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val)) == -1)
 		throw (std::runtime_error("the reuse of the address has failed!"));
-	// std::cout << "Setsocketopt successfully" << std::endl;
-	if (fcntl(serverFD, F_SETFL, O_NONBLOCK) == -1)//PERFORM OPERATIONS ON FD : F_SETFL: THE OPERATION IS TO SET FILE STATUS FLAGS/ O_NONBLOCK : SOCKET NONBLOCKING
+	if (fcntl(serverFD, F_SETFL, O_NONBLOCK) == -1)
 		throw ("Failed to set nonblocking flag!");
 	std::cout << "fcntl successfully" << std::endl;
-	if (bind(serverFD, (const sockaddr *)&serveraddress, sizeof(serveraddress)) == -1)//bind the server to a port and IP //KHH return 0 on success
+	if (bind(serverFD, (const sockaddr *)&serveraddress, sizeof(serveraddress)) == -1)
 		throw(std::runtime_error("Binding to IP and port failed!"));
-	// std::cout << "Socket binded" << std::endl;
-	if (listen(serverFD, SOMAXCONN) == -1)//socket is passive and listening to coming connections
+	if (listen(serverFD, SOMAXCONN) == -1)
 		throw (std::runtime_error("server isn't listening!"));
 	std::cout << "Socket listening ..." << std::endl;
-	pollf.fd = serverFD;//initialize the fds with server
-	pollf.events = POLLIN;//flag to indicate theres data to read
-	fds.push_back(pollf);//initialize fds vector
+	pollf.fd = serverFD;
+	pollf.events = POLLIN;
+	fds.push_back(pollf);
 	std::cout << "server is listening from port : " << this->port << std::endl;
 }
 void	Server::launch_server(){
@@ -154,7 +128,7 @@ void	Server::acceptClient(){
 	socklen_t			clientaddrlen = sizeof(clientaddress);
 
 	memset(&clientaddress, 0, sizeof(clientaddress));
-	this->connectionID = accept(serverFD, (struct sockaddr *)&clientaddress, &clientaddrlen);//new socket to 	assure safe communication with multiple clients 
+	this->connectionID = accept(serverFD, (struct sockaddr *)&clientaddress, &clientaddrlen);
 	if (connectionID == -1){
 		std::cerr << "Failed to connect!" << std::endl;
 		return ;
@@ -165,7 +139,7 @@ void	Server::acceptClient(){
 	}
 	if (send(connectionID, "enter: password, nickname, and username\n", 41, 0) == -1)
 		throw (std::runtime_error("failed to send to client"));
-	if (fcntl(connectionID, F_SETFL, O_NONBLOCK) == -1){//server configuration can impact client's so we set new socket as server 
+	if (fcntl(connectionID, F_SETFL, O_NONBLOCK) == -1){
 		std::cerr << "failed to set nonblocking option!" << std::endl;
 		return ;
 	}
@@ -188,41 +162,14 @@ void	Server::recieve_data(int fd){
 	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0);
 	std::cout << "buffer==" << buffer << "==\n";
 	if (total <= 0){
-		if (errno == EAGAIN || errno == EWOULDBLOCK)
-        	std::cout << "11111\n";
-    	else if (errno == EINTR) 
-        	std::cout << "22222\n";
-    	else if (errno == EBADF) //The argument fd is an invalid descriptor.
-        	std::cout << "33333\n";
-    	else if (errno == ECONNRESET) 
-        	std::cout << "44444\n";
-    	else if (errno == EFAULT) 
-        	std::cout << "55555\n";
-    	else if (errno == EINVAL) 
-        	std::cout << "66666\n";
-    	else if (errno == ENOBUFS) 
-        	std::cout << "77777\n";
-    	else if (errno == ENOTCONN) 
-        	std::cout << "88888\n";
-    	else if (errno == ENOTSOCK) 
-        	std::cout << "99999\n";
-    	else if (errno == EOPNOTSUPP) 
-        	std::cout << "*****\n";
-    	else if (errno == ETIMEDOUT) 
-        	std::cout << "-----\n";
-    	else if (errno == EMSGSIZE) 
-        	std::cout << "+++++\n";
-    	else if (errno == ENOMEM) 
-        	std::cout << "/////\n";
-		else
-        	std::cout << "33333\n";
 		std::cout << "client disconnected" << std::endl;
 		clearClient(fd);
 		close(fd);
+		return ;
 	}
 	std::string strBuffer = buffer;
 	for (i = 0; i < clients.size(); i++){
-		if (clients[i].getClientFD() == fd)//IF ITS NOT FOUND
+		if (clients[i].getClientFD() == fd)
 			break ;
 	}
 	if (strBuffer.find_first_of("\n") == std::string::npos)
@@ -277,10 +224,10 @@ void	Server::recieve_data(int fd){
 
 void	Server::multi_clients(){
 	while (Server::signal == false){
-		if (poll(&fds[0], fds.size(), -1) == -1 && Server::signal == false)//poll blocked indefinitely till an event occurs or ctrl c
+		if (poll(&fds[0], fds.size(), -1) == -1 && Server::signal == false)
 			throw (std::runtime_error("poll() failed!"));
 		for (size_t i = 0; i < fds.size(); ++i){
-			if (fds[i].revents & POLLIN)//returned event: data to read
+			if (fds[i].revents & POLLIN)
 			{
 				if (fds[i].fd == serverFD)
 					acceptClient();

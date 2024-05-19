@@ -1,18 +1,5 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   mode.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/04 13:33:00 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/19 14:15:31 by khanhayf         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "Server.hpp"
-
-//KHHH @ in mode msg
 
 void    Server::modeCommand(std::string &args, Client &c){
     std::stringstream ss(args);

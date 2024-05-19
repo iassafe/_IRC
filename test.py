@@ -2,8 +2,8 @@ import socket
 import threading
 
 # Informations de connexion au serveur IRC
-server_ip = "e3r7p1.1337.ma"
-# server_ip = "localhost"
+# server_ip = "e3r7p1.1337.ma"
+server_ip = "localhost"
 server_port = 6667
 server_password = "l"
 # server_password = "zarda"
@@ -12,7 +12,7 @@ server_password = "l"
 available_nicks = []
 
 
-for i in range(1, 400):
+for i in range(1, 1000):
     nick = "client_bot{}".format(i)
     available_nicks.append(nick)
 
