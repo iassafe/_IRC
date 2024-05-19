@@ -6,12 +6,14 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 13:33:00 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/17 17:58:56 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/05/19 14:15:31 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-//M IP added
+
+//KHHH @ in mode msg
+
 void    Server::modeCommand(std::string &args, Client &c){
     std::stringstream ss(args);
     std::string chan;
@@ -33,7 +35,7 @@ void    Server::modeCommand(std::string &args, Client &c){
         return ;
     }
     Channel &channel = findChannel(chan);
-    if (ss.eof()){ //there is no mode // mode #ch
+    if (ss.eof()){
         sendMsg(c.getClientFD(), RPL_CHANNELMODES(channel.getName(), c.getNickname(), channel.channelModes()));
         return ;
     }
@@ -66,18 +68,18 @@ void    Server::modeCommand(std::string &args, Client &c){
                         if (sign[0] == '+'){
                             if (channel.getHasKey()){
                                 key.clear();
-                                continue ; //do nothing if the Key already set
+                                continue ;
                                 }
                             else{
                                 channel.setKey(key);
                                 channel.setHasKey(true);
-                                std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + " :") + key + "\n";
+                                std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + " :") + key + "\n";
                                 channel.sendModeMsg2All(*this, msg);
                             }
                         }
                         else{
                             if (channel.getHasKey() && key == channel.getKey()){
-                                std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + " :") + key + "\n";
+                                std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + " :") + key + "\n";
                                 channel.sendModeMsg2All(*this, msg);
                                 channel.setKey("");
                                 channel.setHasKey(false);
@@ -105,7 +107,7 @@ void    Server::modeCommand(std::string &args, Client &c){
                             if (!channel.getHasLimit()){
                                 channel.setLimit(nb);
                                 channel.setHasLimit(true);
-                                std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + " :") + limit + "\n";
+                                std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + " :") + limit + "\n";
                                 channel.sendModeMsg2All(*this, msg);}
                         }
                         else
@@ -115,7 +117,7 @@ void    Server::modeCommand(std::string &args, Client &c){
                         if (channel.getHasLimit()){
                             channel.setLimit(0);
                             channel.setHasLimit(false);
-                            std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
+                            std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
                             channel.sendModeMsg2All(*this, msg);}
                     }
                     else
@@ -126,28 +128,28 @@ void    Server::modeCommand(std::string &args, Client &c){
                     if (sign[0] == '+'){
                         if (channel.getMode().empty()){
                             channel.setMode("invite-only");
-                            std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
+                            std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
                             channel.sendModeMsg2All(*this, msg);}
                     }
                     else{
                             if (!channel.getMode().empty()){
                                 channel.setMode("");
-                                std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
+                                std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
                                 channel.sendModeMsg2All(*this, msg);}
                     }
                 }
                 else if (modestring[i] == 't'){
                     if (sign[0] == '+'){
-                        if (!channel.isTopiclocked()){//KH
+                        if (!channel.isTopiclocked()){
                             channel.setTopicLock(true);
-                            std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
+                            std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
                             channel.sendModeMsg2All(*this, msg);}
                     }
                     else{
-                        if (channel.isTopiclocked()){//KH
+                        if (channel.isTopiclocked()){
                             channel.setTopicLock(false);
                             std::cout << "topic--" << channel.isTopiclocked() << "--\n";
-                            std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
+                            std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
                             channel.sendModeMsg2All(*this, msg);}
                     }
                 }
@@ -163,14 +165,14 @@ void    Server::modeCommand(std::string &args, Client &c){
                         else if (channel.isMember(findClient(user))){
                             if (sign[0] == '+'){
                                 if (channel.isRegularuser(findClient(user))){
-                                    channel.addOperator(findClient(user)); //check if the nickname is in use and if its registered then add it in addoprator
-                                    std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + " :" + user) + "\n";
+                                    channel.addOperator(findClient(user));
+                                    std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + " :" + user) + "\n";
                                     channel.sendModeMsg2All(*this, msg);}
                             }
                             else{
                                 if (channel.isOperator(findClient(user))){
-                                    channel.addRegularUser(findClient(user)); //check if the nickname is in use and if its registered then add it in addoprator
-                                    std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + " :") + user + "\n";
+                                    channel.addRegularUser(findClient(user));
+                                    std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + " :") + user + "\n";
                                     channel.sendModeMsg2All(*this, msg);}
                             }
                         }

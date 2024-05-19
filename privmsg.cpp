@@ -110,7 +110,7 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 	}
 	else{
 		for(; (args[comma] == ' ' || args[comma] == '\r' || args[comma] == '\t'); comma++){
-		};
+		}
 		if (args[comma] == ':'){
 			isMessage = true;
 			this->message = (args.substr(comma + 1 , args.size()));

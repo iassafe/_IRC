@@ -11,7 +11,7 @@ std::string    Server::tolowercase(std::string str){
     return (str);
 }
 
-bool    Server::isInUseChName(std::string chName){// chname lowercase before check
+bool    Server::isInUseChName(std::string chName){
    chName = tolowercase(chName);
     for (unsigned int i = 0; i < channels.size(); ++i){
         if (tolowercase(channels[i].getName()) == chName)
@@ -52,10 +52,11 @@ Server::Server(){
 	// this->Channelkick = "";
 }
 
-Server::~Server(){//KHH
+Server::~Server(){
 	this->clients.clear();
 	this->channels.clear();
 	this->sayingsBox.clear();
+	this->fds.clear();
 }
 
 void	Server::setPort(int n){
@@ -80,15 +81,15 @@ std::string Server::getCommand(){
 }
 
 void    Server::clearClient(int fd){
-    for (size_t i = 0; i < fds.size(); ++i){//remove client from fds vector
+    for (size_t i = 0; i < fds.size(); ++i){
         if(fds[i].fd == fd){
             fds.erase(fds.begin() + i);
             break ;
         }
     }
-    for (size_t i = 0; i < clients.size(); ++i){//remove client from Clients vector
+    for (size_t i = 0; i < clients.size(); ++i){
         if(clients[i].getClientFD() == fd){
-            for (unsigned int j = 0; j < channels.size(); ++j){
+            for (unsigned int j = 0; j < channels.size(); j++){
                 if (channels[j].isMember(clients[i])){
                     channels[j].removeOperator(clients[i]);
                     channels[j].removeRegularUser(clients[i]);
@@ -101,12 +102,13 @@ void    Server::clearClient(int fd){
 
 }
 void	Server::closeFD(){
-	for (size_t i = 0; i < clients.size(); ++i){//close clients fd
+	for (size_t i = 0; i < clients.size(); ++i){
 		std::cout << "client disconnected" << std::endl;
-		close(clients[i].getClientFD());}
-	if (serverFD == -1){//close server socket
+		close(clients[i].getClientFD());
+		}
+	//if (serverFD == -1){//close server socket//KHH
 		std::cout << "server disconnected" << std::endl;
-		close(serverFD);}
+		close(serverFD);//}
 	//KHH
 }
 
@@ -119,10 +121,6 @@ void		Server::create_socket(){
 	serveraddress.sin_addr.s_addr = INADDR_ANY;//any local machine address
 
 	serverFD = socket(AF_INET, SOCK_STREAM, 0);
-	//KHH //AF_INET (Address family internet IPv4) define the socket family (there is AF_UNIX, PF_INET, AF_INET)
-	//SOCK_STREM define the type socket; the socket can use tcp or udp tecknologie in transport layer, SOCK_STREAM stand for TCP Protocol
-	// the third argument represent the network protocol used; rules and standards that difine the connumication between 2 or more devices over the network, 0 stands for Internet protocol IP 
-	//socket() return the socket file descriptor on success
 	if (serverFD == -1)
 		throw (std::runtime_error("Server failed to get created!")); //socket failed to get created
 	// std::cout << "Socket created successfully" << std::endl;
@@ -181,23 +179,47 @@ void	Server::acceptClient(){
 	std::cout << "accepted!" << std::endl;
 }
 
-
-
-void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
+void	Server::recieve_data(int fd){
 	char		buffer[1024];
 	std::string	str;
 	size_t		i;
 
 	memset(buffer, 0, sizeof(buffer));
-	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0); //KHH return -1 on failure
+	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0);
+	std::cout << "buffer==" << buffer << "==\n";
 	if (total <= 0){
+		if (errno == EAGAIN || errno == EWOULDBLOCK)
+        	std::cout << "11111\n";
+    	else if (errno == EINTR) 
+        	std::cout << "22222\n";
+    	else if (errno == EBADF) //The argument fd is an invalid descriptor.
+        	std::cout << "33333\n";
+    	else if (errno == ECONNRESET) 
+        	std::cout << "44444\n";
+    	else if (errno == EFAULT) 
+        	std::cout << "55555\n";
+    	else if (errno == EINVAL) 
+        	std::cout << "66666\n";
+    	else if (errno == ENOBUFS) 
+        	std::cout << "77777\n";
+    	else if (errno == ENOTCONN) 
+        	std::cout << "88888\n";
+    	else if (errno == ENOTSOCK) 
+        	std::cout << "99999\n";
+    	else if (errno == EOPNOTSUPP) 
+        	std::cout << "*****\n";
+    	else if (errno == ETIMEDOUT) 
+        	std::cout << "-----\n";
+    	else if (errno == EMSGSIZE) 
+        	std::cout << "+++++\n";
+    	else if (errno == ENOMEM) 
+        	std::cout << "/////\n";
+		else
+        	std::cout << "33333\n";
 		std::cout << "client disconnected" << std::endl;
 		clearClient(fd);
 		close(fd);
-		return ;
 	}
-	else
-		buffer[total] = '\0';
 	std::string strBuffer = buffer;
 	for (i = 0; i < clients.size(); i++){
 		if (clients[i].getClientFD() == fd)//IF ITS NOT FOUND
@@ -242,7 +264,8 @@ void	Server::recieve_data(int fd){//M (this is the last version of recieve_data)
 					this->args = '\0';
 				}
 				new_buf = new_buf.substr(fond+1, new_buf.size());
-				checkCommands(fd);//M
+				std::cout << "command=" << command << "=\n";
+				checkCommands(fd);
 				command.clear();
 				args.clear();
 			}
@@ -269,10 +292,6 @@ void	Server::multi_clients(){
 	closeFD();
 }
 
-// void    Server::addClient(Client const& client){
-//     this->clients.push_back(client);
-// }
-
 void	Server::sendMsg(int fd, std::string msg){
 	if (send(fd, msg.c_str(), msg.size(), 0) == -1)
 		throw (std::runtime_error("failed to send to client"));
@@ -289,20 +308,6 @@ bool    Server::isInUseNickname(std::string nickname){
     return false;
 }
 
-
-		
-		
-	// std::cout << "----------------------from the server -------------------------------------\n";
-    //     std::cout << "------after cmd------\n";
-    //     std::cout << "nn = " << clients[i].getNickname() << "\n";
-    //     std::cout << "un = " << clients[i].getUsername() << "\n";
-    //     std::cout << "hn = " << clients[i].getHostname() << "\n";
-    //     std::cout << "sn = " << clients[i].getServername() << "\n";
-    //     std::cout << "rn = " << clients[i].getRealname() << "\n";
-    //     std::cout << "pw = " << clients[i].isPasswordSended() << "\n";
-    //     std::cout << "registered = " << clients[i].isRegistered() << "\n";
-    //     std::cout << "fd = " << clients[i].getClientFD() << "\n";
-
 void    Server::addChannel(Channel const& channel){
     channels.push_back(channel);
 }
@@ -315,22 +320,6 @@ bool	Server::isRegistered(std::string nickname){
 	return false;
 }
 
-// bool    Server::isInUseChName(std::string chName){
-//     for (unsigned int i = 0; i < channels.size(); i++){
-//         if (channels[i].getName() == chName)
-//             return true;
-//     }
-//     return false;
-// }
-
-// bool 	Server::isMember(Client &c, Channel &ch){
-// 	for (unsigned int i = 0; i < channels.size(); i++){
-//         if (channels[i].getName() == ch.getName() && ch.isMember(c))
-//             return true;
-//     }
-//     return false;
-// }
-
 Client		&Server::findClient(std::string nn){
 	unsigned int i;
 	nn = tolowercase(nn);
@@ -338,7 +327,7 @@ Client		&Server::findClient(std::string nn){
 		if (tolowercase(clients[i].getNickname()) == nn)
 			return (clients[i]);
 	}
-	return clients[i]; //clients end if not found
+	return clients[i];
 }
 
 Channel		&Server::findChannel(std::string chname){
@@ -348,30 +337,8 @@ Channel		&Server::findChannel(std::string chname){
 		if (tolowercase(channels[i].getName()) == chname)
 			return (channels[i]);
 	}
-	return channels[i];//channels end if not found
+	return channels[i];
 }
-
-// void	Server::channelsInvited2(Client & c){
-// 	for (unsigned int i = 0; i < channels.size(); i++){
-// 		if (channels[i].isInvited(c));
-			
-// 	}
-// }
-
-// void	Server::clearClientslist(){//KHH
-// 	clients.clear();
-// }
-// void	Server::clearChannelslist(){//KHH
-// 	channels.clear();
-// }
-/* // Convert std::string to const char*
-    if (!base.is_open())
-        throw std::runtime_error("Can not open the sayings data base\n");
-    std::string line;
-    while (std::getline(base, line))
-        sayingsBox.push_back(line);
-    base.close();
-}*/
 
 void	Server::fillSayingsBox(std::string fileName){
 	std::fstream base(fileName);
@@ -382,15 +349,6 @@ void	Server::fillSayingsBox(std::string fileName){
         sayingsBox.push_back(line);
     base.close();
 }
-
-
-// void Server::sendNickMsg2Mem(std::string msg, Client c){
-// 	for (unsigned int i = 0; i < channels.size(); i++){
-// 		if (channels[i].isMember(c)){
-// 			channels[i].sendNickMsg2All(*this, msg, c);
-// 		}
-// 	}
-// }
 
 void Server::removeChannel(std::string chName){
 	for (unsigned int i = 0; i < this->channels.size(); i++){

@@ -6,7 +6,7 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:17:48 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/18 14:35:11 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/05/19 14:06:07 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ int	main(int ac, char **av){
 	
 		if (ac != 3)
 			throw(std::runtime_error("Enter a port and a password"));
-		//AZMARA
 		std::string	password = av[2];
 		if (password.find_first_of(" \t") != std::string::npos)
 			throw(std::runtime_error("NO WHITE SPACES ALLOWED!"));
@@ -30,14 +29,14 @@ int	main(int ac, char **av){
 		por = serv.getPort();
 		std::string	s = av[1];
 		if (s.find_first_not_of("0123456789") != std::string::npos){
-			throw(std::runtime_error("Only numbers in port!"));//AZMARA
+			throw(std::runtime_error("Only numbers in port!"));
 		}
 		pas = serv.getPassword();
 		if (por < 1024 || por > 49151){
-			throw(std::runtime_error("Enter a valid port"));//AZMARA
+			throw(std::runtime_error("Enter a valid port"));
 		}
 		if (pas.size() <= 0){
-			throw(std::runtime_error("Empty Password!"));//AZMARA
+			throw(std::runtime_error("Empty Password!"));
 		}
 		signal(SIGINT, Server::sigHandler);
 		signal(SIGQUIT, Server::sigHandler);

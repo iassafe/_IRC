@@ -6,7 +6,7 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 18:17:06 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/18 18:24:37 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/05/19 16:52:29 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,9 @@ Client::Client(){
     clientFD = -1;
 }
 Client::~Client(){
-    this->invited2channels.clear();//KHH
+    this->invited2channels.clear();
 }
 
-//setters
 void	Client::setClientIP(std::string IPaddr){
 	this->clientIP = IPaddr;
 }
@@ -59,8 +58,6 @@ void Client::setPasswordSended(bool b){
     PasswordSended = b;
 }
 
-//getters
-
 std::string Client::getBuffer() const{
     return (this->buffer);
 }
@@ -90,7 +87,6 @@ bool    Client::isPasswordSended(){
     return PasswordSended;
 }
 
-//others
 void    Client::clearAuthentication(){
     nickname.clear();
     username.clear();
@@ -104,11 +100,10 @@ void Client::registerClient(Server &s){
     if (isPasswordSended() && !nickname.empty() && !username.empty()
     && !hostname.empty() && !servername.empty() && !realname.empty()){
         registered = true;
-        s.sendMsg(getClientFD(), RPL_WELCOME(getNickname(), getUsername(), getClientIP()));//KHH
+        s.sendMsg(getClientFD(), "\r\n");
+        s.sendMsg(getClientFD(), ":ircserv 001 " + getNickname() + " :Welcome to the ft_irc IRC network " + getNickname() + "!\r\n");
         s.sendMsg(getClientFD(), ":ircserv 002 " + getNickname() + " :Your host is ircserv\r\n");
         s.sendMsg(getClientFD(), ":ircserv 003 " + getNickname() + " :This server was created Avr 2024\r\n");
-        s.sendMsg(getClientFD(), ":ircserv 004 " + getNickname() + " ircserv \r\n");
-        s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :\r\n");
         s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :  Welcome to the\r\n");
         s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :        __  .______        ______     _______. _______ .______     ____    ____ \r\n");
         s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :       |  | |   _  \\      /      |   /       ||   ____||   _  \\    \\   \\  /   / \r\n");
@@ -119,7 +114,6 @@ void Client::registerClient(Server &s){
         s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :                                                               AUTONOMOUS ZONE\r\n");
         s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :                                                                                      \r\n");
         s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :  Thank you for using ircserv!\r\n");
-        s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :  End of message of the day.\r\n");
     }
         std::cout << "------registered successfully------\n";
         std::cout << "nn = " << getNickname() << "\n";
@@ -131,7 +125,6 @@ void Client::registerClient(Server &s){
         std::cout << "registered = " << isRegistered() << "\n";
 }
 
-/////////////////IK
 std::string Client::getClientIP() const{
     return (this->clientIP);
 }
@@ -152,16 +145,6 @@ bool    Client::isInUseInvitedCh(std::string ChannelName){
     }
     return false;
 }
-
-// std::string& Client::findingInvitedCh(std::string ChannelName){
-//     unsigned int i;
-// 	ChannelName = tolowercase(ChannelName);
-// 	for (i = 0; i < this->invited2channels.size(); i++){
-// 		if (tolowercase(this->invited2channels[i]) == ChannelName)
-// 			return (this->invited2channels[i]);
-// 	}
-// 	return (this->invited2channels[i]);//channels end if not found
-// }
 
 void Client::removeInvitedCh(std::string ChannelName){
     for (unsigned int i = 0; i < this->invited2channels.size(); i++){

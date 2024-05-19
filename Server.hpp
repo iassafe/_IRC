@@ -18,16 +18,16 @@
 #include <sstream>
 #include <map>
 #include <fstream>
-#include <cctype> // toupper
+#include <cctype>
 #include "responses.hpp"
 #include <ctime>
 
 class Client;
 class Channel;
-//TODO : need canonical form for classes
+
 class	Server{
 	private:
-		int									serverFD; // (name changed from serverID to severFD)
+		int									serverFD;
 		int									port;
 		static bool							signal;
 		std::string							password;
@@ -35,46 +35,37 @@ class	Server{
 		std::string 						command;
 		std::string 						args;
 		std::vector<struct pollfd>			fds;
-		// std::map<std::string, std::string>	map;
 		std::vector<std::string>			sayingsBox;
 		std::vector<Client>					clients;
 		std::vector<Channel>				channels;
-		//AZMARA
-		std::string							target;//NEW
-		std::string							message;//NEW
-		std::vector<std::string>			vec_cl;//NEW
-		std::vector<std::string>			vec_ch;//NEW
-
-		// join
-		int existPassword;
-		std::vector<std::string> joinChannel;
-		std::vector<std::string> joinPassword;
-		std::vector<std::pair<std::string, std::string> > channelPass;
-		std::string ChannelTopic;
-		std::string topic;
-		std::string Channelkick;
-		std::vector<std::string> ClientsKick;	
-
-		///////&&&&&&&&&&&&&&
-		std::string reason;
-
-		///////////up
-		std::string ipAddress;
-
+		std::string							target;
+		std::string							message;
+		std::vector<std::string>			vec_cl;
+		std::vector<std::string>			vec_ch;
+		int									existPassword;
+		std::string							ChannelTopic;
+		std::string							topic;
+		std::string							reason;
+		std::string							ipAddress;
+		std::string							Channelkick;
+		std::vector<std::string>							joinChannel;
+		std::vector<std::string>							joinPassword;
+		std::vector<std::pair<std::string, std::string> > 	channelPass;
+		std::vector<std::string>							ClientsKick;	
 
 	public:
 		std::vector<std::string> nickMsgRecievers;
 		Server();
-		~Server();//close users fds before quitting
-		//--Setters--//
+		~Server();
+
+		int			getPort();
+		int			getServerFD();
+		std::string	getPassword();
+		std::string getCommand();
+
 		void		setPort(int n);
 		void		setPassword(char *str);
-		//--Getters--//
-		int			getPort();
-		std::string	getPassword();
-		int			getServerFD();
-		std::string getCommand();
-		//----//
+
 		void		create_socket();
 		void		launch_server();
 		void		multi_clients();
@@ -93,18 +84,15 @@ class	Server{
 		Client		&findClient(std::string nn);
 		Channel		&findChannel(std::string chname);
 
-		// void		clearClientslist();//KHH no need
-		// void		clearChannelslist();//KHH
+		void		fillSayingsBox(std::string fileName);
+        void		nickCommand(std::string &args, Client &c);
+        void		userCommand(std::string &args, Client &c);
+        void		passCommand(std::string &args, Client &c);
+        void		inviteCommand(std::string &args, Client &c);
+        void		modeCommand(std::string &args, Client &c);
+        void		botCommand(Client &c);
 
-		void	fillSayingsBox(std::string fileName);
-        void    nickCommand(std::string &args, Client &c);
-        void    userCommand(std::string &args, Client &c);
-        void    passCommand(std::string &args, Client &c);
-        void	inviteCommand(std::string &args, Client &c);
-        void    modeCommand(std::string &args, Client &c);
-        void    botCommand(Client &c);
 
-		// ikrame
 		void	checkCommands(int fd);
 		int		argsJoin(void);
 		void	joinCommand(Client &c);
@@ -123,29 +111,22 @@ class	Server{
 		void	createChannel(Client &c, int i);
 		void	addChannel(Client &c, int i);
 		void 	makeClientKick(std::string clKick, int exist2Points);
-
 		std::string    tolowercase(std::string str);
 		bool	isValidNickName(std::string nickname);
-		//AZMARA
-		//AZMARA
-		void	privmsgCommand(std::string &args, Client &cli);//NEW
-		int		validArgsPriv(std::string &args, Client &cli);//NEW
-		void	store_clients_channels(std::string &args, size_t count, size_t ind, size_t start);
-		void	sendToClients(size_t msg_begin, Client &cli, bool isMessage);
-		void	sendToChannels(size_t msg_begin, Client &cli, bool isMessage);
 
+		void	privmsgCommand(std::string &args, Client &cli);
+		int		validArgsPriv(std::string &args, Client &cli);
 
-		////////UPPPPPPPP
-		void handleError(Client &c);
-		// void sendNickMsg2Mem(std::string msg, Client c);
-		void removeChannel(std::string chName);
+		// void	store_clients_channels(std::string &args, size_t count, size_t ind, size_t start);
+		// void	sendToClients(size_t msg_begin, Client &cli, bool isMessage);
+		// void	sendToChannels(size_t msg_begin, Client &cli, bool isMessage);
 
-		bool	msgAlreadyRecieved(std::string nick);//M neW
+		void 	handleError(Client &c);
+		void 	removeChannel(std::string chName);
+
+		bool	msgAlreadyRecieved(std::string nick);
 };
 
-
-
-///////
 std::string	skipSpaces(std::string str);
 int countComma(std::string str);
 std::string skipCommas(std::string s);

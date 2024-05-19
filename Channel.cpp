@@ -2,17 +2,17 @@
 
 Channel::Channel(Client &creator, std::string chname, Server &s)
 :name(chname), topicLock(true), hasLimit(false), hasKey(false){
-    this->operators.push_back(creator); //the channel creator is considered an operator by default
-    this->mode = "";//////ik
+    this->operators.push_back(creator);
+    this->mode = "";
     s.addChannel(*this);
 }
 
-Channel::~Channel(){//KHH
+Channel::~Channel(){
     this->regularUsers.clear();
     this->operators.clear();
 }
 
-//setters
+
 void Channel::setMode(std::string newMode){
     this->mode = newMode;
 }
@@ -22,9 +22,7 @@ void Channel::setTopic(std::string newTopic){
 void Channel::setKey(std::string k){
     this->key = k;
 }
-// void Channel::setModeLock(bool b){
-//     modeLock = b;
-// }
+
 void Channel::setTopicLock(bool b){
     this->topicLock = b;
 }
@@ -40,7 +38,6 @@ void Channel::setHasKey(bool b){
     this->hasKey = b;
 }
 
-//getters
 std::string Channel::getName() const{
     return this->name;
 }
@@ -56,9 +53,7 @@ std::string Channel::getKey() const{
 int Channel::getLimit() const{
     return this->limit;
 }
-// bool Channel::isModelocked() const{
-//     return modeLock;
-// }
+
 bool Channel::isTopiclocked() const{
     return this->topicLock;
 }
@@ -123,28 +118,7 @@ bool Channel::isMember(Client const& c){
         return true;
     return false;
 }
-// bool Channel::isfull(){
-//     if (this->operators.size() + this->regularUsers.size() == limit)
-//         return true;
-//     return false;
-// }
 
-// void    Channel::addInvited(Client & c){
-//     invited.push_back(c);
-// }
-
-// bool    Channel::isInvited(Client & c){
-//     if (isMember(c)){
-//         for (unsigned int i = 0; i < invited.size(); i++)
-//             if (invited[i].getNickname() == c.getNickname())
-//                 return true;
-//     }
-//     return false;
-// }
-
-
-
-//////ik
 void Channel::sendMsg2Members(Server &s, Client &c){
     for(size_t i = 0; i < this->regularUsers.size(); ++i){
         if (toLowerCase(this->regularUsers[i].getNickname()) != toLowerCase(c.getNickname()))
@@ -158,7 +132,6 @@ void Channel::sendMsg2Members(Server &s, Client &c){
     }
 }
 
-//AZMARA
 void	Channel::sendmsg2chanRegulars(Server s, Client cli, std::string& message, Channel ch){
 	for (size_t i = 0; i < this->regularUsers.size(); ++i){
         if (cli.getNickname() != this->regularUsers[i].getNickname())
@@ -173,8 +146,7 @@ void	Channel::sendmsg2chanOperators(Server s, Client cli, std::string& message, 
 	}
 }
 
-
-void Channel::sendNickMsg2All(Server &s, std::string message){//M modified
+void Channel::sendNickMsg2All(Server &s, std::string message){
 	for (size_t i = 0; i < this->regularUsers.size(); ++i){
         if (!s.msgAlreadyRecieved(this->regularUsers[i].getNickname())){
 		    s.sendMsg(this->regularUsers[i].getClientFD(), message);
@@ -189,14 +161,13 @@ void Channel::sendNickMsg2All(Server &s, std::string message){//M modified
 	}
 }
 
-void Channel::sendModeMsg2All(Server &s, std::string message){//KH
+void Channel::sendModeMsg2All(Server &s, std::string message){
 	for (size_t i = 0; i < this->regularUsers.size(); ++i)
 		s.sendMsg(this->regularUsers[i].getClientFD(), message);
     for (size_t i = 0; i < this->operators.size(); ++i)
 		    s.sendMsg(this->operators[i].getClientFD(), message);
 }
 
-////////UPPPPPPPP
 bool Channel::hasLimitCanJ(void){
     if((this->operators.size() + this->regularUsers.size()) >= this->limit)
         return (false);
@@ -215,39 +186,6 @@ std::string Channel::makeStringMember(void){
 	}
 	return (member);
 }
-
-// void Channel::channelStatusMsg(Server &s,std::string modestring, std::string newOp){
-//     std::string str = "";
-//     std::string sign;
-//     if (modestring.find_first_of("+-") == std::string::npos && !modestring.empty()) 
-//         sign = "+";
-//     for (unsigned int i = 0; i < modestring.size(); i++){
-//         if (modestring[i] == 'k' && this->getHasKey()){
-//             str += " ";
-//             str += this->getKey();}
-//         else if (modestring[i] == 'l' && this->getHasLimit()){
-//             std::cout << "limit ==" << getLimit() << "\n";
-//             str += " ";
-//             std::stringstream ss;
-//             ss << this->getLimit();
-//             str += ss.str();}
-//         else if (modestring[i] == 'o' && !newOp.empty()){
-//             str += " ";
-//             str += newOp;}
-//     }
-//     for(unsigned int i = 0; i < this->regularUsers.size(); ++i){
-//         std::string msg = ":" + this->regularUsers[i].getNickname() + "!~" + \
-//             this->regularUsers[i].getUsername() + " " + s.getCommand() + " " + \
-//             this->getName() + " " + sign + modestring + str + "\n";
-//         s.sendMsg(this->regularUsers[i].getClientFD(), msg);
-//     }
-//     for(unsigned int i = 0; i < this->operators.size(); ++i){
-//         std::string msg = ":" + this->operators[i].getNickname() + "!~" + \
-//             this->operators[i].getUsername() + " " + s.getCommand()+ " " + \
-//             this->getName() + " " + sign + modestring + str + "\n";
-//         s.sendMsg(this->operators[i].getClientFD(), msg);
-//     }
-// }
 
 std::string Channel::channelModes(){
     std::string str = "";
@@ -273,7 +211,6 @@ std::string Channel::channelModes(){
             }
         }
     }
-    std::cout << "str==" << str << "\n";
     return (str);
 }
 
@@ -292,7 +229,6 @@ void	Channel::updateAmemNickName(Client &c, std::string newNick){
     }
 }
 
-//$$$$$$$$$$
 std::string    Channel::toLowerCase(std::string str){
     if (!str.empty()){
         for (unsigned int i = 0; i < str.size(); ++i)
@@ -301,7 +237,6 @@ std::string    Channel::toLowerCase(std::string str){
     return (str);
 }
 
-///////&&&&&&&&&&&&&&
 void Channel::sendMsgKick2Members(Server &s, Client &c, std::string name, std::string reason){
     for (size_t i = 0; i < this->regularUsers.size(); ++i){
         if(reason == "")
@@ -317,7 +252,6 @@ void Channel::sendMsgKick2Members(Server &s, Client &c, std::string name, std::s
 	}
 }
 
-///////&&&&&&&&&&&&&&
 size_t Channel::getSizeMembers(void){
     return (this->operators.size() + this->regularUsers.size());
 }

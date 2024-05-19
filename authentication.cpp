@@ -6,7 +6,7 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 15:39:46 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/17 17:59:54 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/05/19 12:43:12 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ bool Server::isValidNickName(std::string nickname){
         }
         if (isdigit(nickname[0]))
             return false;
-        if (nickname == "nickserv" || nickname == "chanserv") //are often reserved or restricted by the IRC server for other server services.
+        if (nickname == "nickserv" || nickname == "chanserv")
             return false ;
     }
     else
@@ -45,7 +45,7 @@ void    Server::nickCommand(std::string &args, Client &c){
         getline(ss, param);
         param = param.substr(1);
     }
-    if (c.getNickname() == param) //in case a client try to change his nn with the same nickname setted before
+    if (c.getNickname() == param)
         return;
     if (!isValidNickName(param)){
         sendMsg(c.getClientFD(), ERR_ERRONEUSNICKNAME(c.getNickname()));
@@ -54,11 +54,11 @@ void    Server::nickCommand(std::string &args, Client &c){
         if ((tolowercase(clients[i].getNickname()) == tolowercase(param)) && !clients[i].isRegistered())
             clients[i].setNickname("");
     }
-    if (isInUseNickname(param)){// check this only if new client 
+    if (isInUseNickname(param)){
         sendMsg(c.getClientFD(), ERR_NICKNAMEINUSE(c.getNickname()));
         return ;}
-    if (c.isRegistered()){//M modified  block
-        std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + c.getClientIP() + " NICK :" + param + "\n";//M added
+    if (c.isRegistered()){
+        std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + c.getClientIP() + " NICK :" + param + "\n";
         sendMsg(c.getClientFD(), msg);
         nickMsgRecievers.push_back(c.getNickname());
         for (unsigned int i = 0; i < channels.size(); i++){
@@ -75,7 +75,7 @@ void    Server::nickCommand(std::string &args, Client &c){
 }
 
 void    Server::userCommand(std::string &args, Client &c){
-    if (args[0] == ':'){//it's not standard practice to use colons before every parameter in IRC commands.//the colon is reserved specifically for the trailing(last) parameter.
+    if (args[0] == ':'){
         sendMsg(c.getClientFD(), ERR_NEEDMOREPARAMS(c.getNickname(), "USER"));
         if (c.isRegistered())
 			handleError(c);

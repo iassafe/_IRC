@@ -69,7 +69,6 @@ void	Server::handleCommands(Client &c){
 		else if (this->command == "PRIVMSG")
 			privmsgCommand(args, c);
 	}
-	c.setBuffer("");//KHH
 }
 
 void Server::checkCommands(int fd){
@@ -80,11 +79,11 @@ void Server::checkCommands(int fd){
 			break ;
 		}
 	}
-	if (i == clients.size()) //this is not part of the implementation just in case this happens 
+	if (i == clients.size())
 		throw(std::runtime_error("Client no found in the server container\n")); 
 	if (validCommand(this->command))
 		handleCommands(this->clients[i]);
-	else if (this->command != "" && this->clients[i].isRegistered()) // else without conditons is enough
+	else if (this->command != "" && this->clients[i].isRegistered())
 		sendMsg(fd, ERR_UNKNOWNCOMMAND(this->clients[i].getNickname(), this->command));
 }
 
