@@ -92,8 +92,8 @@ int	Server::validArgsPriv(std::string &args, Client &cli){
 					this->message = (args.substr(msg_begin + 1, args.size()));
 				Channel	&chan = findChannel(vec_ch[M]);
 				if (chan.isMember(cli)){
-					chan.sendmsg2chanOperators(*this,cli, this->message, chan);
-					chan.sendmsg2chanRegulars(*this,cli, this->message, chan);
+					chan.sendmsg2chanOperators(*this, cli, this->message, chan);
+					chan.sendmsg2chanRegulars(*this, cli, this->message, chan);
 				}
 				else
 					sendMsg(cli.getClientFD(), ERR_CANNOTSENDTOCHANNEL(vec_ch[M], cli.getNickname()));

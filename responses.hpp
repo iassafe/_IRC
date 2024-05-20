@@ -37,7 +37,7 @@
 #define RPL_TOPICWHOTIME(topicsetter, topictime, nick, channelName) ":ircserv 333 " + nick + " " + channelName + " " + topicsetter + "!~" + topicsetter + "@ircserv " + topictime + "\r\n"
 
 #define ERR_INPUTTOOLONG(nick) ": ircserv 417 " + nick + " :Input line too long\r\n"
-#define RPL_SETTOPIC(nick, channel, topic) ":" + nick + "!" + nick + "@" + "ircserv" + " TOPIC " + channel + " :" + topic + "\r\n"
+#define RPL_SETTOPIC(nick, user,channel, topic) ":" + nick + "!~" + user + "@ircserv TOPIC " + channel + " :" + topic + "\r\n"
 #define RPL_KICK(kicker, username, channel, targetuser, reason, ip) ":" + kicker + "!~" + username + "@" + ip + " KICK " + channel + " " + targetuser + " :" + reason + "\r\n"
 
 #define RPL_JOIN(nick, username, channelname, ipaddress) ":" + nick + "!~" + username + "@" + ipaddress + " JOIN :" + channelname + "\r\n"

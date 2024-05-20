@@ -282,3 +282,14 @@ void Channel::setStringTime(std::string str){
 std::string Channel::getStringTime(void) const{
     return (this->stringtime);
 }
+
+void Channel::sendMsgTopic(Client &c, Server &s){
+    for (size_t i = 0; i < this->operators.size(); ++i){
+        s.sendMsg(this->operators[i].getClientFD(), RPL_SETTOPIC(c.getNickname(), \
+        c.getUsername(), s.getChannelTopic(), s.getTopic()));
+    }
+    for (size_t i = 0; i < this->regularUsers.size(); ++i){
+        s.sendMsg(this->regularUsers[i].getClientFD(), RPL_SETTOPIC(c.getNickname(), \
+        c.getUsername(), s.getChannelTopic(), s.getTopic()));
+    }
+}

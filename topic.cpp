@@ -53,12 +53,13 @@ void Server::execTopicCommand(Client &c){
         sendMsg(c.getClientFD(), ERR_NOSUCHCHANNEL(this->ChannelTopic, c.getNickname()));
     else{
         Channel &findingChannel = this->findChannel(this->ChannelTopic);
+		if (findingChannel.isMember(c)){
 			if (this->topic != ""){
 				if (findingChannel.isOperator(c)){
 					if (findingChannel.getTopic() != this->topic){
 						findingChannel.setStringTime(getCurrentTime());
 						findingChannel.setTopic(this->topic);
-						this->sendMsg(c.getClientFD(), RPL_SETTOPIC(c.getNickname(), this->ChannelTopic, this->topic));
+						findingChannel.sendMsgTopic(c, *this);
 					}
 				}
 				else if (findingChannel.isRegularuser(c)){
@@ -66,7 +67,7 @@ void Server::execTopicCommand(Client &c){
 						findingChannel.setStringTime(getCurrentTime());
 						if (findingChannel.getTopic() != this->topic){
 							findingChannel.setTopic(this->topic);
-							this->sendMsg(c.getClientFD(), RPL_SETTOPIC(c.getNickname(), this->ChannelTopic, this->topic));
+							findingChannel.sendMsgTopic(c, *this);
 						}
 					}
 					else
@@ -80,7 +81,10 @@ void Server::execTopicCommand(Client &c){
 					sendMsg(c.getClientFD(), RPL_TOPICDISPLAY(c.getHostname(), c.getNickname(), findingChannel.getName(), findingChannel.getTopic()));
 					sendMsg(c.getClientFD(), RPL_TOPICWHOTIME(findingChannel.getTopic(), findingChannel.getStringTime(), c.getNickname(), findingChannel.getName()));
 				}
-			}	
+			}
+		}
+		else
+			sendMsg(c.getClientFD(), ERR_NOTONCHANNEL(c.getNickname(), findingChannel.getName()));
     }
     
 }

@@ -36,7 +36,7 @@ Server& Server::operator=(Server const& obj){
 		this->fds = obj.fds;
 		this->clients = obj.clients;
 		this->channels = obj.channels;
-		// this->sayingsBox = obj.sayingsBox;
+		this->sayingsBox = obj.sayingsBox;
 	}
 	return(*this);
 }
@@ -87,6 +87,13 @@ std::string	Server::getPassword(){
 }
 int	Server::getServerFD(){
 	return this->serverFD;
+}
+
+std::string Server::getTopic() const{
+	return (this->topic);
+}
+std::string Server::getChannelTopic() const{
+	return (this->ChannelTopic);
 }
 
 std::string Server::getCommand(){
@@ -150,6 +157,7 @@ void		Server::create_socket(){
 	fds.push_back(pollf);
 	std::cout << "server is listening from port : " << this->port << std::endl;
 }
+
 void	Server::launch_server(){
 	create_socket();
 	multi_clients();
@@ -194,7 +202,6 @@ void	Server::recieve_data(int fd){
 
 	memset(buffer, 0, sizeof(buffer));
 	size_t	total = recv(fd, buffer, sizeof(buffer) - 1, 0);
-	std::cout << "buffer==" << buffer << "==\n";
 	if (total <= 0){
 		std::cout << "client disconnected" << std::endl;
 		clearClient(fd);
@@ -245,7 +252,6 @@ void	Server::recieve_data(int fd){
 					this->args = '\0';
 				}
 				new_buf = new_buf.substr(fond+1, new_buf.size());
-				std::cout << "command=" << command << "=\n";
 				checkCommands(fd);
 				command.clear();
 				args.clear();

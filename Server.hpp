@@ -64,6 +64,8 @@ class	Server{
 		int			getServerFD();
 		std::string	getPassword();
 		std::string getCommand();
+		std::string getTopic() const;
+		std::string getChannelTopic() const;
 
 		void		setPort(int n);
 		void		setPassword(char *str);
