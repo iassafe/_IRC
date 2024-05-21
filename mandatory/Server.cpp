@@ -106,11 +106,13 @@ void    Server::clearClient(int fd){
     }
     for (size_t i = 0; i < clients.size(); ++i){
         if(clients[i].getClientFD() == fd){
-            for (unsigned int j = 0; j < channels.size(); j++){
+            for (unsigned int j = 0; j < channels.size(); ++j){
                 if (channels[j].isMember(clients[i])){
                     channels[j].removeOperator(clients[i]);
                     channels[j].removeRegularUser(clients[i]);
                 }
+				if (!channels[j].getSizeMembers())
+					channels.erase(channels.begin() + j);
             }
             clients.erase(clients.begin() + i);
             return ;
@@ -122,7 +124,7 @@ void	Server::closeFD(){
 	for (size_t i = 0; i < clients.size(); ++i){
 		std::cout << "client disconnected" << std::endl;
 		close(clients[i].getClientFD());
-		}
+	}
 	std::cout << "server disconnected" << std::endl;
 	close(serverFD);
 }
