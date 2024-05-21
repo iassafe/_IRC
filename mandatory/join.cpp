@@ -38,6 +38,8 @@ void Server::addChannel(Client& c, int i){
 				sendMsg(c.getClientFD(), RPL_ENDOFNAMES(c.getHostname(), c.getNickname(), findingChannel.getName()));
 				findingChannel.sendMsg2Members(*this, c);
 			}
+			else if (!findingChannel.isMember(c))
+				sendMsg(c.getClientFD(), ERR_CANTJOIN(c.getNickname(), findingChannel.getName()));
 		}
 		else if (findingChannel.getKey() == this->channelPass[i].second){
 			if (!findingChannel.isMember(c) && findingChannel.getMode() != "invite-only"){
@@ -48,6 +50,8 @@ void Server::addChannel(Client& c, int i){
 				sendMsg(c.getClientFD(), RPL_ENDOFNAMES(c.getHostname(), c.getNickname(), findingChannel.getName()));
 				findingChannel.sendMsg2Members(*this, c);
 			}
+			else if (!findingChannel.isMember(c))
+				sendMsg(c.getClientFD(), ERR_CANTJOIN(c.getNickname(), findingChannel.getName()));
 		}
 		else if (!findingChannel.isMember(c))
 			sendMsg(c.getClientFD(), ERR_BADCHANNELKEY(c.getNickname(), findingChannel.getName()));
