@@ -135,7 +135,6 @@ void    Server::modeCommand(std::string &args, Client &c){
                     else{
                         if (channel.isTopiclocked()){
                             channel.setTopicLock(false);
-                            std::cout << "topic--" << channel.isTopiclocked() << "--\n";
                             std::string msg = ":" + c.getNickname() + "!~" + c.getUsername() + "@" + c.getClientIP() + " " + getCommand() + " " + channel.getName() + " " + (sign + modestring[i] + "\n");
                             channel.sendModeMsg2All(*this, msg);}
                     }
@@ -200,24 +199,16 @@ void    Server::modeCommand(std::string &args, Client &c){
                     continue ;
                 }
                 if (modestring[i] == 'i'){
-                    if (sign[0] == '+'){
+                    if (sign[0] == '+')
                         channel.setMode("invite-only");
-                        std::cout << "mode--" << channel.getMode() << "--\n";
-                    }
-                    else{
+                    else
                         channel.setMode("");
-                        std::cout << "mode--" << channel.getMode() << "--\n";
-                    }
                 }
                 else if (modestring[i] == 't'){
-                    if (sign[0] == '+'){
+                    if (sign[0] == '+')
                         channel.setTopicLock(true);
-                        std::cout << "topic--" << channel.isTopiclocked() << "--\n";
-                    }
-                    else{
+                    else
                         channel.setTopicLock(false);
-                        std::cout << "topic--" << channel.isTopiclocked() << "--\n";
-                    }
                 }
                 
             }

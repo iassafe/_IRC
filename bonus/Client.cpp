@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Client.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: iassafe <iassafe@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/01 18:17:06 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/19 19:14:49 by iassafe          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "Client.hpp"
 
@@ -136,14 +125,6 @@ void Client::registerClient(Server &s){
         s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :                                                                                      \r\n");
         s.sendMsg(getClientFD(), ":ircserv 372 " + getNickname() + " :  Thank you for using ircserv!\r\n");
     }
-        std::cout << "------registered successfully------\n";
-        std::cout << "nn = " << getNickname() << "\n";
-        std::cout << "un = " << getUsername() << "\n";
-        std::cout << "hn = " << getHostname() << "\n";
-        std::cout << "sn = " << getServername() << "\n";
-        std::cout << "rn = " << getRealname() << "\n";
-        std::cout << "pw = " << isPasswordSended() << "\n";
-        std::cout << "registered = " << isRegistered() << "\n";
 }
 
 std::string Client::getClientIP() const{

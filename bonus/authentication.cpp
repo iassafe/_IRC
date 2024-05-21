@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   authentication.cpp                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/30 15:39:46 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/05/19 12:43:12 by khanhayf         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "Server.hpp"
 
@@ -25,8 +14,6 @@ bool Server::isValidNickName(std::string nickname){
         }
         if (isdigit(nickname[0]))
             return false;
-        if (nickname == "nickserv" || nickname == "chanserv")
-            return false ;
     }
     else
         return(false);

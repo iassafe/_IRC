@@ -3,7 +3,6 @@
 Server::Server(){
 	this->serverFD = -1;
 	this->password = "\0";
-	fillSayingsBox("sayings.txt");
 }
 
 Server::Server(Server const& obj){
@@ -36,7 +35,6 @@ Server& Server::operator=(Server const& obj){
 		this->fds = obj.fds;
 		this->clients = obj.clients;
 		this->channels = obj.channels;
-		this->sayingsBox = obj.sayingsBox;
 	}
 	return(*this);
 }
@@ -44,7 +42,6 @@ Server& Server::operator=(Server const& obj){
 Server::~Server(){
 	this->clients.clear();
 	this->channels.clear();
-	this->sayingsBox.clear();
 	this->fds.clear();
 }
 
@@ -325,16 +322,6 @@ Channel		&Server::findChannel(std::string chname){
 			return (channels[i]);
 	}
 	return channels[i];
-}
-
-void	Server::fillSayingsBox(std::string fileName){
-	std::fstream base(fileName);
-    if (!base.is_open())
-        throw std::runtime_error("Can not open the sayings data base\n");
-    std::string line;
-    while (std::getline(base, line))
-        sayingsBox.push_back(line);
-    base.close();
 }
 
 void Server::removeChannel(std::string chName){
